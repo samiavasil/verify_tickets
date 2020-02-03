@@ -8,7 +8,7 @@ Created понеделник 03 февруари 2020
 ===== QT SSL Server =====
 
 https://stackoverflow.com/questions/23493338/what-is-the-correct-way-to-create-succesfull-ssl-handshake-in-qt
-
+https://github.com/jbagg/QSslSocket-example
 
 ===== Cassandra Conceptual Data Modeling =====
 
