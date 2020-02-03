@@ -1,0 +1,7 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2020-02-03T15:40:51+02:00
+
+====== Билетна Верификация ======
+Created понеделник 03 февруари 2020
+

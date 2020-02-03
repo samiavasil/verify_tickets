@@ -1,0 +1,17 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2020-02-03T17:20:07+02:00
+
+====== Линкове ======
+Created понеделник 03 февруари 2020
+
+===== QT SSL Server =====
+
+https://stackoverflow.com/questions/23493338/what-is-the-correct-way-to-create-succesfull-ssl-handshake-in-qt
+
+
+===== Cassandra Conceptual Data Modeling =====
+
+http://cassandra.apache.org/doc/latest/data_modeling/data_modeling_conceptual.html
+http://cassandra.apache.org/doc/latest/data_modeling/data_modeling_queries.html
+http://cassandra.apache.org/doc/latest/data_modeling/data_modeling_logical.html
