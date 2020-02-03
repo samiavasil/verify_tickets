@@ -10,9 +10,13 @@ int main(int argc, char *argv[])
     Daemon::SetupUnixSignalHandlers();
     SslServer server;
 
+    qDebug()<<"SSL version use for build: "<<QSslSocket::sslLibraryBuildVersionString();
+    qDebug()<<"SSL version use for run-time: "<<QSslSocket::sslLibraryVersionNumber();
+    qDebug()<<QCoreApplication::libraryPaths();
+
     qDebug() << "Run " << a.applicationName();
 
-    server.listen(QHostAddress::Any, 8082);
+
 
 
     return a.exec();
