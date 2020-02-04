@@ -13,7 +13,8 @@ class SslServer: public QTcpServer
 public:
     explicit SslServer(QObject *parent = nullptr,
                        const QHostAddress &address = QHostAddress::Any,
-                       quint16 port = 12345);
+                       quint16 port = 12345,
+                       bool bencr = true);
     virtual ~SslServer();
 
 protected:

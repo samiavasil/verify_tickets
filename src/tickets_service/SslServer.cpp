@@ -3,7 +3,7 @@
 #include <QFile>
 
 
-SslServer::SslServer(QObject *parent, const QHostAddress &address, quint16 port)
+SslServer::SslServer(QObject *parent, const QHostAddress &address, quint16 port, bool bencr)
     :QTcpServer(parent)
 {
 
