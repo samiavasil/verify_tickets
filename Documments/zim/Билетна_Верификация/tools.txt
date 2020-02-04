@@ -1,0 +1,29 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2020-02-04T17:44:20+02:00
+
+====== tools ======
+Created вторник 04 февруари 2020
+
+===== 1 Ssl test tools: =====
+
+If you want to be a client use openssl's s_client:
+
+{{{code: lang="sh" linenumbers="True"
+openssl s_client -connect host:port
+}}}
+
+
+If you want to be a server use openssl's s_server:
+
+{{{code: lang="sh" linenumbers="True"
+openssl s_server -accept <port> -key <keyfile> -cert <certfile>
+}}}
+
+
+Quick And Dirty cert and key for the server to use for testing:
+
+{{{code: lang="sh" linenumbers="True"
+openssl req -x509 -nodes -days 365 -newkey rsa -keyout keyfile.key -out certfile.crt
+}}}
+

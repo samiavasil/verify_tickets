@@ -1,0 +1,148 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2020-02-04T16:49:42+02:00
+
+====== Running local development server on ssl ======
+Created вторник 04 февруари 2020
+
+===== Generating SSL certificate =====
+
+Firstly, there are two types of certificates: One being signed by a ‘Certificate Authority(CA)’ and the other one being ‘self-signed certificate’. A CA is a trusted source for an SSL certificate, and using a certificate from a CA allows your users to trust the identity of your website. In most cases, you would want to use a CA-signed certificate in a production environment, however for testing purpose, a self-signed certificate would be sufficient.
+
+=== 1. How to Create Your Own SSL Certificate Authority for Local HTTPS Development ===
+
+This is a recomended way - Create own CA certificate and sign server certificates with it.
+
+Used Links:
+[[https://medium.com/@hugomejia74/how-to-create-your-own-ssl-certificate-authority-for-local-https-development-3b97573c7bb5|How to Create Your Own SSL Certificate Authority for Local HTTPS Development]]
+
+**a) Generate CA private key - Use -des3 option to protect the key with password.**
+{{{code: lang="sh" linenumbers="True"
+openssl genrsa -des3 -out myCA_key.pem 2048
+
+}}}
+
+
+**b)  Generate CA certificate:**
+{{{code: lang="sh" linenumbers="True"
+openssl req -x509 -new -nodes -key myCA_key.pem -sha256 -days 20005 -out myCA.pem
+}}}
+
+
+**d) Generate server private key and Sign server certificate**
+* Generate sever private key
+{{{code: lang="sh" linenumbers="True"
+openssl genrsa -out test_key.pem 2048
+}}}
+ 
+
+* Prepare openssl configuratrion file [[./ssl.conf|ssl.conf]] 
+This configuration file contains some fields which are connected to the specific domain where th server will be run.
+Here server is running on IP 192.168.0.170, and in order certificate to be accepted for 192.168.0.170, for  local address (127.0.0.1),  and for domain name **alabala.com **alternative names are added:  **IP.1 = 127.0.0.1 IP.2 = 192.168.0.170 DNS.1 = alabala.com.**
+
+{{{code: lang="sh" linenumbers="True"
+[ req ]
+default_bits       = 4096
+distinguished_name = req_distinguished_name
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment, dataEncipherment
+#req_extensions     = v3_req
+prompt             = no
+
+[ req_distinguished_name ]
+commonName                  = alabala.com
+
+[ v3_req ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+IP.1 = 127.0.0.1
+IP.2 = 192.168.0.170
+DNS.1 = alabala.com
+
+}}}
+
+* Prepare CA signing request **192.168.0.170_csr.pem:**
+{{{code: lang="sh" linenumbers="True"
+openssl req -new -key test_key.pem -out 192.168.0.170_csr.pem -config ssl.conf
+}}}
+
+* Create server certificate **test_cert.pem**
+{{{code: lang="sh" linenumbers="True"
+ openssl x509 -req -in 192.168.0.170_csr.pem -CA ../CA/myCA.pem  -CAkey ../CA/myCA_key.pem -CAcreateserial -out test_cert.pem  -days 1825 -sha256  -extensions v3_req  -extfile ssl.conf
+}}}
+
+
+=== Self Signed  certificate ===
+
+Other option to run local server with https, just for development puspose, is a self-signed certificate. To generate it, execute below commands:
+
+**a) First we generate RSA key for our root CA and store it in file test_key.pem. If you want to password-protect this key, add option -des3.**
+
+{{{code: lang="sh" linenumbers="True"
+openssl genrsa -out test_key.pem
+#openssl genrsa -out test_key.pem -des3   This way have an issue on server run. Should be checked how to provide the key passw!!!
+}}}
+
+
+**b) This command generates a Certificate Signing Request, which you could instead use to generate a CA-signed certificate.**
+
+{{{code: lang="sh" linenumbers="True"
+openssl req -new -sha256 -key test_key.pem -out test_csr.pem
+}}}
+
+
+**c) Next, we create our self-signed root CA certificate cert.pem; you’ll need to provide an identity for your root CA. The -x509 option is used for a self-signed certificate. You may specify the validity of your certificate by providing the number of days.**
+
+{{{code: lang="sh" linenumbers="True"
+openssl x509 -req -days 8888 -in test_csr.pem -signkey test_key.pem -out test_cert.pem
+}}}
+
+
+This will create key.pem, csr.pem and cert.pem file in the bin folder of your OpenSSL. You will only require cert.pem(The Certificate) & key.pem(The Private Key) for an SSL connection.
+
+Alternative way to generate  CA certificate and key is to use  just one command ( information for this can be found in  examples/system/ota/README.md ). 
+{{{code: lang="sh" linenumbers="True"
+openssl req -x509 -newkey rsa:2048 -keyout ca_key.pem -out ca_cert.pem -days 365 -nodes
+}}}
+
+
+**IMPORTANT**//: //__Command for certificate generation expect some input information.  For proper certificate generation ( one wich will be accepted by eps-tls),  CN (Common Name) field should__
+__be set to  domain name or IP address of the host where the server will be deployed. __
+__For example:  CN (Common Name): IP__
+
+To see certificate info in UBUNTU you can use:
+{{{code: lang="sh" linenumbers="True"
+gcr-viewer test_csr.pem 
+}}}
+
+
+===== Running local development server =====
+
+Go to your project directory. Install npm module http-server in your project directory:
+
+{{{code: lang="sh" linenumbers="True"
+npm install --save-dev http-server
+}}}
+
+
+Copy cert.pem & key.pem to root of your project directory.
+
+Run below command:
+
+{{{code: lang="sh" linenumbers="True"
+	http-server  ./www_dir/ -S -c-1  -C ./certs/test_cert.pem -K ./certs/test_key.pem -p 8080 -a 127.0.0.1
+}}}
+
+
+Starting up http-server, serving ./ through https
+Available on:
+
+{{{code: lang="sh" linenumbers="True"
+https://127.0.0.1:8080
+}}}
+
+
+Hit CTRL-C to stop the server
+
+After this, hit the URL https://localhost:8080 and see the magic. You might need to approve a security warning from your browser before continuing.
