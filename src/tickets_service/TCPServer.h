@@ -1,36 +1,40 @@
-#ifndef SSLSERVER_H
-#define SSLSERVER_H
+#ifndef TCPSERVER_H
+#define TCPSERVER_H
 
 #include <QTcpServer>
 #include <QSslSocket>
 #include <QSslKey>
 #include <QSslCertificate>
 
-class SslServer: public QTcpServer
+class TCPServer: public QTcpServer
 {
     Q_OBJECT
 
 public:
-    explicit SslServer(QObject *parent = nullptr,
+    explicit TCPServer(QObject *parent = nullptr,
                        const QHostAddress &address = QHostAddress::Any,
                        quint16 port = 12345,
-                       bool bencr = true);
-    virtual ~SslServer();
+                       bool encrypt = true);
+    virtual ~TCPServer();
 
 protected:
     virtual void incomingConnection(qintptr socketDescriptor);
 
+    QTcpSocket *createSslSocket(qintptr socketDescriptor);
+    QTcpSocket *createRegularSocket(qintptr socketDescriptor);
+    void ParseJsonInput(const QByteArray &buff);
 private slots:
 
-    void EncriptionReady();
+    void EncryptionReady();
     void linkConnection();
-    void Receive();
+    virtual void Receive() = 0;
     void Disconnected();
     void sslErrors(const QList<QSslError> &errors);
 
 private:
     QSslKey m_key;
     QSslCertificate m_cert;
+    bool m_encrypt;
 };
 
-#endif // SSLSERVER_H
+#endif // TCPSERVER_H
