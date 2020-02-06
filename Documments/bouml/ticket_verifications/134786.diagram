@@ -1,0 +1,9 @@
+format 222
+
+fragment 128002 ""
+  xyzwh 196 89 2000 45 55
+end
+note 128130 "sq"
+  xyzwh 317 137 2000 35 35
+no_msg
+end

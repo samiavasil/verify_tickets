@@ -1,0 +1,20 @@
+window_sizes 1280 972 203 1071 824 96
+cleanlooks_style
+diagrams
+  usecasediagram_ref 134530 // Use Case Diagram
+    779 659 100 A4 0 0
+  active  usecasediagram_ref 134658 // Use Case Diagram
+    1071 824 100 A4 0 0
+  collaborationdiagram_ref 134786 // Library Communication Diagram
+    120 98 100 A4 0 0
+end
+show_stereotypes
+selected 
+  package_ref 135042 // Library
+open
+  classview_ref 134530 // ClassView
+  classview_ref 141058 // Class View
+  
+  package_ref 135042 // Library
+end
+end

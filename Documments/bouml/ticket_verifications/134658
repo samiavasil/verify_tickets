@@ -1,0 +1,90 @@
+format 222
+"CassanbdraDB" // CassanbdraDB
+  revision 3
+  modified_by 2 "vvasilev"
+  // class settings
+  
+  classdiagramsettings member_max_width 0 end
+  
+  classcompositediagramsettings end
+  
+  usecasediagramsettings end
+  
+  sequencediagramsettings end
+  
+  collaborationdiagramsettings end
+  
+  objectdiagramsettings end
+  
+  objectcompositediagramsettings end
+  
+  componentdiagramsettings
+   end
+  
+  deploymentdiagramsettings
+   end
+  
+  statediagramsettings
+   end
+  
+  activitydiagramsettings
+   end
+  
+  usecaseview 134530 "Use Case View"
+    
+    usecasediagramsettings end
+    
+    sequencediagramsettings end
+    
+    collaborationdiagramsettings end
+    
+    classdiagramsettings member_max_width 0 end
+    
+    classcompositediagramsettings end
+    
+    objectdiagramsettings end
+    
+    objectcompositediagramsettings end
+    
+    statediagramsettings
+     end
+    
+    activitydiagramsettings
+     end
+    usecasediagram 134530 "Use Case Diagram"
+      usecasediagramsettings end
+      size A4
+    end
+  end
+
+  classview 141058 "Class View"
+    
+    classdiagramsettings member_max_width 0 end
+    
+    classcompositediagramsettings end
+    
+    collaborationdiagramsettings end
+    
+    objectdiagramsettings end
+    
+    objectcompositediagramsettings end
+    
+    sequencediagramsettings end
+    
+    statediagramsettings
+     end
+    
+    
+    activitydiagramsettings
+     end
+    sequencediagram 141314 "Ajure Input Sequence"
+      sequencediagramsettings end
+      overlapping_bars size A4
+    end
+
+    sequencediagram 141442 "Validation Sequence Diagram"
+      sequencediagramsettings end
+      overlapping_bars size A4
+    end
+  end
+end

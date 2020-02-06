@@ -1,0 +1,21 @@
+format 222
+
+usecasecanvas 128002 usecase_ref 134530 // Node1
+  xyzwh 232 129 3005 64 32 label_xy 246 161
+end
+usecasecanvas 128130 usecase_ref 134658 // Node2
+  xyzwh 402 92 3005 64 32 label_xy 416 124
+end
+usecasecanvas 128258 usecase_ref 134786 // Node3
+  xyzwh 228 241 3005 64 32 label_xy 242 273
+end
+usecasecanvas 128386 usecase_ref 134914 // Node4
+  xyzwh 535 135 3005 64 32 label_xy 549 167
+end
+usecasecanvas 128514 usecase_ref 135042 // Node5
+  xyzwh 534 254 3005 64 32 label_xy 548 286
+end
+usecasecanvas 128642 usecase_ref 135170 // Node6
+  xyzwh 366 299 3005 64 32 label_xy 380 331
+end
+end
