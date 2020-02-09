@@ -1,0 +1,7 @@
+format 222
+
+classinstance 128002 class_ref 161154 // CassandraDB
+  name ""   xyz 519 6 2000 life_line_z 2000
+classinstance 128130 class_ref 154626 // QRServer
+  name ""   xyz 48 4 2000 life_line_z 2000
+end

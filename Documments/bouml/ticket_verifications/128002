@@ -1,6 +1,6 @@
 format 222
 "AjureDB" // AjureDB
-  revision 2
+  revision 4
   modified_by 2 "vvasilev"
   // class settings
   
@@ -50,6 +50,20 @@ format 222
     
     activitydiagramsettings
      end
+    class 147970 "Exporter"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl ""
+      
+    end
   end
 
   usecaseview 134786 "Use Case View"

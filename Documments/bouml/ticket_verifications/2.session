@@ -1,20 +1,23 @@
-window_sizes 1280 972 203 1071 824 96
+window_sizes 1280 972 203 1071 920 0
 cleanlooks_style
 diagrams
   usecasediagram_ref 134530 // Use Case Diagram
     779 659 100 A4 0 0
-  active  usecasediagram_ref 134658 // Use Case Diagram
-    1071 824 100 A4 0 0
-  collaborationdiagram_ref 134786 // Library Communication Diagram
-    120 98 100 A4 0 0
+  usecasediagram_ref 134658 // Use Case Diagram
+    1157 658 100 A4 60 0
+  sequencediagram_ref 141442 // Validation Sequence Diagram
+    1003 627 130 A4 0 0
+  active  sequencediagram_ref 148098 // Validate Ticket
+    1071 920 100 A4 0 0
 end
 show_stereotypes
-selected 
-  package_ref 135042 // Library
+selected class_ref 154498 // AJRServer
 open
   classview_ref 134530 // ClassView
+  classview_ref 147586 // Class View
   classview_ref 141058 // Class View
-  
-  package_ref 135042 // Library
+  classview_ref 160642 // Class View
+  usecaseview_ref 134658 // Use Case View
+  classview_ref 154114 // Class View
 end
 end

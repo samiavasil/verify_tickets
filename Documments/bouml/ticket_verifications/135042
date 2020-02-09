@@ -1,6 +1,6 @@
 format 222
 "Library" // Library
-  revision 3
+  revision 6
   modified_by 2 "vvasilev"
   // class settings
   
@@ -76,21 +76,6 @@ ${inlines}
       
     end
 
-    class 141058 "Exporter"
-      visibility package stereotype "actor"
-      cpp_decl "${comment}${template}class ${name}${inherit} {
-${members}};
-${inlines}
-"
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      mysql_decl ""
-      
-    end
-
     usecase 141698 "Export Data"
       
       usecasediagramsettings end
@@ -137,7 +122,7 @@ ${inlines}
        end
     end
 
-    usecase 141954 "Notify New Order"
+    usecase 141954 "Receive New Order"
       
       usecasediagramsettings end
       
@@ -158,21 +143,6 @@ ${inlines}
       
       activitydiagramsettings
        end
-    end
-
-    class 141186 "AjureInput"
-      visibility package stereotype "actor"
-      cpp_decl "${comment}${template}class ${name}${inherit} {
-${members}};
-${inlines}
-"
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      mysql_decl ""
-      
     end
 
     usecase 142082 "Add New Order"
@@ -198,21 +168,6 @@ ${inlines}
        end
     end
 
-    class 141314 "Validator"
-      visibility package stereotype "actor"
-      cpp_decl "${comment}${template}class ${name}${inherit} {
-${members}};
-${inlines}
-"
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      mysql_decl ""
-      
-    end
-
     usecase 142210 "Receive New Ticket Code Event"
       
       usecasediagramsettings end
@@ -234,21 +189,6 @@ ${inlines}
       
       activitydiagramsettings
        end
-    end
-
-    class 141442 "BarcodeReader"
-      visibility package stereotype "actor"
-      cpp_decl "${comment}${template}class ${name}${inherit} {
-${members}};
-${inlines}
-"
-      java_decl ""
-      php_decl ""
-      python_2_2 python_decl ""
-      idl_decl ""
-      explicit_switch_type ""
-      mysql_decl ""
-      
     end
 
     usecase 142338 "Node 1"
@@ -341,6 +281,42 @@ ${inlines}
       
       activitydiagramsettings
        end
+    end
+  end
+
+  classview 154114 "Class View"
+    
+    classdiagramsettings member_max_width 0 end
+    
+    classcompositediagramsettings end
+    
+    collaborationdiagramsettings end
+    
+    objectdiagramsettings end
+    
+    objectcompositediagramsettings end
+    
+    sequencediagramsettings end
+    
+    statediagramsettings
+     end
+    
+    
+    activitydiagramsettings
+     end
+    class 161282 "BarcodeReader"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl ""
+      
     end
   end
 end

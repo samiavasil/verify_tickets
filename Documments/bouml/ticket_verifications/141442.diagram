@@ -1,0 +1,56 @@
+format 222
+
+classinstance 128002 class_ref 161282 // BarcodeReader
+  name ""   xyz 24.6 4.4 2000 life_line_z 2000
+classinstance 128130 class_ref 154626 // QRServer
+  name ""   xyz 184.2 4.4 2000 life_line_z 2000
+classinstance 128258 class_ref 161154 // CassandraDB
+  name ""   xyz 343.2 4.4 2000 life_line_z 2000
+classinstance 129410 class_ref 167810 // Gate
+  name ""   xyz 480.5 3.6 2000 life_line_z 2000
+iconcanvas 129794 sequencediagram_ref 148098 // Validate Ticket
+  xyz 248 131 2000
+durationcanvas 128386 classinstance_ref 128002 // :BarcodeReader
+  xyzwh 67 68.1 2010 11 40
+end
+durationcanvas 128514 classinstance_ref 128130 // :QRServer
+  xyzwh 213 70.1 2010 11 135
+  overlappingdurationcanvas 129154
+    xyzwh 219 133.5 2020 11 25
+  end
+end
+durationcanvas 128770 classinstance_ref 128258 // :CassandraDB
+  xyzwh 383 80.5 2010 11 31
+end
+durationcanvas 129538 classinstance_ref 129410 // :Gate
+  xyzwh 499 183.5 2010 11 25
+end
+msg 128642 synchronous
+  from durationcanvas_ref 128386
+  to durationcanvas_ref 128514
+  yz 70 2015 explicitmsg "SendTicket"
+  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
+  label_xy 115 52
+msg 128898 synchronous
+  from durationcanvas_ref 128514
+  to durationcanvas_ref 128770
+  yz 83 2020 explicitmsg "GetTicketInfo"
+  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
+  label_xy 267 65
+msg 129026 return
+  from durationcanvas_ref 128770
+  to durationcanvas_ref 128514
+  yz 101 2015 unspecifiedmsg
+  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
+reflexivemsg 129282 synchronous
+  to durationcanvas_ref 129154
+  yz 133 2025 explicitmsg "ValidateTicket"
+  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
+  label_xy 235 117
+msg 129666 synchronous
+  from durationcanvas_ref 128514
+  to durationcanvas_ref 129538
+  yz 181 2015 explicitmsg "SetGateState"
+  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
+  label_xy 288 167
+end

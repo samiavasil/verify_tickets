@@ -1,6 +1,6 @@
 format 222
 "CassanbdraDB" // CassanbdraDB
-  revision 3
+  revision 5
   modified_by 2 "vvasilev"
   // class settings
   
@@ -77,14 +77,19 @@ format 222
     
     activitydiagramsettings
      end
-    sequencediagram 141314 "Ajure Input Sequence"
-      sequencediagramsettings end
-      overlapping_bars size A4
-    end
-
-    sequencediagram 141442 "Validation Sequence Diagram"
-      sequencediagramsettings end
-      overlapping_bars size A4
+    class 161154 "CassandraDB"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl ""
+      
     end
   end
 end

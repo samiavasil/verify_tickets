@@ -1,3 +1,49 @@
 format 222
 
+classinstance 128002 class_ref 147970 // Exporter
+  name ""   xyz 50.5051 4.06365 2000 life_line_z 2010
+classinstance 128130 class_ref 161154 // CassandraDB
+  name ""   xyz 593.478 4.06365 2000 life_line_z 2000
+classinstance 128258 class_ref 154498 // AJRServer
+  name ""   xyz 310.335 5.34496 2000 life_line_z 2000
+durationcanvas 128386 classinstance_ref 128002 // :Exporter
+  xyzwh 73 76.4764 2020 11 88
+end
+durationcanvas 128514 classinstance_ref 128258 // :AJRServer
+  xyzwh 339 76.3511 2010 11 79
+  overlappingdurationcanvas 130562
+    xyzwh 345 79.5996 2020 11 25
+  end
+end
+durationcanvas 131330 classinstance_ref 128130 // :CassandraDB
+  xyzwh 633 113.446 2010 11 28
+end
+msg 128642 synchronous
+  from durationcanvas_ref 128386
+  to durationcanvas_ref 128514
+  yz 77 2015 explicitmsg "SendNewOrder"
+  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
+  label_xy 186 59
+reflexivemsg 130690 synchronous
+  to durationcanvas_ref 130562
+  yz 79 2005 explicitmsg "ParseJson"
+  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
+  label_xy 364 64
+msg 131458 synchronous
+  from durationcanvas_ref 128514
+  to durationcanvas_ref 131330
+  yz 113 2015 explicitmsg "WriteOrder"
+  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
+  label_xy 462 95
+msg 131586 return
+  from durationcanvas_ref 131330
+  to durationcanvas_ref 128514
+  yz 130 2015 unspecifiedmsg
+  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
+msg 131970 return
+  from durationcanvas_ref 128514
+  to durationcanvas_ref 128386
+  yz 144 2025 explicitmsg "OrderAccepted"
+  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
+  label_xy 172 126
 end
