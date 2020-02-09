@@ -1,28 +1,26 @@
 #include "TCPServer.h"
 #include <QDebug>
 #include <QFile>
-#include <QJsonDocument>
 
-
-TCPServer::TCPServer(QObject *parent, const QHostAddress &address, quint16 port, bool encrypt)
-    :QTcpServer(parent), m_encrypt(encrypt)
+TCPServer::TCPServer(QObject *parent, const ServerConfigurator& config)
+    :QTcpServer(parent), m_config(config)
 {
 
-    if(encrypt) {
+    if(m_config.is_encrypted()) {
         qDebug()<<"SSL version use for build: "<<QSslSocket::sslLibraryBuildVersionString();
         qDebug()<<"SSL version use for run-time: "<<QSslSocket::sslLibraryVersionNumber();
-        QFile keyFile("../../certificates/red_local.key");
+        QFile keyFile(m_config.getKey());
         keyFile.open(QIODevice::ReadOnly);
         m_key = QSslKey(keyFile.readAll(), QSsl::Rsa);
         keyFile.close();
 
-        QFile certFile("../../certificates/red_local.pem");
+        QFile certFile(m_config.getCert());
         certFile.open(QIODevice::ReadOnly);
         m_cert = QSslCertificate(certFile.readAll());
         certFile.close();
     }
 
-    if (!listen(address, port)) {
+    if (!listen(m_config.getIP(), m_config.getPort())) {
         qCritical() << "Unable to start the TCP server";
         exit(0);
     }
@@ -37,7 +35,7 @@ TCPServer::~TCPServer()
 
 void TCPServer::incomingConnection(qintptr socketDescriptor)
 {
-    if(m_encrypt) {
+    if(m_config.is_encrypted()) {
         createSslSocket(socketDescriptor);
     } else {
         createRegularSocket(socketDescriptor);
@@ -48,11 +46,12 @@ void TCPServer::incomingConnection(qintptr socketDescriptor)
 QTcpSocket* TCPServer::createSslSocket(qintptr socketDescriptor) {
 
     QSslSocket *serverSocket = new QSslSocket;
+
     if (serverSocket->setSocketDescriptor(socketDescriptor)) {
 
         serverSocket->setPrivateKey(m_key);
         serverSocket->setLocalCertificate(m_cert);
-        serverSocket->addCaCertificates("../../certificates/blue_ca.pem");
+        serverSocket->addCaCertificates(m_config.getCa());
         serverSocket->setPeerVerifyMode(QSslSocket::VerifyPeer);
         connect(serverSocket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(sslErrors(QList<QSslError>)));
         connect(serverSocket, &QSslSocket::encrypted, this, &TCPServer::EncryptionReady);
@@ -97,18 +96,6 @@ void TCPServer::linkConnection()
     connect(clientSocket, &QTcpSocket::readyRead, this, &TCPServer::Receive);
     connect(clientSocket, &QTcpSocket::disconnected, this, &TCPServer::Disconnected);
 }
-
-void TCPServer::ParseJsonInput(const QByteArray& buff) {
-    QJsonParseError error;
-    QJsonDocument doc = QJsonDocument::fromJson(buff, &error);
-
-    if (doc.isNull()) {
-        qDebug() <<"Json error>:" <<error.errorString();
-    } else {
-        qDebug() << doc.toJson();
-    }
-}
-
 
 
 void TCPServer::Disconnected()
