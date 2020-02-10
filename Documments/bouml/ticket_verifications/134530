@@ -1,6 +1,6 @@
 format 222
 "VerificationService" // VerificationService
-  revision 6
+  revision 10
   modified_by 2 "vvasilev"
   // class settings
   
@@ -60,6 +60,157 @@ format 222
       overlapping_bars size A4
     end
 
+    sequencediagram 148098 "Validate Ticket"
+      sequencediagramsettings end
+      overlapping_bars size A4
+    end
+
+    classdiagram 167682 "Class Diagram"
+      classdiagramsettings member_max_width 0 end
+      size A4
+    end
+
+    activity 134530 "Activity"
+      activitydiagram 161154 "Activity Diagram"
+	activitydiagramsettings draw_all_relations no
+	 end
+	size A4
+      end
+    end
+
+    activity 134786 "Ticket Validation"
+      activityobject 134658 "QR Code Scan"
+	 explicit_type ""
+	unordered 
+	flow 135810 "<flow>"
+	  on activityaction_ref 134914 // activity action QR Code Receive
+	end
+      end
+
+      activitynode 135042 initial_node ""
+	flow 135938 "<flow>"
+	  on activityaction_ref 134914 // activity action QR Code Receive
+	end
+      end
+
+      activityaction 134914 "QR Code Receive"
+	opaque_action
+	flow 136066 "<flow>"
+	  on activityaction_ref 135042 // activity action Find Sales from QR
+	end
+      end
+
+      activityaction 135042 "Find Sales from QR"
+	opaque_action
+	flow 136194 "<flow>"
+	  on activitynode_ref 135170 // decision
+	end
+      end
+
+      activitynode 135170 decision "Check Result"
+	flow 136450 "Not exist"
+	  on activityaction_ref 135170 // activity action Notify
+	end
+
+	flow 136578 "Exist"
+	  on activitynode_ref 135426 // decision
+	end
+      end
+
+      activitynode 135298 activity_final ""
+      end
+
+      activityaction 135170 "Notify"
+	opaque_action
+	flow 136322 "<flow>"
+	  on activitynode_ref 135298 // activity_final
+	end
+      end
+
+      activitynode 135426 decision "Check Sale Counter"
+	flow 136706 "Disable Access"
+	  on activityaction_ref 135170 // activity action Notify
+	  comment "Counter is 0"
+	end
+
+	flow 136834 "Allow Access"
+	  on activityaction_ref 135298 // activity action Update Counter in DB
+	  comment "Counter > 0"
+	end
+      end
+
+      activityaction 135298 "Update Counter in DB"
+	opaque_action
+	flow 136962 "Allow Access"
+	  on activityaction_ref 135170 // activity action Notify
+	end
+      end
+    end
+
+    activity 134658 "New Ajur Order"
+      activityaction 134530 "Receive Order"
+	opaque_action
+	flow 134658 "<flow>"
+	  on activitynode_ref 134530 // decision
+	end
+      end
+
+      activityobject 134530 "New Order"
+	 explicit_type ""
+	unordered 
+	flow 134530 "<flow>"
+	  on activityaction_ref 134530 // activity action Receive Order
+	end
+      end
+
+      activitynode 134530 decision "Check for Existing Order"
+	flow 135170 "Already Exist"
+	  on activityaction_ref 134658 // activity action Return Answer
+	end
+
+	flow 135298 "Not Exist"
+	  on activityaction_ref 134786 // activity action Insert Order to CassandraDb
+	end
+      end
+
+      activitynode 134658 initial_node ""
+	flow 134786 "<flow>"
+	  on activityaction_ref 134530 // activity action Receive Order
+	end
+      end
+
+      activityaction 134658 "Return Answer"
+	opaque_action
+	flow 134914 "<flow>"
+	  on activitynode_ref 134786 // activity_final
+	end
+      end
+
+      activitynode 134786 activity_final ""
+      end
+
+      activityaction 134786 "Insert Order to CassandraDb"
+	opaque_action
+	flow 135042 "Success"
+	  on activityaction_ref 134658 // activity action Return Answer
+	end
+
+	flow 135426 "Success"
+	  on activitynode_ref 134914 // decision
+	end
+      end
+
+      activitynode 134914 decision "Cassandra DB transaction status"
+	flow 135554 "Success"
+	  on activityaction_ref 134658 // activity action Return Answer
+	end
+
+	flow 135682 "Error"
+	  on activityaction_ref 134658 // activity action Return Answer
+	end
+      end
+    end
+
     class 154498 "AJRServer"
       visibility package 
       cpp_decl "${comment}${template}class ${name}${inherit} {
@@ -73,6 +224,17 @@ ${inlines}
       explicit_switch_type ""
       mysql_decl ""
       
+      classrelation 134530 // <generalisation>
+	relation 134530 ---|>
+	  a public
+	    cpp default "${type}"
+	    classrelation_ref 134530 // <generalisation>
+	  b parent class_ref 180994 // TCPServer
+      end
+
+      classrelation 141314 // <composition>
+	relation_ref 141186 // <composition>
+      end
     end
 
     class 154626 "QRServer"
@@ -88,11 +250,92 @@ ${inlines}
       explicit_switch_type ""
       mysql_decl ""
       
+      classrelation 134658 // <generalisation>
+	relation 134658 ---|>
+	  a public
+	    cpp default "${type}"
+	    classrelation_ref 134658 // <generalisation>
+	  b parent class_ref 180994 // TCPServer
+      end
+
+      classrelation 141570 // <composition>
+	relation_ref 141314 // <composition>
+      end
     end
 
-    sequencediagram 148098 "Validate Ticket"
-      sequencediagramsettings end
-      overlapping_bars size A4
+    class 174466 "Verificator"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl ""
+      
+      classrelation 141186 // <composition>
+	relation 141186 *---
+	  a role_name "" private
+	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	    classrelation_ref 141186 // <composition>
+	  b role_name "" private
+	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	    classrelation_ref 141314 // <composition>
+      end
+
+      classrelation 141442 // <composition>
+	relation 141314 *---
+	  a role_name "" private
+	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	    classrelation_ref 141442 // <composition>
+	  b role_name "" private
+	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	    classrelation_ref 141570 // <composition>
+      end
     end
+
+    class 180994 "TCPServer"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl ""
+      
+    end
+  end
+
+  classview 167170 "Deployment"
+    
+    classdiagramsettings member_max_width 0 end
+    
+    classcompositediagramsettings end
+    
+    collaborationdiagramsettings end
+    
+    objectdiagramsettings end
+    
+    objectcompositediagramsettings end
+    
+    sequencediagramsettings end
+    
+    statediagramsettings
+     end
+    
+    
+    activitydiagramsettings
+     end
   end
 end

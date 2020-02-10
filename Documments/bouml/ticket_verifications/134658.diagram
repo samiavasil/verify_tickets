@@ -82,5 +82,5 @@ line 140674 ----
   from ref 139010 z 3006 label "Notify Gates" max_width 255 xyz 344 421 3006 to ref 136450
 line 141058 ----
   from ref 140802 z 3011 to point 282 331
-  line 141186 z 3011 label "Send Ticket Code" max_width 255 xyz 154 312.5 3000 to ref 132354
+  line 141186 z 3011 label "Send Ticket Code" max_width 255 xyz 154 312 3011 to ref 132354
 end

@@ -1,0 +1,201 @@
+format 222
+
+activitycanvas 128002 activity_ref 134658 // New Ajur Order
+  
+  xyzwh 56.92 25.2 2000 663 231
+end
+activityactioncanvas 128130 activityaction_ref 134530 // activity action Receive Order
+  
+  show_opaque_action_definition default
+  color yellow
+  xyzwh 152.04 98 2005 79 55
+end
+activityobjectcanvas 128258 activityobject_ref 134530 // activity object New Order
+  
+  color white xyzwh 16.52 109 2005 75 35
+end
+activitynodecanvas 128514 activitynode_ref 134530 // decision
+  xyz 259.44 106.72 2005
+end
+activitynodecanvas 128770 activitynode_ref 134658 // initial_node
+  xyz 184.6 193.56 2005
+end
+activityactioncanvas 129026 activityaction_ref 134658 // activity action Return Answer
+  
+  show_opaque_action_definition default
+  color yellow
+  xyzwh 604.68 93.44 2005 101 61
+end
+activitynodecanvas 129154 activitynode_ref 134786 // activity_final
+  xyz 651.2 215.56 2005
+end
+activityactioncanvas 129666 activityaction_ref 134786 // activity action Insert Order to CassandraDb
+  
+  show_opaque_action_definition default
+  color yellow
+  xyzwh 342.32 95 2005 101 61
+end
+activitynodecanvas 130562 activitynode_ref 134914 // decision
+  xyz 511 108.28 2005
+end
+activitycanvas 131842 activity_ref 134786 // Ticket Validation
+  
+  xyzwh 55.8 323.44 2000 675 323
+end
+activityobjectcanvas 131970 activityobject_ref 134658 // activity object QR Code Scan
+  
+  color white xyzwh 9.08 399.8 2005 97 35
+end
+activitynodecanvas 132098 activitynode_ref 135042 // initial_node
+  xyz 178 487 2005
+end
+activityactioncanvas 132226 activityaction_ref 134914 // activity action QR Code Receive
+  
+  show_opaque_action_definition default
+  color yellow
+  xyzwh 140 393 2005 98 50
+end
+activityactioncanvas 132610 activityaction_ref 135042 // activity action Find Sales from QR
+  
+  show_opaque_action_definition default
+  color yellow
+  xyzwh 283 392 2005 92 49
+end
+activitynodecanvas 132866 activitynode_ref 135170 // decision
+  xyz 410 395 2005
+end
+note 133122 "QR code scan must contains  a door  which  should open.
+"
+  fg red  xyzwh 65 541 2005 183 61
+activitynodecanvas 133250 activitynode_ref 135298 // activity_final
+  xyz 687 608 2005
+end
+activityactioncanvas 133506 activityaction_ref 135170 // activity action Notify
+  
+  show_opaque_action_definition default
+  color yellow
+  xyzwh 567 598 2010 90 43
+end
+activitynodecanvas 134274 activitynode_ref 135426 // decision
+  xyz 496 396 2005
+end
+activityactioncanvas 135042 activityaction_ref 135298 // activity action Update Counter in DB
+  
+  show_opaque_action_definition default
+  color yellow
+  xyzwh 604 378 2005 79 75
+end
+note 135682 "TODO: Describe the case when the Cassandra nodes are disconnected."
+  color red  xyzwh 240 650 2000 247 75
+flowcanvas 128386 flow_ref 134530 // <flow>
+  decenter_begin 457
+  
+  from ref 128258 z 2006 to ref 128130
+   write_horizontally default
+end
+flowcanvas 128642 flow_ref 134658 // <flow>
+  
+  from ref 128130 z 2006 to ref 128514
+   write_horizontally default
+end
+flowcanvas 128898 flow_ref 134786 // <flow>
+  
+  from ref 128770 z 2006 to ref 128130
+   write_horizontally default
+end
+flowcanvas 129282 flow_ref 134914 // <flow>
+  decenter_begin 570
+  
+  from ref 129026 z 2006 to ref 129154
+   write_horizontally default
+end
+flowcanvas 129922 flow_ref 135170 // Already Exist
+  
+  from ref 128514 z 2006 label "Already Exist" xyz 373 43 2006 to point 269 61
+  line 130050 z 2006 to point 652 61
+  line 130178 z 2006 to ref 129026
+   write_horizontally default
+end
+flowcanvas 130434 flow_ref 135298 // Not Exist
+  
+  from ref 128514 z 2006 label "Not Exist" xyz 282 104 2006 to ref 129666
+   write_horizontally default
+end
+flowcanvas 130690 flow_ref 135426 // Success
+  decenter_end 513
+  
+  from ref 129666 z 2006 label "Success" xyz 451 104 2006 to ref 130562
+   write_horizontally default
+end
+flowcanvas 130818 flow_ref 135554 // Success
+  decenter_begin 486
+  decenter_end 540
+  
+  from ref 130562 z 2006 label "Success" xyz 538 103 2006 to ref 129026
+   write_horizontally default
+end
+flowcanvas 131074 flow_ref 135682 // Error
+  decenter_end 190
+  
+  from ref 130562 z 2006 label "Error" xyz 564 182 2006 to point 521 200
+  line 131330 z 2006 to point 621 199
+  line 131586 z 2006 to ref 129026
+   write_horizontally default
+end
+flowcanvas 132354 flow_ref 135810 // <flow>
+  
+  from ref 131970 z 2006 to ref 132226
+   write_horizontally default
+end
+flowcanvas 132482 flow_ref 135938 // <flow>
+  
+  from ref 132098 z 2006 to ref 132226
+   write_horizontally default
+end
+flowcanvas 132738 flow_ref 136066 // <flow>
+  
+  from ref 132226 z 2006 to ref 132610
+   write_horizontally default
+end
+flowcanvas 132994 flow_ref 136194 // <flow>
+  decenter_end 540
+  
+  from ref 132610 z 2006 to ref 132866
+   write_horizontally default
+end
+flowcanvas 133634 flow_ref 136322 // <flow>
+  
+  from ref 133506 z 2011 to ref 133250
+   write_horizontally default
+end
+flowcanvas 133890 flow_ref 136450 // Not exist
+  
+  from ref 132866 z 2011 label "Not exist" xyz 448.5 595.5 2011 to point 421 617
+  line 134018 z 2011 to ref 133506
+   write_horizontally default
+end
+flowcanvas 134402 flow_ref 136578 // Exist
+  
+  from ref 132866 z 2006 label "Exist" xyz 444 395 2006 to ref 134274
+   write_horizontally default
+end
+flowcanvas 134786 flow_ref 136706 // Disable Access
+  decenter_end 233
+  
+  from ref 134274 z 2011 label "Disable Access" xyz 514 471 2011 to point 509 552
+  line 134914 z 2011 to point 585 553
+  line 135554 z 2011 to ref 133506
+   write_horizontally default
+end
+flowcanvas 135170 flow_ref 136834 // Allow Access
+  
+  from ref 134274 z 2006 label "Allow Access" xyz 525 395 2006 to ref 135042
+   write_horizontally default
+end
+flowcanvas 135426 flow_ref 136962 // Allow Access
+  decenter_end 788
+  
+  from ref 135042 z 2011 label "Allow Access" xyz 642 481 2011 to ref 133506
+   write_horizontally default
+end
+end

@@ -1,6 +1,6 @@
 format 222
 "ticket_verifications"
-  revision 2
+  revision 4
   modified_by 2 "vvasilev"
 
 
@@ -44,6 +44,8 @@ format 222
 
   mark_for_import
   
+  ncouples 1
+  key "html dir" value "/home/vvasilev/Documents/Dellme/"
   package_ref 128002 // AjureDB
 
   package_ref 134530 // VerificationService
@@ -54,5 +56,5 @@ format 222
 
   package_ref 134914 // Gateways
 
-  package_ref 135042 // Libraries
+  package_ref 135042 // Library
 end

@@ -1,21 +1,41 @@
 format 222
 
-usecasecanvas 128002 usecase_ref 134530 // Node1
-  xyzwh 232 129 3005 64 32 label_xy 246 161
+usecasecanvas 129410 usecase_ref 149250 // Get Sales for QR
+  xyzwh 272 128 3005 121 35 label_xy 284 135
 end
-usecasecanvas 128130 usecase_ref 134658 // Node2
-  xyzwh 402 92 3005 64 32 label_xy 416 124
+usecasecanvas 130050 usecase_ref 149378 // Get Sale Info
+  xyzwh 470 129 3005 121 31 label_xy 499 131
 end
-usecasecanvas 128258 usecase_ref 134786 // Node3
-  xyzwh 228 241 3005 64 32 label_xy 242 273
+usecasecanvas 130434 usecase_ref 149506 // Receive QR code
+  xyzwh 26 51 3011 155 33 label_xy 52 54
 end
-usecasecanvas 128386 usecase_ref 134914 // Node4
-  xyzwh 535 135 3005 64 32 label_xy 549 167
+classcanvas 130690 class_ref 174466 // Verificator
+  simpleclassdiagramsettings end
+  xyz 71 112 2000
 end
-usecasecanvas 128514 usecase_ref 135042 // Node5
-  xyzwh 534 254 3005 64 32 label_xy 548 286
+usecasecanvas 130818 usecase_ref 149634 // Receive Ajur Data
+  xyzwh 28 439 3005 131 41 label_xy 51 449
 end
-usecasecanvas 128642 usecase_ref 135170 // Node6
-  xyzwh 366 299 3005 64 32 label_xy 380 331
+usecasecanvas 131458 usecase_ref 149762 // Write Ajur Data to Cassandra
+  xyzwh 469 308 3011 185 33 label_xy 483 313
 end
+usecasecanvas 131970 usecase_ref 149890 // Check For Existense
+  xyzwh 234 306 3005 167 33 label_xy 261 310
+end
+classcanvas 132482 class_ref 174466 // Verificator
+  simpleclassdiagramsettings end
+  xyz 60 290 2000
+end
+line 130178 --->
+  from ref 129410 z 3006 to ref 130050
+line 131330 --->
+  from ref 130434 z 3012 to ref 130690
+line 132226 --->
+  from ref 131970 z 3012 to ref 131458
+line 132354 --->
+  from ref 130690 z 3006 to ref 129410
+line 132738 --->
+  from ref 132482 z 3006 to ref 131970
+line 132866 --->
+  from ref 130818 z 3006 to ref 132482
 end

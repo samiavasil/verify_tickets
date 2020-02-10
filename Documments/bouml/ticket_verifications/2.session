@@ -1,23 +1,32 @@
-window_sizes 1280 972 203 1071 920 0
+window_sizes 1280 972 257 1017 920 0
 cleanlooks_style
 diagrams
-  usecasediagram_ref 134530 // Use Case Diagram
-    779 659 100 A4 0 0
-  usecasediagram_ref 134658 // Use Case Diagram
-    1157 658 100 A4 60 0
+  activitydiagram_ref 161154 // Activity Diagram
+    813 736 100 A4 0 0
+  sequencediagram_ref 148098 // Validate Ticket
+    1017 920 100 A4 0 0
   sequencediagram_ref 141442 // Validation Sequence Diagram
-    1003 627 130 A4 0 0
-  active  sequencediagram_ref 148098 // Validate Ticket
-    1071 920 100 A4 0 0
+    120 98 100 A4 0 0
+  sequencediagram_ref 141314 // Ajure Input Sequence
+    1017 920 100 A4 0 0
+  classdiagram_ref 167682 // Class Diagram
+    813 736 100 A4 0 0
+  usecasediagram_ref 134530 // Use Case Diagram
+    120 98 100 A4 0 0
+  active  classdiagram_ref 154626 // Class Diagram
+    1017 920 100 A4 0 0
 end
 show_stereotypes
-selected class_ref 154498 // AJRServer
+selected classdiagram_ref 154626 // Class Diagram
 open
   classview_ref 134530 // ClassView
-  classview_ref 147586 // Class View
+  sequencediagram_ref 141442 // Validation Sequence Diagram
+  sequencediagram_ref 148098 // Validate Ticket
+  classdiagram_ref 167682 // Class Diagram
+  activity_ref 134530 // Activity
+  class_ref 180994 // TCPServer
   classview_ref 141058 // Class View
   classview_ref 160642 // Class View
   usecaseview_ref 134658 // Use Case View
-  classview_ref 154114 // Class View
 end
 end

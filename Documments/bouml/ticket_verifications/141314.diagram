@@ -7,16 +7,16 @@ classinstance 128130 class_ref 161154 // CassandraDB
 classinstance 128258 class_ref 154498 // AJRServer
   name ""   xyz 310.335 5.34496 2000 life_line_z 2000
 durationcanvas 128386 classinstance_ref 128002 // :Exporter
-  xyzwh 73 76.4764 2020 11 88
+  xyzwh 75 76 2020 11 88
 end
 durationcanvas 128514 classinstance_ref 128258 // :AJRServer
-  xyzwh 339 76.3511 2010 11 79
+  xyzwh 341 76 2010 11 79
   overlappingdurationcanvas 130562
-    xyzwh 345 79.5996 2020 11 25
+    xyzwh 347 79 2020 11 25
   end
 end
 durationcanvas 131330 classinstance_ref 128130 // :CassandraDB
-  xyzwh 633 113.446 2010 11 28
+  xyzwh 632 113 2010 11 28
 end
 msg 128642 synchronous
   from durationcanvas_ref 128386
