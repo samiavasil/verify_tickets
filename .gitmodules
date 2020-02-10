@@ -1,0 +1,3 @@
+[submodule "src/external/cpp-driver"]
+	path = src/external/cpp-driver
+	url = https://github.com/datastax/cpp-driver.git
