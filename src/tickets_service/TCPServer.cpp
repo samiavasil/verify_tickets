@@ -2,6 +2,12 @@
 #include <QDebug>
 #include <QFile>
 
+
+/**
+ * @brief TCPServer::TCPServer
+ * @param parent
+ * @param config
+ */
 TCPServer::TCPServer(QObject *parent, const ServerConfigurator& config)
     :QTcpServer(parent), m_config(config)
 {
@@ -28,11 +34,18 @@ TCPServer::TCPServer(QObject *parent, const ServerConfigurator& config)
 
 }
 
+/**
+ * @brief TCPServer::~TCPServer
+ */
 TCPServer::~TCPServer()
 {
 
 }
 
+/**
+ * @brief TCPServer::incomingConnection
+ * @param socketDescriptor
+ */
 void TCPServer::incomingConnection(qintptr socketDescriptor)
 {
     if(m_config.is_encrypted()) {
@@ -43,6 +56,11 @@ void TCPServer::incomingConnection(qintptr socketDescriptor)
 
 }
 
+/**
+ * @brief TCPServer::createSslSocket
+ * @param socketDescriptor
+ * @return
+ */
 QTcpSocket* TCPServer::createSslSocket(qintptr socketDescriptor) {
 
     QSslSocket *serverSocket = new QSslSocket;
@@ -65,6 +83,11 @@ QTcpSocket* TCPServer::createSslSocket(qintptr socketDescriptor) {
     return serverSocket;
 }
 
+/**
+ * @brief TCPServer::createRegularSocket
+ * @param socketDescriptor
+ * @return
+ */
 QTcpSocket* TCPServer::createRegularSocket(qintptr socketDescriptor) {
 
     QTcpSocket *serverSocket = new QTcpSocket;
@@ -77,17 +100,27 @@ QTcpSocket* TCPServer::createRegularSocket(qintptr socketDescriptor) {
     return serverSocket;
 }
 
+/**
+ * @brief TCPServer::EncryptionReady
+ */
 void TCPServer::EncryptionReady()
 {
 
 }
 
+/**
+ * @brief TCPServer::sslErrors
+ * @param errors
+ */
 void TCPServer::sslErrors(const QList<QSslError> &errors)
 {
     foreach (const QSslError &error, errors)
         qDebug() << error.errorString();
 }
 
+/**
+ * @brief TCPServer::linkConnection
+ */
 void TCPServer::linkConnection()
 {
     QTcpSocket *clientSocket;
@@ -97,7 +130,9 @@ void TCPServer::linkConnection()
     connect(clientSocket, &QTcpSocket::disconnected, this, &TCPServer::Disconnected);
 }
 
-
+/**
+ * @brief TCPServer::Disconnected
+ */
 void TCPServer::Disconnected()
 {
     qDebug("Client Disconnected");

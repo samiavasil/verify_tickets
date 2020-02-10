@@ -8,6 +8,7 @@
 class ServerConfigurator
 {
 public:
+
     ServerConfigurator(QHostAddress address = QHostAddress::Any,
                        quint16 port = 12345,
                        bool encrypted = true,
@@ -49,6 +50,7 @@ protected:
     QHostAddress m_address;
     quint16 m_port;
     bool m_encrypted;
+
 };
 
 #endif // SERVERCONFIGURATOR_H

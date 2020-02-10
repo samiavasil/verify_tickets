@@ -1,11 +1,5 @@
 #include "ServerConfigurator.h"
 
-/*!
- * \brief ServerConfigurator::ServerConfigurator
- * \param address
- * \param port
- * \param encrypted
- */
 ServerConfigurator::ServerConfigurator(QHostAddress address,
                                        quint16 port,
                                        bool encrypted,
@@ -21,6 +15,10 @@ ServerConfigurator::ServerConfigurator(QHostAddress address,
     m_encrypted = encrypted;
 }
 
+/**
+ * @brief ServerConfigurator::ServerConfigurator
+ * @param cfg
+ */
 ServerConfigurator::ServerConfigurator(const ServerConfigurator &cfg)
 {
     m_key       = cfg.m_key       ;
@@ -31,9 +29,13 @@ ServerConfigurator::ServerConfigurator(const ServerConfigurator &cfg)
     m_encrypted = cfg.m_encrypted ;
 }
 
+/**
+ * @brief ServerConfigurator::operator =
+ * @param cfg
+ * @return
+ */
 ServerConfigurator& ServerConfigurator::operator =(const ServerConfigurator &cfg)
 {
-    qDebug() <<__FUNCTION__;
     if (this != &cfg) {
         m_key       = cfg.m_key       ;
         m_cert      = cfg.m_cert      ;
@@ -80,56 +82,100 @@ bool ServerConfigurator::is_encrypted()
     return m_encrypted;
 }
 
+/**
+ * @brief ServerConfigurator::getKey
+ * @return
+ */
 QString ServerConfigurator::getKey() const
 {
     return m_key;
 }
 
+/**
+ * @brief ServerConfigurator::setKey
+ * @param key
+ */
 void ServerConfigurator::setKey(const QString &key)
 {
     m_key = key;
 }
 
+/**
+ * @brief ServerConfigurator::getCert
+ * @return
+ */
 QString ServerConfigurator::getCert() const
 {
     return m_cert;
 }
 
+/**
+ * @brief ServerConfigurator::setCert
+ * @param cert
+ */
 void ServerConfigurator::setCert(const QString &cert)
 {
     m_cert = cert;
 }
 
+/**
+ * @brief ServerConfigurator::getCa
+ * @return
+ */
 QString ServerConfigurator::getCa() const
 {
     return m_ca;
 }
 
+/**
+ * @brief ServerConfigurator::setCa
+ * @param ca
+ */
 void ServerConfigurator::setCa(const QString &ca)
 {
     m_ca = ca;
 }
 
+/**
+ * @brief ServerConfigurator::getAddress
+ * @return
+ */
 QHostAddress ServerConfigurator::getAddress() const
 {
     return m_address;
 }
 
+/**
+ * @brief ServerConfigurator::setAddress
+ * @param address
+ */
 void ServerConfigurator::setAddress(const QHostAddress &address)
 {
     m_address = address;
 }
 
+/**
+ * @brief ServerConfigurator::setPort
+ * @param port
+ */
 void ServerConfigurator::setPort(const quint16 &port)
 {
     m_port = port;
 }
 
+/**
+ * @brief ServerConfigurator::getEncrypted
+ * @return
+ */
 bool ServerConfigurator::getEncrypted() const
 {
     return m_encrypted;
 }
 
+/**
+ * @brief ServerConfigurator::setEncrypted
+ * @param encrypted
+ */
 void ServerConfigurator::setEncrypted(bool encrypted)
 {
     m_encrypted = encrypted;
