@@ -1,6 +1,6 @@
 format 222
 "CassanbdraDB" // CassanbdraDB
-  revision 7
+  revision 18
   modified_by 2 "vvasilev"
   // class settings
   
@@ -231,45 +231,482 @@ ${inlines}
     end
 
     classdiagram 154626 "Class Diagram"
-      classdiagramsettings member_max_width 0 end
+      classdiagramsettings draw_all_relations no member_max_width 0 end
       size A4
     end
 
-    class 187522 "code_info"
-      visibility package 
-      cpp_decl "${comment}${template}class ${name}${inherit} {
-${members}};
-${inlines}
-"
+    class 200706 "ajur_Sales"
+      visibility package stereotype "table"
+      cpp_decl ""
       java_decl ""
       php_decl ""
       python_2_2 python_decl ""
       idl_decl ""
       explicit_switch_type ""
-      mysql_decl ""
-      
-      attribute 135042 "code_id"
-	private explicit_type "string"
-	cpp_decl "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} ${name}${value};
+      mysql_decl "DROP TABLE IF EXISTS ${name};
+CREATE TABLE ${name} ${definition}${comment};
 "
+      
+      comment "Таблица от Ажур
+"
+      attribute 184450 "qr"
+	default explicit_type ""
+	cpp_decl ""
 	java_decl ""
 	php_decl ""
 	python_decl ""
 	idl_decl ""
-	mysql_decl ""
+	mysql_decl "  ${constraint}${modifier}KEY${name}${type} (${columns})${ref}${comment}"
+	MysqlKey notnull_hash
+      end
+
+      attribute 155522 "sale_id"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
 	MysqlColumn
       end
 
-      attribute 135170 "codename"
-	private explicit_type "string"
-	cpp_decl "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} ${name}${value};
-"
+      attribute 171266 "museum"
+	default explicit_type "int"
+	cpp_decl ""
 	java_decl ""
 	php_decl ""
 	python_decl ""
 	idl_decl ""
-	mysql_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
 	MysqlColumn
+      end
+
+      attribute 155778 "code"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 177794 "qty"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      classrelation 161794 // <association>
+	relation_ref 161026 // <association>
+      end
+    end
+
+    class 194050 "code_access"
+      visibility package stereotype "table"
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl "DROP TABLE IF EXISTS ${name};
+CREATE TABLE ${name} ${definition}${comment};
+"
+      
+      comment "Таблица с достъпа на всеки артикул"
+      attribute 156034 "id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 155266 "id_code"
+	default explicit_type ""
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 156162 "door_id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+    end
+
+    class 194178 "code_info"
+      visibility package stereotype "table"
+      cpp_decl "${comment}enum class ${name} {
+${items}};
+"
+      java_decl "${comment}${@}${visibility}${static}${final}${abstract}enum ${name}${implements} {
+${items};
+${members}}
+"
+      php_decl "${comment}${visibility}final class ${name} {
+${items}}
+"
+      python_2_2 python_decl "class ${name}:
+${docstring}${members}
+"
+      idl_decl "${comment}enum ${name} {
+${items}};
+"
+      explicit_switch_type ""
+      mysql_decl "DROP TABLE IF EXISTS ${name};
+CREATE TABLE ${name} ${definition}${comment};
+"
+      
+      comment "Таблица с артикули"
+      attribute 155906 "id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 148354 "code"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 148482 "code_name"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 148610 "info"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 148738 "dead_level"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+    end
+
+    class 207234 "doors"
+      visibility package stereotype "table"
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl "DROP TABLE IF EXISTS ${name};
+CREATE TABLE ${name} ${definition}${comment};
+"
+      
+      comment "Таблица за наличните врати
+"
+      attribute 162690 "id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 190978 "qr_id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 170754 "name"
+	default explicit_type "strig"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 170882 "info"
+	default explicit_type ""
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+	comment "string"
+      end
+
+      attribute 171010 "access_type"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+	comment "дали е турникет или лампа"
+      end
+
+      attribute 171138 "obj_type"
+	default explicit_type ""
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+	comment "църква/музей"
+      end
+
+      classrelation 168450 // <association>
+	relation_ref 167554 // <association>
+      end
+    end
+
+    class 213762 "qr_table"
+      visibility package stereotype "table"
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl "DROP TABLE IF EXISTS ${name};
+CREATE TABLE ${name} ${definition}${comment};
+"
+      
+      comment "Таблица с QR кодовете"
+      attribute 169218 "id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 169346 "fbon_qr"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 169474 "timestamp_in"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+    end
+
+    class 220290 "Sold_access"
+      visibility package stereotype "table"
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl "DROP TABLE IF EXISTS ${name};
+CREATE TABLE ${name} ${definition}${comment};
+"
+      
+      comment "Таблица на продадени достъпи
+"
+      attribute 169602 "id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 169730 "qr_id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 169858 "door_id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 169986 "qty"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 170114 "timestamp"
+	default explicit_type "date"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      classrelation 168322 // <association>
+	relation 167554 ----
+	  a role_name "" public
+	    classrelation_ref 168322 // <association>
+	  b role_name "" public
+	    classrelation_ref 168450 // <association>
+      end
+    end
+
+    class 220418 "dead_tickets"
+      visibility package stereotype "table"
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl "DROP TABLE IF EXISTS ${name};
+CREATE TABLE ${name} ${definition}${comment};
+"
+      
+      comment "Таблица на посещенията по неопределените
+обекти
+"
+      attribute 170242 "id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 170370 "qr_id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 170498 "door_id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 170626 "dead"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+	comment "decrement"
       end
     end
   end

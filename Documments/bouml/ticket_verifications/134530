@@ -1,6 +1,6 @@
 format 222
 "VerificationService" // VerificationService
-  revision 10
+  revision 16
   modified_by 2 "vvasilev"
   // class settings
   
@@ -98,6 +98,14 @@ format 222
 	flow 136066 "<flow>"
 	  on activityaction_ref 135042 // activity action Find Sales from QR
 	end
+
+	flow 144386 "<flow>"
+	  on activitynode_ref 142466 // merge
+	end
+
+	flow 144898 "<flow>"
+	  on activitynode_ref 142594 // decision
+	end
       end
 
       activityaction 135042 "Find Sales from QR"
@@ -109,18 +117,22 @@ format 222
 
       activitynode 135170 decision "Check Result"
 	flow 136450 "Not exist"
-	  on activityaction_ref 135170 // activity action Notify
+	  on activityaction_ref 135170 // activity action Notify & Write Verified Table
 	end
 
 	flow 136578 "Exist"
 	  on activitynode_ref 135426 // decision
+	end
+
+	flow 143490 "<flow>"
+	  on activitynode_ref 141954 // decision
 	end
       end
 
       activitynode 135298 activity_final ""
       end
 
-      activityaction 135170 "Notify"
+      activityaction 135170 "Notify & Write Verified Table"
 	opaque_action
 	flow 136322 "<flow>"
 	  on activitynode_ref 135298 // activity_final
@@ -129,7 +141,7 @@ format 222
 
       activitynode 135426 decision "Check Sale Counter"
 	flow 136706 "Disable Access"
-	  on activityaction_ref 135170 // activity action Notify
+	  on activityaction_ref 135170 // activity action Notify & Write Verified Table
 	  comment "Counter is 0"
 	end
 
@@ -142,7 +154,72 @@ format 222
       activityaction 135298 "Update Counter in DB"
 	opaque_action
 	flow 136962 "Allow Access"
-	  on activityaction_ref 135170 // activity action Notify
+	  on activityaction_ref 135170 // activity action Notify & Write Verified Table
+	end
+      end
+
+      activitynode 141954 decision "Offline Status Logic"
+	comment "Is all node are online?"
+	flow 143618 "Disable Access"
+	  on activityaction_ref 135170 // activity action Notify & Write Verified Table
+	end
+
+	flow 143746 "<flow>"
+	  on activityaction_ref 141826 // activity action Offline Logic
+	end
+
+	flow 144258 "Allow Access"
+	  on activityaction_ref 135170 // activity action Notify & Write Verified Table
+	end
+
+	flow 145026 "<flow>"
+	  on activityaction_ref 141954 // activity action Write in offline tickets table
+	end
+      end
+
+      activityaction 141826 "Offline Logic"
+	opaque_action
+	comment "Describe logic when cassandra nodes are disconected."
+	flow 143874 "<flow>"
+	  on activitynode_ref 142210 // decision
+	end
+      end
+
+      activitynode 142082 fork ""
+      end
+
+      activitynode 142210 decision ""
+	flow 144002 "Allow Access"
+	  on activityaction_ref 135170 // activity action Notify & Write Verified Table
+	end
+
+	flow 144130 "Disable Access"
+	  on activityaction_ref 135170 // activity action Notify & Write Verified Table
+	end
+      end
+
+      activitynode 142466 merge "QR Code forest"
+	comment "Check that QR code is from museum"
+	flow 144514 "<flow>"
+	  on activityaction_ref 135042 // activity action Find Sales from QR
+	end
+      end
+
+      activitynode 142594 decision "QR Code forest"
+	comment "Check that QR code is from museum"
+	flow 144642 "verify"
+	  on activityaction_ref 135042 // activity action Find Sales from QR
+	end
+
+	flow 144770 "Disable Access"
+	  on activityaction_ref 135170 // activity action Notify & Write Verified Table
+	end
+      end
+
+      activityaction 141954 "Write in offline tickets table"
+	opaque_action
+	flow 145154 "Allow Access"
+	  on activityaction_ref 135170 // activity action Notify & Write Verified Table
 	end
       end
     end

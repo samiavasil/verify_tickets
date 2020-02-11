@@ -1,6 +1,6 @@
 format 222
 "Library" // Library
-  revision 7
+  revision 9
   modified_by 2 "vvasilev"
   // class settings
   
@@ -53,11 +53,6 @@ format 222
      end
     usecasediagram 134658 "Use Case Diagram"
       usecasediagramsettings end
-      size A4
-    end
-
-    collaborationdiagram 134786 "Library Communication Diagram"
-      collaborationdiagramsettings end
       size A4
     end
 

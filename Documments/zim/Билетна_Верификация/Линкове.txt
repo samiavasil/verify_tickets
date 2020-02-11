@@ -15,3 +15,5 @@ https://github.com/jbagg/QSslSocket-example
 http://cassandra.apache.org/doc/latest/data_modeling/data_modeling_conceptual.html
 http://cassandra.apache.org/doc/latest/data_modeling/data_modeling_queries.html
 http://cassandra.apache.org/doc/latest/data_modeling/data_modeling_logical.html
+
+https://shermandigital.com/blog/designing-a-cassandra-data-model/

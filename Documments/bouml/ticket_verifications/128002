@@ -1,6 +1,6 @@
 format 222
 "AjureDB" // AjureDB
-  revision 6
+  revision 9
   modified_by 2 "vvasilev"
   // class settings
   
@@ -63,6 +63,29 @@ ${inlines}
       explicit_switch_type ""
       mysql_decl ""
       
+      classrelation 154754 // <composition>
+	relation 154370 *---
+	  a role_name "" private
+	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	    classrelation_ref 154754 // <composition>
+	  b role_name "" private
+	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	    classrelation_ref 154882 // <composition>
+      end
+
+      classrelation 155010 // <composition>
+	relation 154498 *---
+	  a role_name "" private
+	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	    classrelation_ref 155010 // <composition>
+	  b role_name "" private
+	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} ${name}${value};
+"
+	    classrelation_ref 155138 // <composition>
+      end
     end
 
     class 174338 "ajur_Sales"
@@ -136,6 +159,42 @@ ${inlines}
 	idl_decl ""
 	mysql_decl ""
 	MysqlColumn
+      end
+
+      classrelation 148098 // <aggregation>
+	relation 147842 o---
+	  a role_name "" private
+	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} * ${name}${value};
+"
+	    classrelation_ref 148098 // <aggregation>
+	  b role_name "" private
+	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} * ${name}${value};
+"
+	    classrelation_ref 148226 // <aggregation>
+      end
+
+      classrelation 148226 // <aggregation>
+	relation_ref 147842 // <aggregation>
+      end
+
+      classrelation 154882 // <composition>
+	relation_ref 154370 // <composition>
+      end
+
+      classrelation 155138 // <composition>
+	relation_ref 154498 // <composition>
+      end
+
+      classrelation 161666 // <association>
+	relation 161026 ----
+	  a role_name "" private
+	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} * ${name}${value};
+"
+	    classrelation_ref 161666 // <association>
+	  b role_name "" private
+	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} * ${name}${value};
+"
+	    classrelation_ref 161794 // <association>
       end
     end
   end

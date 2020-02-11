@@ -17,7 +17,7 @@ usecasecanvas 130818 usecase_ref 149634 // Receive Ajur Data
   xyzwh 28 439 3005 131 41 label_xy 51 449
 end
 usecasecanvas 131458 usecase_ref 149762 // Write Ajur Data to Cassandra
-  xyzwh 469 308 3011 185 33 label_xy 483 313
+  xyzwh 480 307 3011 185 33 label_xy 494 312
 end
 usecasecanvas 131970 usecase_ref 149890 // Check For Existense
   xyzwh 234 306 3005 167 33 label_xy 261 310
