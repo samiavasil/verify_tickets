@@ -1,6 +1,6 @@
 format 222
 "BarcodeReader" // BarcodeReader
-  revision 1
+  revision 2
   modified_by 2 "vvasilev"
   // class settings
   
@@ -30,4 +30,39 @@ format 222
   activitydiagramsettings
    end
   
+  classview 173698 "Class View"
+    
+    classdiagramsettings member_max_width 0 end
+    
+    classcompositediagramsettings end
+    
+    collaborationdiagramsettings end
+    
+    objectdiagramsettings end
+    
+    objectcompositediagramsettings end
+    
+    sequencediagramsettings end
+    
+    statediagramsettings
+     end
+    
+    
+    activitydiagramsettings
+     end
+    class 226946 "BRCReader"
+      visibility package 
+      cpp_decl "${comment}${template}class ${name}${inherit} {
+${members}};
+${inlines}
+"
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl ""
+      
+    end
+  end
 end

@@ -1,12 +1,12 @@
-window_sizes 1272 964 428 838 912 0
+window_sizes 1920 1015 294 1620 963 0
 cleanlooks_style
 diagrams
-  sequencediagram_ref 148098 // Validate Ticket
-    1593 965 100 A4 0 0
+  active  sequencediagram_ref 148098 // Validate Ticket
+    1620 963 100 A4 0 0
   activitydiagram_ref 161154 // Activity Diagram
     1434 963 80 A4 0 0
-  active  classdiagram_ref 154626 // Class Diagram
-    838 912 90 A4 0 0
+  classdiagram_ref 154626 // Class Diagram
+    1486 965 90 A4 0 0
   sequencediagram_ref 141442 // Validation Sequence Diagram
     120 98 100 A4 0 0
   sequencediagram_ref 141314 // Ajure Input Sequence
@@ -19,12 +19,13 @@ diagrams
     818 920 100 A4 0 0
 end
 show_stereotypes
-selected classdiagram_ref 154626 // Class Diagram
+selected class_ref 154626 // QRServer
 open
   
   package_ref 128002 // AjureDB
   activity_ref 134530 // Activity
   classview_ref 141058 // Class View
+  classview_ref 173698 // Class View
   classview_ref 160642 // Class View
   usecaseview_ref 134658 // Use Case View
   classview_ref 154114 // Class View
