@@ -1,6 +1,6 @@
 format 222
 "AjureDB" // AjureDB
-  revision 9
+  revision 10
   modified_by 2 "vvasilev"
   // class settings
   
@@ -185,17 +185,6 @@ ${inlines}
 	relation_ref 154498 // <composition>
       end
 
-      classrelation 161666 // <association>
-	relation 161026 ----
-	  a role_name "" private
-	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} * ${name}${value};
-"
-	    classrelation_ref 161666 // <association>
-	  b role_name "" private
-	    cpp default "    ${comment}${static}${thread_local}${mutable}${volatile}${const}${type} * ${name}${value};
-"
-	    classrelation_ref 161794 // <association>
-      end
     end
   end
 

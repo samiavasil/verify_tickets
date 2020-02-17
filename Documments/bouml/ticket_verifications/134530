@@ -110,6 +110,7 @@ format 222
 
       activityaction 135042 "Find Sales from QR"
 	opaque_action
+	comment "Check table Sold_access"
 	flow 136194 "<flow>"
 	  on activitynode_ref 135170 // decision
 	end
@@ -206,7 +207,9 @@ format 222
       end
 
       activitynode 142594 decision "QR Code forest"
-	comment "Check that QR code is from museum"
+	comment "Check that QR code is from museum
+check fisc_str int table Fisc_unit
+"
 	flow 144642 "verify"
 	  on activityaction_ref 135042 // activity action Find Sales from QR
 	end

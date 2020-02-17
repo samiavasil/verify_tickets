@@ -1,41 +1,29 @@
 format 222
 
 classinstance 128002 class_ref 161154 // CassandraDB
-  name ""   xyz 519 6 2000 life_line_z 2000
+  name ""   xyz 433 4 2000 life_line_z 2000
 classinstance 128130 class_ref 154626 // QRServer
-  name ""   xyz 234 4 2000 life_line_z 2000
-classinstance 128258 class_ref 226946 // BRCReader
-  name ""   xyz -2 4 2000 life_line_z 2000
-durationcanvas 128770 classinstance_ref 128130 // :QRServer
-  xyzwh 265 40 2010 11 126
-  overlappingdurationcanvas 129538
-    xyzwh 271 120 2020 11 41
-  end
+  name ""   xyz 236 4 2000 life_line_z 2000
+classinstance 130178 class_ref 226946 // BarCodeReader
+  name ""   xyz -7 5 2000 life_line_z 2000
+durationcanvas 130690 classinstance_ref 130178 // :BarCodeReader
+  xyzwh 38 63 2010 11 40
 end
-durationcanvas 129154 classinstance_ref 128002 // :CassandraDB
-  xyzwh 562 53 2010 11 46
+durationcanvas 130818 classinstance_ref 128130 // :QRServer
+  xyzwh 265 63 2010 11 25
 end
-lostfoundmsgsupport 128898 xyz 29 42 2015
-msg 129026 found_synchronous
-  from lostfoundmsgsupport_ref 128898
-  to durationcanvas_ref 128770
-  yz 40 2015 explicitmsg "NotifyBarcode(int bcr_id, string qr)"
+durationcanvas 131074 classinstance_ref 128002 // :CassandraDB
+  xyzwh 472 68 2010 11 25
+end
+msg 130946 asynchronous
+  from durationcanvas_ref 130690
+  to durationcanvas_ref 130818
+  yz 64 2015 explicitmsg "SendBarCode(int bcr_id, string code)"
   show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
-  label_xy 42 32
-msg 129282 synchronous
-  from durationcanvas_ref 128770
-  to durationcanvas_ref 129154
-  yz 75 2015 explicitmsg "getConfiguredBcrIDs(bcr_id)"
+  label_xy 58 51
+msg 131202 synchronous
+  from durationcanvas_ref 130818
+  to durationcanvas_ref 131074
+  yz 68 2015 unspecifiedmsg
   show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
-  label_xy 317 61
-msg 129410 return
-  from durationcanvas_ref 129154
-  to durationcanvas_ref 128770
-  yz 88 2020 unspecifiedmsg
-  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
-reflexivemsg 129666 synchronous
-  to durationcanvas_ref 129538
-  yz 120 2025 explicitmsg "is_Bcr_Id_is_correct()"
-  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
-  label_xy 300 108
 end

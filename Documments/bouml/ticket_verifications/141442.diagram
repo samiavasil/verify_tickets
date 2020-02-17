@@ -9,7 +9,11 @@ classinstance 128258 class_ref 161154 // CassandraDB
 classinstance 129410 class_ref 167810 // Gate
   name ""   xyz 481 4 2000 life_line_z 2000
 iconcanvas 129794 sequencediagram_ref 148098 // Validate Ticket
-  xyz 236.9 147.2 2000
+  xyz 249.9 146.2 2000
+classinstance 129922 class_ref 200706 // ajur_Sales
+  name ""   xyz 266 4 2000 life_line_z 2000
+classinstance 130050 class_ref 200706 // ajur_Sales
+  name ""   xyz 205 4 2000 life_line_z 2000
 durationcanvas 128386 classinstance_ref 128002 // :BarcodeReader
   xyzwh 68 68 2010 11 40
 end

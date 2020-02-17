@@ -1,6 +1,6 @@
 format 222
 "CassanbdraDB" // CassanbdraDB
-  revision 19
+  revision 23
   modified_by 2 "vvasilev"
   // class settings
   
@@ -247,17 +247,27 @@ ${inlines}
 CREATE TABLE ${name} ${definition}${comment};
 "
       
-      comment "Таблица от Ажур
-"
-      attribute 184450 "qr"
-	default explicit_type ""
+      comment "Ajure sakes"
+      attribute 197506 "id"
+	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
 	php_decl ""
 	python_decl ""
 	idl_decl ""
-	mysql_decl "  ${constraint}${modifier}KEY${name}${type} (${columns})${ref}${comment}"
-	MysqlKey notnull_hash
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 171266 "museum_id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
       end
 
       attribute 155522 "sale_id"
@@ -271,8 +281,8 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 171266 "museum"
-	default explicit_type "int"
+      attribute 197634 "qr"
+	default explicit_type "string"
 	cpp_decl ""
 	java_decl ""
 	php_decl ""
@@ -283,6 +293,17 @@ CREATE TABLE ${name} ${definition}${comment};
       end
 
       attribute 155778 "code"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 204162 "codename"
 	default explicit_type "string"
 	cpp_decl ""
 	java_decl ""
@@ -304,8 +325,35 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      classrelation 161794 // <association>
-	relation_ref 161026 // <association>
+      attribute 204546 "transfered"
+	default explicit_type "bool"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      classrelation 168578 // <association>
+	relation 167682 ----
+	  a role_name "" public
+	    classrelation_ref 168578 // <association>
+	  b role_name "" public
+	    classrelation_ref 168706 // <association>
+      end
+
+      classrelation 168834 // <association>
+	relation 167810 ----
+	  a role_name "" public
+	    classrelation_ref 168834 // <association>
+	  b role_name "" public
+	    classrelation_ref 168962 // <association>
+      end
+
+      classrelation 169218 // <association>
+	relation_ref 167938 // <association>
       end
     end
 
@@ -333,7 +381,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 155266 "id_code"
+      attribute 155266 "code_info_id"
 	default explicit_type ""
 	cpp_decl ""
 	java_decl ""
@@ -353,6 +401,22 @@ CREATE TABLE ${name} ${definition}${comment};
 	idl_decl ""
 	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
 	MysqlColumn
+      end
+
+      classrelation 161666 // <association>
+	relation 161026 ----
+	  a role_name "" public
+	    classrelation_ref 161666 // <association>
+	  b role_name "" public
+	    classrelation_ref 161794 // <association>
+      end
+
+      classrelation 161922 // <association>
+	relation 161154 ----
+	  a role_name "" public
+	    classrelation_ref 161922 // <association>
+	  b role_name "" public
+	    classrelation_ref 162050 // <association>
       end
     end
 
@@ -379,7 +443,8 @@ ${items}};
 CREATE TABLE ${name} ${definition}${comment};
 "
       
-      comment "Таблица с артикули"
+      comment "Tickets type.
+viber_image_2020-02-15_14-08-42.jpg"
       attribute 155906 "id"
 	default explicit_type "int"
 	cpp_decl ""
@@ -402,7 +467,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 148482 "code_name"
+      attribute 148482 "name"
 	default explicit_type "string"
 	cpp_decl ""
 	java_decl ""
@@ -434,6 +499,101 @@ CREATE TABLE ${name} ${definition}${comment};
 	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
 	MysqlColumn
       end
+
+      classrelation 161794 // <association>
+	relation_ref 161026 // <association>
+      end
+
+      classrelation 169986 // <association>
+	relation_ref 168322 // <association>
+      end
+    end
+
+    class 240002 "code_access_info"
+      visibility protected stereotype "table"
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl "DROP TABLE IF EXISTS ${name};
+CREATE TABLE ${name} ${definition}${comment};
+"
+      
+      attribute 224642 "id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 224770 "code"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 225154 "name"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 224898 "info"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 225026 "dead_level"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 225282 "door_id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      classrelation 170242 // <association>
+	relation_ref 168450 // <association>
+      end
+
+      classrelation 170498 // <association>
+	relation_ref 168578 // <association>
+      end
     end
 
     class 207234 "doors"
@@ -451,17 +611,6 @@ CREATE TABLE ${name} ${definition}${comment};
       comment "Таблица за наличните врати
 "
       attribute 162690 "id"
-	default explicit_type "int"
-	cpp_decl ""
-	java_decl ""
-	php_decl ""
-	python_decl ""
-	idl_decl ""
-	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
-	MysqlColumn
-      end
-
-      attribute 190978 "qr_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -519,8 +668,31 @@ CREATE TABLE ${name} ${definition}${comment};
 	comment "църква/музей"
       end
 
-      classrelation 168450 // <association>
-	relation_ref 167554 // <association>
+      attribute 190978 "qr_id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      classrelation 162050 // <association>
+	relation_ref 161154 // <association>
+      end
+
+      classrelation 170114 // <association>
+	relation 168450 ----
+	  a role_name "" public
+	    classrelation_ref 170114 // <association>
+	  b role_name "" public
+	    classrelation_ref 170242 // <association>
+      end
+
+      classrelation 170754 // <association>
+	relation_ref 168706 // <association>
       end
     end
 
@@ -569,6 +741,18 @@ CREATE TABLE ${name} ${definition}${comment};
 	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
 	MysqlColumn
       end
+
+      classrelation 168706 // <association>
+	relation_ref 167682 // <association>
+      end
+
+      classrelation 169474 // <association>
+	relation_ref 168066 // <association>
+      end
+
+      classrelation 169730 // <association>
+	relation_ref 168194 // <association>
+      end
     end
 
     class 220290 "Sold_access"
@@ -583,7 +767,8 @@ CREATE TABLE ${name} ${definition}${comment};
 CREATE TABLE ${name} ${definition}${comment};
 "
       
-      comment "Таблица на продадени достъпи
+      comment "This table is used for insertion of sold access.
+
 "
       attribute 169602 "id"
 	default explicit_type "int"
@@ -640,12 +825,35 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      classrelation 168322 // <association>
-	relation 167554 ----
+      attribute 217986 "fail_over_flag"
+	default explicit_type "bool"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      classrelation 168962 // <association>
+	relation_ref 167810 // <association>
+      end
+
+      classrelation 169346 // <association>
+	relation 168066 ----
 	  a role_name "" public
-	    classrelation_ref 168322 // <association>
+	    classrelation_ref 169346 // <association>
 	  b role_name "" public
-	    classrelation_ref 168450 // <association>
+	    classrelation_ref 169474 // <association>
+      end
+
+      classrelation 170626 // <association>
+	relation 168706 ----
+	  a role_name "" public
+	    classrelation_ref 170626 // <association>
+	  b role_name "" public
+	    classrelation_ref 170754 // <association>
       end
     end
 
@@ -686,7 +894,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 170498 "door_id"
+      attribute 218114 "qty"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -707,6 +915,103 @@ CREATE TABLE ${name} ${definition}${comment};
 	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
 	MysqlColumn
 	comment "decrement"
+      end
+
+      classrelation 169090 // <association>
+	relation 167938 ----
+	  a role_name "" public
+	    classrelation_ref 169090 // <association>
+	  b role_name "" public
+	    classrelation_ref 169218 // <association>
+      end
+
+      classrelation 169602 // <association>
+	relation 168194 ----
+	  a role_name "" public
+	    classrelation_ref 169602 // <association>
+	  b role_name "" public
+	    classrelation_ref 169730 // <association>
+      end
+
+      classrelation 169858 // <association>
+	relation 168322 ----
+	  a role_name "" public
+	    classrelation_ref 169858 // <association>
+	  b role_name "" public
+	    classrelation_ref 169986 // <association>
+      end
+
+      classrelation 170370 // <association>
+	relation 168578 ----
+	  a role_name "" public
+	    classrelation_ref 170370 // <association>
+	  b role_name "" public
+	    classrelation_ref 170498 // <association>
+      end
+    end
+
+    activity 141314 "Activity"
+      activitydiagram 174210 "ActivityDiagram"
+	activitydiagramsettings
+	 end
+	size A4
+      end
+    end
+
+    class 233474 "Fisc_unit"
+      visibility package stereotype "table"
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl "DROP TABLE IF EXISTS ${name};
+CREATE TABLE ${name} ${definition}${comment};
+"
+      
+      attribute 211074 "id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 211202 "fisc_str"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 211330 "name_address"
+	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 211458 "cassandra_node_id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
       end
     end
   end

@@ -30,7 +30,7 @@ format 222
   activitydiagramsettings
    end
   
-  classview 173698 "Class View"
+  classview 173698 "ClassView"
     
     classdiagramsettings member_max_width 0 end
     
@@ -50,7 +50,7 @@ format 222
     
     activitydiagramsettings
      end
-    class 226946 "BRCReader"
+    class 226946 "BarCodeReader"
       visibility package 
       cpp_decl "${comment}${template}class ${name}${inherit} {
 ${members}};
