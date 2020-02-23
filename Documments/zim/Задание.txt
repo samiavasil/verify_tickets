@@ -1,0 +1,9 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2020-02-24T00:33:35+02:00
+
+====== Задание ======
+Created понеделник 24 февруари 2020
+
+===== Типове Билети =====
+[[./TicketsTypes.jpg|TicketsTypes]]

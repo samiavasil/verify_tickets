@@ -1,6 +1,6 @@
 format 222
 "CassanbdraDB" // CassanbdraDB
-  revision 23
+  revision 25
   modified_by 2 "vvasilev"
   // class settings
   
@@ -325,6 +325,17 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
+      attribute 231810 "timestamp_in"
+	default explicit_type "DATE"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
       attribute 204546 "transfered"
 	default explicit_type "bool"
 	cpp_decl ""
@@ -344,16 +355,20 @@ CREATE TABLE ${name} ${definition}${comment};
 	    classrelation_ref 168706 // <association>
       end
 
-      classrelation 168834 // <association>
-	relation 167810 ----
-	  a role_name "" public
-	    classrelation_ref 168834 // <association>
-	  b role_name "" public
-	    classrelation_ref 168962 // <association>
-      end
-
       classrelation 169218 // <association>
 	relation_ref 167938 // <association>
+      end
+
+      classrelation 177794 // <association>
+	relation 175490 ----
+	  a role_name "" public
+	    classrelation_ref 177794 // <association>
+	  b role_name "" public
+	    classrelation_ref 177922 // <association>
+      end
+
+      classrelation 178178 // <association>
+	relation_ref 175618 // <association>
       end
     end
 
@@ -576,7 +591,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 225282 "door_id"
+      attribute 225282 "site_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -590,13 +605,9 @@ CREATE TABLE ${name} ${definition}${comment};
       classrelation 170242 // <association>
 	relation_ref 168450 // <association>
       end
-
-      classrelation 170498 // <association>
-	relation_ref 168578 // <association>
-      end
     end
 
-    class 207234 "doors"
+    class 207234 "site"
       visibility package stereotype "table"
       cpp_decl ""
       java_decl ""
@@ -608,8 +619,7 @@ CREATE TABLE ${name} ${definition}${comment};
 CREATE TABLE ${name} ${definition}${comment};
 "
       
-      comment "Таблица за наличните врати
-"
+      comment "Describe sites"
       attribute 162690 "id"
 	default explicit_type "int"
 	cpp_decl ""
@@ -668,8 +678,9 @@ CREATE TABLE ${name} ${definition}${comment};
 	comment "църква/музей"
       end
 
-      attribute 190978 "qr_id"
-	default explicit_type "int"
+      attribute 190978 "doors"
+	default explicit_type "string"
+	stereotype "list"
 	cpp_decl ""
 	java_decl ""
 	php_decl ""
@@ -691,8 +702,8 @@ CREATE TABLE ${name} ${definition}${comment};
 	    classrelation_ref 170242 // <association>
       end
 
-      classrelation 170754 // <association>
-	relation_ref 168706 // <association>
+      classrelation 177666 // <association>
+	relation_ref 175362 // <association>
       end
     end
 
@@ -746,10 +757,6 @@ CREATE TABLE ${name} ${definition}${comment};
 	relation_ref 167682 // <association>
       end
 
-      classrelation 169474 // <association>
-	relation_ref 168066 // <association>
-      end
-
       classrelation 169730 // <association>
 	relation_ref 168194 // <association>
       end
@@ -781,7 +788,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 169730 "qr_id"
+      attribute 169730 "ajur_sales_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -792,7 +799,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 169858 "door_id"
+      attribute 169858 "site_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -803,8 +810,8 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 169986 "qty"
-	default explicit_type "int"
+      attribute 238466 "qr"
+	default explicit_type "string"
 	cpp_decl ""
 	java_decl ""
 	php_decl ""
@@ -825,6 +832,17 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
+      attribute 238338 "door_id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
       attribute 217986 "fail_over_flag"
 	default explicit_type "bool"
 	cpp_decl ""
@@ -836,24 +854,16 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      classrelation 168962 // <association>
-	relation_ref 167810 // <association>
+      classrelation 177538 // <association>
+	relation 175362 ----
+	  a role_name "" public
+	    classrelation_ref 177538 // <association>
+	  b role_name "" public
+	    classrelation_ref 177666 // <association>
       end
 
-      classrelation 169346 // <association>
-	relation 168066 ----
-	  a role_name "" public
-	    classrelation_ref 169346 // <association>
-	  b role_name "" public
-	    classrelation_ref 169474 // <association>
-      end
-
-      classrelation 170626 // <association>
-	relation 168706 ----
-	  a role_name "" public
-	    classrelation_ref 170626 // <association>
-	  b role_name "" public
-	    classrelation_ref 170754 // <association>
+      classrelation 177922 // <association>
+	relation_ref 175490 // <association>
       end
     end
 
@@ -883,18 +893,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 170370 "qr_id"
-	default explicit_type "int"
-	cpp_decl ""
-	java_decl ""
-	php_decl ""
-	python_decl ""
-	idl_decl ""
-	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
-	MysqlColumn
-      end
-
-      attribute 218114 "qty"
+      attribute 170370 "ajur_sales_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -941,12 +940,12 @@ CREATE TABLE ${name} ${definition}${comment};
 	    classrelation_ref 169986 // <association>
       end
 
-      classrelation 170370 // <association>
-	relation 168578 ----
+      classrelation 178050 // <association>
+	relation 175618 ----
 	  a role_name "" public
-	    classrelation_ref 170370 // <association>
+	    classrelation_ref 178050 // <association>
 	  b role_name "" public
-	    classrelation_ref 170498 // <association>
+	    classrelation_ref 178178 // <association>
       end
     end
 

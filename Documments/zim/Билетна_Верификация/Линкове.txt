@@ -18,5 +18,8 @@ http://cassandra.apache.org/doc/latest/data_modeling/data_modeling_logical.html
 
 https://hackolade.com/schemas/OReilly_documentation.html#c599fa60-a231-11e8-a82b-ab38db90b078
 
-
 https://shermandigital.com/blog/designing-a-cassandra-data-model/
+
+[[https://docs.datastax.com/en/developer/cpp-driver/2.15/topics/configuration/#host-state-changes|Notify on nodes changes]]
+
+

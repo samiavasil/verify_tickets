@@ -1,28 +1,26 @@
-window_sizes 1358 702 204 1148 650 0
+window_sizes 1272 702 243 1023 650 0
 cleanlooks_style
 diagrams
   sequencediagram_ref 148098 // Validate Ticket
     604 630 100 A4 0 0
   activitydiagram_ref 161154 // Activity Diagram
-    777 764 100 A4 0 0
+    1109 484 100 A4 288 0
   active  classdiagram_ref 154626 // Class Diagram
-    1148 650 100 A4 0 0
+    1023 650 100 A4 0 0
 end
 show_stereotypes
-selected 
-package_ref 129 // ticket_verifications
+selected attribute_ref 238466 // qr
 open
   
-package_ref 128002 // AjureDB
+  package_ref 128002 // AjureDB
   activity_ref 134530 // Activity
+  activity_ref 134658 // New Ajur Order
   class_ref 194050 // code_access
   class_ref 194178 // code_info
-  attribute_ref 170754 // name
-  attribute_ref 170882 // info
-  attribute_ref 171010 // access_type
-  attribute_ref 171138 // obj_type
-  class_ref 220290 // Sold_access
-  attribute_ref 218114 // qty
+  class_ref 240002 // code_access_info
+  attribute_ref 238466 // qr
+  attribute_ref 238338 // door_id
+  class_ref 220418 // dead_tickets
   class_ref 233474 // Fisc_unit
   classview_ref 173698 // ClassView
   classview_ref 160642 // Class View

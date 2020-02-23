@@ -1,0 +1,111 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2020-02-20T19:15:05+02:00
+
+====== Cassandra CQL ======
+Created четвъртък 20 февруари 2020
+
+[[http://cassandra.apache.org/doc/latest/cql/types.html|CQL types]]
+
+[[https://docs.datastax.com/en/archived/cql/3.3/cql/cql_reference/cqlCreateKeyspace.html|CREATE KEYSPACE]]
+{{{code: lang="sql" linenumbers="True"
+CREATE  KEYSPACE [IF NOT EXISTS] keyspace_name 
+   WITH REPLICATION = { 
+      'class' : 'SimpleStrategy', 'replication_factor' : N } 
+     | 'class' : 'NetworkTopologyStrategy', 
+       'dc1_name' : N [, ...] 
+   }
+   [AND DURABLE_WRITES =  true|false] ;
+}}}
+
+
+**CREATE KEYSPACE  IF NOT EXISTS  test_keyspace WITH replication = {'class':'SimpleStrategy', 'replication_factor':4};**
+
+**Drop keyspace**
+DROP KEYSPACE sample;
+
+**See keyspaces**
+DESCRIBE keyspaces;
+
+=== Create table ===
+https://docs.datastax.com/en/archived/cql/3.3/cql/cql_reference/cqlCreateTable.html#cqlCreateTable
+{{{code: lang="sql" linenumbers="True"
+CREATE TABLE [IF NOT EXISTS] [keyspace_name.]table_name ( 
+   column_definition [, ...]
+   PRIMARY KEY (column_name [, column_name ...])
+[WITH table_options
+   | CLUSTERING ORDER BY (clustering_column_name order])
+   | ID = 'table_hash_tag'
+   | COMPACT STORAGE]
+}}}
+
+
+{{{code: lang="sql" linenumbers="True"
+CREATE TABLE test_keyspace.site (
+    id UUID PRIMARY KEY,
+    name text,
+    info text,
+    access_type int,
+    obj_type  int,
+    doors set<text>
+);
+}}}
+
+
+**Drop Table:**
+DROP TABLE <tablename>
+
+[[https://docs.datastax.com/en/dse/5.1/cql/cql/cql_reference/cqlsh_commands/cqlshDescribeTable.html|Describe Tables]]
+**DESCRIBE TABLES | TABLE [keyspace_name.]table_name**
+
+=== ALTER TABLE ===
+
+Changes the datatype of a columns, add new columns, drop existing columns, renames columns, and change table properties. The command returns no results.
+Restriction: Altering PRIMARY KEY columns is not supported. Altering columns in a table that has a materialized view is not supported. 
+
+{{{code: lang="sql" linenumbers="True"
+ALTER TABLE [keyspace_name.] table_name 
+[ALTER column_name TYPE cql_type]
+[ADD (column_definition_list)]
+[DROP column_list | COMPACT STORAGE ]
+[RENAME column_name TO column_name]
+[WITH table_properties];
+}}}
+
+
+
+=== Insert in table ===
+
+{{{code: lang="sql" linenumbers="True"
+INSERT INTO [keyspace_name.] table_name (column_list) 
+VALUES (column_values) 
+[IF NOT EXISTS] 
+[USING TTL seconds | TIMESTAMP epoch_in_microseconds] 
+}}}
+
+
+{{{code: lang="sql" linenumbers="True"
+INSERT INTO test_keyspace.site (id, name, info)
+  VALUES (uuid(), 'KRUIKSWIJK','Steven')
+  USING TTL 86400 AND TIMESTAMP 123456789;
+}}}
+
+
+
+=== UPDATE ===
+
+{{{code: lang="sql" linenumbers="True"
+UPDATE [keyspace_name.] table_name
+[USING TTL time_value | USING TIMESTAMP timestamp_value]
+SET assignment [, assignment] . . . 
+WHERE row_specification
+[IF EXISTS | IF condition [AND condition] . . .] ;
+
+}}}
+
+
+{{{code: lang="sql" linenumbers="True"
+UPDATE test_keyspace.site
+SET comments ='='Rides hard, gets along with others, a real winner'
+WHERE id = fb372533-eb95-4bb4-8685-6ef61e994caa IF EXISTS;
+}}}

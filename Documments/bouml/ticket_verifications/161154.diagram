@@ -124,8 +124,8 @@ flowcanvas 129282 flow_ref 134914 // <flow>
 end
 flowcanvas 129922 flow_ref 135170 // Already Exist
   
-  from ref 128514 z 2006 label "Already Exist" xyz 372 46 2006 to point 266.4 65.1
-  line 130050 z 2006 to point 650.6 65.1
+  from ref 128514 z 2006 label "Already Exist" xyz 372 46 2006 to point 266 65
+  line 130050 z 2006 to point 650 65
   line 130178 z 2006 to ref 129026
    write_horizontally default
 end
@@ -150,8 +150,8 @@ end
 flowcanvas 131074 flow_ref 135682 // Error
   decenter_end 190
   
-  from ref 130562 z 2006 label "Error" xyz 560 185 2006 to point 519.3 204.8
-  line 131330 z 2006 to point 622.2 204.8
+  from ref 130562 z 2006 label "Error" xyz 560 185 2006 to point 519 204
+  line 131330 z 2006 to point 622 204
   line 131586 z 2006 to ref 129026
    write_horizontally default
 end
@@ -184,8 +184,8 @@ end
 flowcanvas 134786 flow_ref 136706 // Disable Access
   decenter_end 266
   
-  from ref 134274 z 2011 label "Disable Access" xyz 604 575 2011 to point 597.7 653.5
-  line 135554 z 2011 to point 712.2 656.4
+  from ref 134274 z 2011 label "Disable Access" xyz 604 575 2011 to point 597 653
+  line 135554 z 2011 to point 712 656
   line 139650 z 2011 to ref 133506
    write_horizontally default
 end
@@ -209,22 +209,22 @@ flowcanvas 136322 flow_ref 143490 // <flow>
 end
 flowcanvas 136450 flow_ref 143618 // Disable Access
   decenter_begin 702
-  decenter_end 358
+  decenter_end 400
   
-  from ref 136066 z 2011 label "Disable Access" xyz 464 625.5 2011 to point 548.2 645
-  line 140162 z 2011 to point 547.9 721.9
+  from ref 136066 z 2011 label "Disable Access" xyz 464 625 2011 to point 548 645
+  line 140162 z 2011 to point 547 721
   line 136706 z 2011 to ref 133506
    write_horizontally default
 end
 flowcanvas 140546 flow_ref 144642 // verify
   
-  from ref 140290 z 2006 label "verify" xyz 260.5 500.5 2006 to ref 132610
+  from ref 140290 z 2006 label "verify" xyz 260 500 2006 to ref 132610
    write_horizontally default
 end
 flowcanvas 140674 flow_ref 144770 // Disable Access
   
-  from ref 140290 z 2011 label "Disable Access" xyz 279.5 775.5 2011 to point 241.9 791.9
-  line 140802 z 2011 to point 737.7 791.9
+  from ref 140290 z 2011 label "Disable Access" xyz 279 775 2011 to point 241 791
+  line 140802 z 2011 to point 737 791
   line 140930 z 2011 to ref 133506
    write_horizontally default
 end
