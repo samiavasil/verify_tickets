@@ -27,7 +27,12 @@ else{
 }
 
 SOURCES += \
+        AJRSale.cpp \
         AJRServer.cpp \
+        BuildQuerry.cpp \
+        CassTable.cpp \
+        Configurator.cpp \
+        DBClient.cpp \
         Daemon.cpp \
         QRServer.cpp \
         ServerConfigurator.cpp \
@@ -40,7 +45,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    AJRSale.h \
     AJRServer.h \
+    BuildQuerry.h \
+    CassTable.h \
+    Configurator.h \
+    DBClient.h \
     Daemon.h \
     QRServer.h \
     ServerConfigurator.h \
