@@ -1,4 +1,4 @@
-#ifndef DAEMON_H
+﻿#ifndef DAEMON_H
 #define DAEMON_H
 
 #include <QObject>
@@ -29,13 +29,13 @@ protected slots:
     void handleSigTerm();
 
 private:
-    static int sighupFd[2];
-    static int sigtermFd[2];
-    static int sigintFd[2];
+    static int m_sighupFd[2];
+    static int m_sigtermFd[2];
+    static int m_sigintFd[2];
 
-    QSocketNotifier *snHup;
-    QSocketNotifier *snTerm;
-    QSocketNotifier *snInt;
+    QSocketNotifier *m_snHup;
+    QSocketNotifier *m_snTerm;
+    QSocketNotifier *m_snInt;
 };
 
 #endif // DAEMON_H

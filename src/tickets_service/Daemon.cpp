@@ -7,28 +7,28 @@
 #include <QCoreApplication>
 #include <unistd.h>
 
-int Daemon::sighupFd[2];
-int Daemon::sigtermFd[2];
-int Daemon::sigintFd[2];
+int Daemon::m_sighupFd[2];
+int Daemon::m_sigtermFd[2];
+int Daemon::m_sigintFd[2];
 
 Daemon::Daemon(QObject *parent) : QObject(parent)
 {
-    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, sighupFd))
+    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, m_sighupFd))
         qFatal("Couldn't create HUP socketpair");
 
-    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, sigtermFd))
+    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, m_sigtermFd))
         qFatal("Couldn't create TERM socketpair");
 
-    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, sigintFd))
+    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, m_sigintFd))
         qFatal("Couldn't create TERM socketpair");
 
-    snHup = new QSocketNotifier(sighupFd[1], QSocketNotifier::Read, this);
-    connect(snHup, SIGNAL(activated(int)), this, SLOT(handleSigHup()));
-    snTerm = new QSocketNotifier(sigtermFd[1], QSocketNotifier::Read, this);
-    connect(snTerm, SIGNAL(activated(int)), this, SLOT(handleSigTerm()));
+    m_snHup = new QSocketNotifier(m_sighupFd[1], QSocketNotifier::Read, this);
+    connect(m_snHup, SIGNAL(activated(int)), this, SLOT(handleSigHup()));
+    m_snTerm = new QSocketNotifier(m_sigtermFd[1], QSocketNotifier::Read, this);
+    connect(m_snTerm, SIGNAL(activated(int)), this, SLOT(handleSigTerm()));
 
-    snInt = new QSocketNotifier(sigintFd[1], QSocketNotifier::Read, this);
-    connect(snInt, SIGNAL(activated(int)), this, SLOT(handleSigInt()));
+    m_snInt = new QSocketNotifier(m_sigintFd[1], QSocketNotifier::Read, this);
+    connect(m_snInt, SIGNAL(activated(int)), this, SLOT(handleSigInt()));
 }
 
 Daemon::~Daemon()
@@ -39,34 +39,34 @@ Daemon::~Daemon()
 void Daemon::IntSignalHandler(int unused)
 {
     char a = 1;
-    ::write(sigintFd[0], &a, sizeof(a));
+    ::write(m_sigintFd[0], &a, sizeof(a));
     qDebug() << "IntSignalHandler";
 }
 
 void Daemon::hupSignalHandler(int unused)
 {
     char a = 1;
-    ::write(sighupFd[0], &a, sizeof(a));
+    ::write(m_sighupFd[0], &a, sizeof(a));
     qDebug() << "hupSignalHandler";
 }
 
 void Daemon::termSignalHandler(int unused)
 {
     char a = 1;
-    ::write(sigtermFd[0], &a, sizeof(a));
+    ::write(m_sigtermFd[0], &a, sizeof(a));
     qDebug() << "termSignalHandler";
 }
 
 void Daemon::handleSigHup()
 {
     qDebug() << __FUNCTION__;
-    snHup->setEnabled(false);
+    m_snHup->setEnabled(false);
     char tmp;
-    ::read(sighupFd[1], &tmp, sizeof(tmp));
+    ::read(m_sighupFd[1], &tmp, sizeof(tmp));
 
     // do Qt stuff
 
-    snHup->setEnabled(true);
+    m_snHup->setEnabled(true);
     /*TODO: On final stage comment this to Daemonize application*/
     QCoreApplication::quit();
 }
@@ -74,25 +74,25 @@ void Daemon::handleSigHup()
 void Daemon::handleSigTerm()
 {
     qDebug() <<  __func__   ;
-    snTerm->setEnabled(false);
+    m_snTerm->setEnabled(false);
     char tmp;
-    ::read(sigtermFd[1], &tmp, sizeof(tmp));
+    ::read(m_sigtermFd[1], &tmp, sizeof(tmp));
 
     // do Qt stuff
 
-    snTerm->setEnabled(true);
+    m_snTerm->setEnabled(true);
     QCoreApplication::quit();
 }
 
 void Daemon::handleSigInt()
 {
     qDebug() << __func__;
-    snTerm->setEnabled(false);
+    m_snTerm->setEnabled(false);
     char tmp;
-    ::read(sigintFd[1], &tmp, sizeof(tmp));
+    ::read(m_sigintFd[1], &tmp, sizeof(tmp));
 
     // do Qt stuff
-    snTerm->setEnabled(true);
+    m_snTerm->setEnabled(true);
     QCoreApplication::quit();
 }
 
