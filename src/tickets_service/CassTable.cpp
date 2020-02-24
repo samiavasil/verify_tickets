@@ -42,12 +42,9 @@ CassError execute_query(CassSession* session, const char* query) {
 
 bool CassTable::CreateTable(CassSession* session)
 {
-    bool ret = false;
+    BuildQuerry querry;
 
-
-            BuildQuerry querry;
-
-    querry.create().table(QString("%1.%2").arg(m_keySpace).arg(m_tableName)).
+    querry.createTable(QString("%1.%2").arg(m_keySpace).arg(m_tableName)).
             lbrace();
     QMap<QString, QString>::const_iterator col = m_columns.constBegin();
     while (col != m_columns.constEnd()) {
@@ -58,9 +55,18 @@ bool CassTable::CreateTable(CassSession* session)
 
     qDebug() << querry.querry();
 
-
     return (CASS_OK == execute_query(session, querry.querry().toUtf8().constData()));
 
+}
+
+bool CassTable::CreateKeySpace(CassSession *session)
+{
+    BuildQuerry querry;
+    querry.createKeySpace(m_keySpace).replication(BuildQuerry::SimpleStrategy, 2);
+
+    qDebug() << querry.querry();
+
+    return (CASS_OK == execute_query(session, querry.querry().toUtf8().constData()));
 }
 
 bool CassTable::InsertRow()
@@ -75,4 +81,24 @@ bool CassTable::UpdateRow()
     bool ret = false;
 
     return ret;
+}
+
+QString CassTable::tableName() const
+{
+    return m_tableName;
+}
+
+void CassTable::setTableName(const QString &tableName)
+{
+    m_tableName = tableName;
+}
+
+QString CassTable::keySpace() const
+{
+    return m_keySpace;
+}
+
+void CassTable::setKeySpace(const QString &keySpace)
+{
+    m_keySpace = keySpace;
 }

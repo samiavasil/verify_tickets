@@ -1,18 +1,37 @@
 #include "BuildQuerry.h"
 
 
-BuildQuerry::BuildQuerry()
+BuildQuerry::BuildQuerry():
+    m_stratMap({
+                {SimpleStrategy, {"SimpleStrategy", "replication_factor"}},
+                {NetworkTopologyStrategy, {"NetworkTopologyStrategy", "dc1_name"}}
+               })
 {
 
 }
 
-BuildQuerry &BuildQuerry::create(){
-    m_querry = QString("%1 CREATE").arg(m_querry);
+
+BuildQuerry &BuildQuerry::createTable(const QString &table){
+    m_querry = QString("CREATE TABLE IF NOT EXISTS %2").arg(m_querry).arg(table);
     return *this;
 }
 
-BuildQuerry &BuildQuerry::table(const QString &table){
-    m_querry = QString("%1 TABLE IF NOT EXISTS %2").arg(m_querry).arg(table);
+BuildQuerry &BuildQuerry::createKeySpace(const QString &space)
+{
+    m_querry = QString("CREATE KEYSPACE %1 IF NOT EXISTS %2").arg(m_querry).arg(space);
+    return *this;
+}
+
+BuildQuerry &BuildQuerry::replication(BuildQuerry::strategyType_t strategy,
+                                      int stratInt, bool durableWrites)
+{
+    m_querry = QString("%1  WITH REPLICATION = { 'class':'%2', '%3':%4 }"
+                       " AND DURABLE_WRITES = %5").
+                       arg(m_querry).
+                       arg(m_stratMap[strategy][0]).
+                       arg(m_stratMap[strategy][1]).
+                       arg( stratInt).
+                       arg(durableWrites);
     return *this;
 }
 

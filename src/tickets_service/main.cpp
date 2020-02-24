@@ -33,5 +33,7 @@ int main(int argc, char *argv[])
     dbClient.connectSession();
 
     qDebug() << "Create Table: " << t.CreateTable(dbClient.session());
+    t.setKeySpace("test_keyspace1");
+    qDebug() << "Create KeySpace: " << t.CreateKeySpace(dbClient.session());
     return a.exec();
 }

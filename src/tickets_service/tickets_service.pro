@@ -19,12 +19,7 @@ EXT_PATH = $${PWD}/../external/lib
 INCLUDEPATH += $${EXT_PATH}/include
 LIBS += -L$${EXT_PATH}
 
-CONFIG(debug, debug|release) {
-    LIBS        += -lcassandra_staticd -lz -lssl -lcrypto -luv
-}
-else{
-    LIBS        += -lcassandra_static -lz -lssl -lcrypto -luv
-}
+LIBS        += -lcassandra_static -lz -lssl -lcrypto -luv
 
 SOURCES += \
         AJRSale.cpp \

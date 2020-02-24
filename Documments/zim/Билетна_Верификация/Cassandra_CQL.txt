@@ -12,9 +12,7 @@ Created четвъртък 20 февруари 2020
 CREATE  KEYSPACE [IF NOT EXISTS] keyspace_name 
    WITH REPLICATION = { 
       'class' : 'SimpleStrategy', 'replication_factor' : N } 
-     | 'class' : 'NetworkTopologyStrategy', 
-       'dc1_name' : N [, ...] 
-   }
+     |'class' : 'NetworkTopologyStrategy',  dc1_name' : N [, ...]  }
    [AND DURABLE_WRITES =  true|false] ;
 }}}
 
