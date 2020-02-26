@@ -93,7 +93,8 @@ void Daemon::handleSigInt()
 
     // do Qt stuff
     m_snTerm->setEnabled(true);
-    QCoreApplication::quit();
+    QCoreApplication::quit(); /*Should be fixed: this is a slot and should be connected to the signal
+    which can be hanlded on QT event loop.*/
 }
 
 int Daemon::SetupUnixSignalHandlers()

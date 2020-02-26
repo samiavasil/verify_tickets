@@ -3,7 +3,7 @@
 #include<QDebug>
 #include "BuildQuerry.h"
 
-CassTable::CassTable(QString keySpace, QString tableName, QMap<QString, QString> &columns):
+CassTable::CassTable(QString keySpace, QString tableName, QMap<QString, QVariant::Type> &columns):
     m_columns(columns),
     m_tableName(tableName),
     m_keySpace(keySpace)
@@ -46,9 +46,15 @@ bool CassTable::CreateTable(CassSession* session)
 
     querry.createTable(QString("%1.%2").arg(m_keySpace).arg(m_tableName)).
             lbrace();
-    QMap<QString, QString>::const_iterator col = m_columns.constBegin();
+
+    QMap<QString, QVariant::Type>::const_iterator col = m_columns.constBegin();
     while (col != m_columns.constEnd()) {
-        querry.keyType(col.key(), col.value());
+/*Todo:
+Fixme - something smart to convert types is needed. This is a just temporary fix.
+*/
+        QVariant val = col.value();
+        QString name =  QString( val.type() != QVariant::String ? val.typeName() : "text");
+        querry.keyType(col.key(),name);
         ++col;
     }
     querry.primaryKey("key1").rbrace().semicolon();
@@ -57,6 +63,16 @@ bool CassTable::CreateTable(CassSession* session)
 
     return (CASS_OK == execute_query(session, querry.querry().toUtf8().constData()));
 
+}
+
+bool CassTable::DropTable(CassSession *session)
+{
+    BuildQuerry querry;
+    querry.dropTable(QString("%1.%2").arg(m_keySpace).arg(m_tableName));
+
+    qDebug() << querry.querry();
+
+    return (CASS_OK == execute_query(session, querry.querry().toUtf8().constData()));
 }
 
 bool CassTable::CreateKeySpace(CassSession *session)
@@ -69,11 +85,51 @@ bool CassTable::CreateKeySpace(CassSession *session)
     return (CASS_OK == execute_query(session, querry.querry().toUtf8().constData()));
 }
 
-bool CassTable::InsertRow()
+bool CassTable::DropKeySpace(CassSession *session)
 {
-    bool ret = false;
+    BuildQuerry querry;
+    querry.dropKeySpace(m_keySpace);
 
-    return ret;
+    qDebug() << querry.querry();
+
+    return (CASS_OK == execute_query(session, querry.querry().toUtf8().constData()));
+}
+
+bool CassTable::InsertRow(CassSession *session, const QMap<QString, QString> &data)
+{
+    BuildQuerry querry;
+    querry.insertInto(QString("%1.%2").arg(m_keySpace).arg(m_tableName)).lbrace();
+    /*
+     *   INSERT INTO test_keyspace.site (id, name, info)
+            VALUES (uuid(), 'KRUIKSWIJK','Steven')
+            USING TTL 86400 AND TIMESTAMP 123456789;
+          */
+
+    QMap<QString, QString>::const_iterator col = data.constBegin();
+    while (col != data.constEnd()) {
+        querry.key(col.key());
+        ++col;
+        if (col != data.constEnd()) {
+            querry.comma();
+        } else {
+            break;
+        }
+    }
+    querry.rbrace().values().lbrace();
+
+    col = data.constBegin();
+    while (col != data.constEnd()) {
+        querry.value(col.value());
+        ++col;
+        if (col != data.constEnd()) {
+            querry.comma();
+        } else {
+            break;
+        }
+    }
+    querry.rbrace();
+    qDebug() << querry.querry();
+    return (CASS_OK == execute_query(session, querry.querry().toUtf8().constData()));
 }
 
 bool CassTable::UpdateRow()

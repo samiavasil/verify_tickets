@@ -15,8 +15,6 @@
 AJRServer::AJRServer(QObject *parent, const ServerConfigurator& config):
     TCPServer(parent, config)
 {
-    QMap<QString, QString> columns({{"key1","int"},
-                                    {"key2","text"},});
     ParseJsonInput("[{\"mu_id\":1,\"sale_id\":16,\"qr\":\"02496214*19861*2020-01-30*11:01:36*7\",\"code\":\"1016\",\"codename\":\"Единичен. възр.\",\"qty\":\"1\"},{\"mu_id\":1,\"sale_id\":17,\"qr\":\"02496214*19861*2020-01-30*11:01:36*7\",\"code\":\"2323\",\"codename\":\"Нещо си\",\"qty\":\"1\"}]");
 }
 

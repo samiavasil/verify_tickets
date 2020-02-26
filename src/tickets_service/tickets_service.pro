@@ -32,7 +32,8 @@ SOURCES += \
         QRServer.cpp \
         ServerConfigurator.cpp \
         TCPServer.cpp \
-        main.cpp
+        main.cpp \
+    TextMetaType.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -49,4 +50,5 @@ HEADERS += \
     Daemon.h \
     QRServer.h \
     ServerConfigurator.h \
-    TCPServer.h
+    TCPServer.h \
+    TextMetaType.h
