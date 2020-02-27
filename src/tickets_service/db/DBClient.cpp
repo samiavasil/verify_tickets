@@ -79,15 +79,20 @@ void on_host_listener(CassHostListenerEvent event, CassInet inet, void* data) {
     }
 }
 
-DBClient::DBClient(QObject* parent):QObject(parent),
-    m_credentials({ "museum", "cassandra" }),
-    m_hosts("192.168.2.221,192.168.2.222"),
+DBClient::DBClient():m_credentials({ "museum", "cassandra" }),
+    m_hosts("192.168.2.221,192.168.2.222,192.168.4.221,192.168.4.222"),
     m_protocol(4),
     m_cluster(nullptr),
     m_session(nullptr),
     m_connState(NOT_CONNECTED)
 {
 
+}
+
+DBClient &DBClient::Instance()
+{
+    static DBClient m_client;
+    return m_client;
 }
 
 DBClient::~DBClient(){

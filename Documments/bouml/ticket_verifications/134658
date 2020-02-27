@@ -1,6 +1,6 @@
 format 222
 "CassanbdraDB" // CassanbdraDB
-  revision 25
+  revision 28
   modified_by 2 "vvasilev"
   // class settings
   
@@ -248,18 +248,7 @@ CREATE TABLE ${name} ${definition}${comment};
 "
       
       comment "Ajure sakes"
-      attribute 197506 "id"
-	default explicit_type "int"
-	cpp_decl ""
-	java_decl ""
-	php_decl ""
-	python_decl ""
-	idl_decl ""
-	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
-	MysqlColumn
-      end
-
-      attribute 171266 "museum_id"
+      attribute 171266 "mu_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -271,7 +260,7 @@ CREATE TABLE ${name} ${definition}${comment};
       end
 
       attribute 155522 "sale_id"
-	default explicit_type "string"
+	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
 	php_decl ""
@@ -620,7 +609,7 @@ CREATE TABLE ${name} ${definition}${comment};
 "
       
       comment "Describe sites"
-      attribute 162690 "id"
+      attribute 162690 "mu_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -779,6 +768,7 @@ CREATE TABLE ${name} ${definition}${comment};
 "
       attribute 169602 "id"
 	default explicit_type "int"
+	stereotype "PK"
 	cpp_decl ""
 	java_decl ""
 	php_decl ""
@@ -788,7 +778,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 169730 "ajur_sales_id"
+      attribute 169730 "sales_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -799,7 +789,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 169858 "site_id"
+      attribute 169858 "mu_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -860,6 +850,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	    classrelation_ref 177538 // <association>
 	  b role_name "" public
 	    classrelation_ref 177666 // <association>
+	  association_type class_ref 200706 // ajur_Sales
       end
 
       classrelation 177922 // <association>
@@ -882,8 +873,9 @@ CREATE TABLE ${name} ${definition}${comment};
       comment "“аблица на посещени€та по неопределените
 обекти
 "
-      attribute 170242 "id"
+      attribute 170242 "mu_id"
 	default explicit_type "int"
+	stereotype "PK"
 	cpp_decl ""
 	java_decl ""
 	php_decl ""
@@ -893,7 +885,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 170370 "ajur_sales_id"
+      attribute 170370 "sales_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""

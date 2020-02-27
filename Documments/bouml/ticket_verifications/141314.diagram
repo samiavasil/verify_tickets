@@ -3,47 +3,66 @@ format 222
 classinstance 128002 class_ref 147970 // Exporter
   name ""   xyz 50.5051 4.06365 2000 life_line_z 2010
 classinstance 128130 class_ref 161154 // CassandraDB
-  name ""   xyz 593.478 4.06365 2000 life_line_z 2000
+  name ""   xyz 598.478 4 2000 life_line_z 2000
 classinstance 128258 class_ref 154498 // AJRServer
-  name ""   xyz 310.335 5.34496 2000 life_line_z 2000
+  name ""   xyz 251.335 6.34496 2000 life_line_z 2000
+fragment 132482 "alt"
+  xyzwh 225 204 2025 445 427
+  separator 5000
+end
 durationcanvas 128386 classinstance_ref 128002 // :Exporter
-  xyzwh 75 76 2020 11 88
+  xyzwh 75 77 2020 11 890
 end
 durationcanvas 128514 classinstance_ref 128258 // :AJRServer
-  xyzwh 341 76 2010 11 79
+  xyzwh 282 81 2010 11 654
   overlappingdurationcanvas 130562
-    xyzwh 347 79 2020 11 25
+    xyzwh 288 85 2020 11 77
   end
 end
 durationcanvas 131330 classinstance_ref 128130 // :CassandraDB
-  xyzwh 632 113 2010 11 28
+  xyzwh 637 113 2010 11 33
+end
+durationcanvas 132098 classinstance_ref 128130 // :CassandraDB
+  xyzwh 637 162 2010 11 33
 end
 msg 128642 synchronous
   from durationcanvas_ref 128386
   to durationcanvas_ref 128514
-  yz 77 2015 explicitmsg "SendNewOrder"
+  yz 83 2015 explicitmsg "SendNewOrder"
   show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
-  label_xy 186 59
+  label_xy 101 69
 reflexivemsg 130690 synchronous
   to durationcanvas_ref 130562
-  yz 79 2005 explicitmsg "ParseJson"
+  yz 85 2005 explicitmsg "ParseJson"
   show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
-  label_xy 364 64
+  label_xy 305 70
 msg 131458 synchronous
   from durationcanvas_ref 128514
   to durationcanvas_ref 131330
-  yz 113 2015 explicitmsg "WriteOrder"
+  yz 118 2015 explicitmsg "InsertRowInAjur_Sales"
   show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
-  label_xy 462 95
+  args "\"INSERT INTO test_keyspace_xx.test_table_new ( code, codename, mu_id, qr, qty, sale_id, timestam_in, transfered ) VALUES ( '1003', '             ', 1, '35767', 2, 63, 0, false )\""
+  label_xy 315 106
 msg 131586 return
   from durationcanvas_ref 131330
   to durationcanvas_ref 128514
-  yz 130 2015 unspecifiedmsg
+  yz 135 2015 unspecifiedmsg
   show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
 msg 131970 return
   from durationcanvas_ref 128514
   to durationcanvas_ref 128386
-  yz 144 2025 explicitmsg "OrderAccepted"
+  yz 722 2025 explicitmsg "OrderAccepted"
   show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
-  label_xy 172 126
+  label_xy 172 704
+msg 132226 synchronous
+  from durationcanvas_ref 128514
+  to durationcanvas_ref 132098
+  yz 166 2015 explicitmsg "ReadCodeType"
+  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
+  label_xy 322 152
+msg 132354 return
+  from durationcanvas_ref 132098
+  to durationcanvas_ref 128514
+  yz 184 2020 unspecifiedmsg
+  show_full_operations_definition default show_class_of_operation default drawing_language default show_context_mode default
 end

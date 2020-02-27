@@ -2,8 +2,8 @@
 
 const Configurator &Configurator::Instance()
 {
-    static Configurator m_cfg;
-    return m_cfg;
+    static Configurator m_inst;
+    return m_inst;
 }
 
 Configurator::Configurator()

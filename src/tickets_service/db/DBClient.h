@@ -19,10 +19,8 @@ public:
         CONNECTED
     };
 
-    explicit DBClient(QObject* parent = nullptr);
-
+    static DBClient& Instance();
     virtual ~DBClient();
-
     bool connectSession();
 
     QString hosts() const;
@@ -37,6 +35,8 @@ public:
     connectionState connState() const;
 
     CassSession *session() const;
+protected:
+    DBClient();
 
 protected:
     Credentials m_credentials;

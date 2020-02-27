@@ -22,16 +22,22 @@ LIBS += -L$${EXT_PATH}
 LIBS        += -lcassandra_static -lz -lssl -lcrypto -luv
 
 SOURCES += \
-        AJRSale.cpp \
         AJRServer.cpp \
-        BuildQuerry.cpp \
-        CassTable.cpp \
         Configurator.cpp \
-        DBClient.cpp \
-        Daemon.cpp \
+         Daemon.cpp \
         QRServer.cpp \
         ServerConfigurator.cpp \
         TCPServer.cpp \
+    db/AJRSale.cpp \
+    db/BuildQuery.cpp \
+    db/CassTable.cpp \
+    db/CodeAccessInfo.cpp \
+    db/DBClient.cpp \
+    db/DeadTickets.cpp \
+    db/FiscUnit.cpp \
+    db/MapQVarCass.cpp \
+    db/SiteDescriptor.cpp \
+    db/SoldAccess.cpp \
         main.cpp \
     TextMetaType.cpp
 
@@ -41,14 +47,21 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    AJRSale.h \
     AJRServer.h \
-    BuildQuerry.h \
-    CassTable.h \
     Configurator.h \
-    DBClient.h \
     Daemon.h \
     QRServer.h \
     ServerConfigurator.h \
     TCPServer.h \
-    TextMetaType.h
+    TextMetaType.h \
+    db/AJRSale.h \
+    db/BuildQuery.h \
+    db/CassTable.h \
+    db/CodeAccessInfo.h \
+    db/DBClient.h \
+    db/DeadTickets.h \
+    db/FiscUnit.h \
+    db/MapQVarCass.h \
+    db/MapQvarCassCfg.h \
+    db/SiteDescriptor.h \
+    db/SoldAccess.h
