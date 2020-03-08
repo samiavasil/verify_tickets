@@ -23,3 +23,6 @@ https://shermandigital.com/blog/designing-a-cassandra-data-model/
 [[https://docs.datastax.com/en/developer/cpp-driver/2.15/topics/configuration/#host-state-changes|Notify on nodes changes]]
 
 
+[[https://hostadvice.com/how-to/how-to-install-apache-cassandra-on-an-ubuntu-18-04-vps/|How to Install Apache Cassandra on an Ubuntu 18.04 VPS or Dedicated Server]]
+
+[[https://www.digitalocean.com/community/questions/how-to-setup-a-mosquitto-mqtt-server-and-receive-data-from-owntracks|How to setup a Mosquitto MQTT Server and receive data from OwnTracks]]

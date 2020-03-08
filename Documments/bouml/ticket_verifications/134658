@@ -1,6 +1,6 @@
 format 222
 "CassanbdraDB" // CassanbdraDB
-  revision 28
+  revision 31
   modified_by 2 "vvasilev"
   // class settings
   
@@ -525,17 +525,6 @@ viber_image_2020-02-15_14-08-42.jpg"
 CREATE TABLE ${name} ${definition}${comment};
 "
       
-      attribute 224642 "id"
-	default explicit_type "int"
-	cpp_decl ""
-	java_decl ""
-	php_decl ""
-	python_decl ""
-	idl_decl ""
-	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
-	MysqlColumn
-      end
-
       attribute 224770 "code"
 	default explicit_type "string"
 	cpp_decl ""
@@ -580,8 +569,9 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 225282 "site_id"
+      attribute 225282 "site_ids"
 	default explicit_type "int"
+	stereotype "list"
 	cpp_decl ""
 	java_decl ""
 	php_decl ""
@@ -609,7 +599,7 @@ CREATE TABLE ${name} ${definition}${comment};
 "
       
       comment "Describe sites"
-      attribute 162690 "mu_id"
+      attribute 162690 "site_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -689,6 +679,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	    classrelation_ref 170114 // <association>
 	  b role_name "" public
 	    classrelation_ref 170242 // <association>
+	  association_type class_ref 220290 // Sold_access
       end
 
       classrelation 177666 // <association>
@@ -800,19 +791,8 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 238466 "qr"
-	default explicit_type "string"
-	cpp_decl ""
-	java_decl ""
-	php_decl ""
-	python_decl ""
-	idl_decl ""
-	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
-	MysqlColumn
-      end
-
-      attribute 170114 "timestamp"
-	default explicit_type "date"
+      attribute 244994 "site_id"
+	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
 	php_decl ""
@@ -824,6 +804,30 @@ CREATE TABLE ${name} ${definition}${comment};
 
       attribute 238338 "door_id"
 	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 245122 "used_cnt"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+	comment "Kolko choweka sa minali s tozi bilet Ako qty > 1.
+Timestamp i used_cnt za broenen na horata w ramkite na wreme."
+      end
+
+      attribute 170114 "timestamp"
+	default explicit_type "date"
 	cpp_decl ""
 	java_decl ""
 	php_decl ""
@@ -896,7 +900,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 170626 "dead"
+      attribute 170626 "live_ctr"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -961,17 +965,6 @@ CREATE TABLE ${name} ${definition}${comment};
 CREATE TABLE ${name} ${definition}${comment};
 "
       
-      attribute 211074 "id"
-	default explicit_type "int"
-	cpp_decl ""
-	java_decl ""
-	php_decl ""
-	python_decl ""
-	idl_decl ""
-	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
-	MysqlColumn
-      end
-
       attribute 211202 "fisc_str"
 	default explicit_type "string"
 	cpp_decl ""
@@ -985,17 +978,6 @@ CREATE TABLE ${name} ${definition}${comment};
 
       attribute 211330 "name_address"
 	default explicit_type "string"
-	cpp_decl ""
-	java_decl ""
-	php_decl ""
-	python_decl ""
-	idl_decl ""
-	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
-	MysqlColumn
-      end
-
-      attribute 211458 "cassandra_node_id"
-	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
 	php_decl ""

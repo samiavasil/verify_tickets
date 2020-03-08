@@ -7,3 +7,4 @@ Created понеделник 24 февруари 2020
 
 ===== Типове Билети =====
 [[./TicketsTypes.jpg|TicketsTypes]]
+
