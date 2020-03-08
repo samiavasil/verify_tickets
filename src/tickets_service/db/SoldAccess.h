@@ -10,8 +10,20 @@ typedef struct{
 class SoldAccess : public CassTable
 {
 public:
+
+    typedef enum {
+        ID,
+        MUSEUM_ID,
+        SALE_ID,
+        SITE_ID,
+        DOOR_ID,
+        USED_CNT,
+        LIFETIME,
+        FAIL_OVER_FLAG,
+        TIMESTAMP
+    } Column_t;
     static SoldAccess& Instance();
-    bool InserRowInSoldAccessTable(SoldAccess_t &data);
+    bool InserRowInSoldAccessTable(QMap<SoldAccess::Column_t, QVariant> &row);
 protected:
     SoldAccess(QString keySpace, QString tableName);
 };

@@ -14,10 +14,18 @@ typedef struct {
 class CodeAccessInfo: public CassTable
 {
 public:
-    static CodeAccessInfo& Instance();
-    bool InserRowInCodeAccessTable(CodeAccess_t &data);
+    typedef enum {
+        CODE,
+        CODENAME,
+        INFO,
+        DEADLEVEL,
+        MUIDS,
+    } Column_t;
 
+    static CodeAccessInfo& Instance();
     bool PrepareCodeAccessTable();
+    bool InserRowInCodeAccessTable(QMap<CodeAccessInfo::Column_t, QVariant> &row);
+
 protected:
     CodeAccessInfo(QString keySpace, QString tableName);
 };

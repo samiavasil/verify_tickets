@@ -146,32 +146,40 @@ bool MapQVarCass::convertQVariantToStrout(const QVariant &in, QVariant::Type typ
         break;
     }
     case QVariant::List:  {
-#if 0
-        QVariant list;
-        if (cass_value_is_collection(in)) {
 
-            res = list;
+        if (in.canConvert<QVariantList>()) {
+
+            QSequentialIterable iterable = in.value<QSequentialIterable>();
+            QSequentialIterable::const_iterator it = iterable.begin();
+            const QSequentialIterable::const_iterator end = iterable.end();
+
             ret = true;
-            //////////////////////////////
-            CassIterator* items_iterator = nullptr;
-            cass_int32_t output;
-            items_iterator = cass_iterator_from_collection(in);
-            while (cass_iterator_next(items_iterator)) {
-                const CassValue * val = cass_iterator_get_value(items_iterator);
-                output = -1;
+            res = "{";
 
-                if (cass_value_type(val) == CASS_VALUE_TYPE_INT) {
-                    cass_value_get_int32(val, &output);
+            for ( ; it != end;) {
+                switch ((*it).type()) {
+                case QVariant::Int:
+                    res.append(QString("%1").arg((*it).toInt()));
+                    break;
+                case QVariant::String:
+                    res.append(QString("'%1'").arg((*it).toString()));
+                    break;
+                default:
+                    qDebug() << __func__<< ":" << __LINE__<< "Error: Not defined for type " << (*it).type();
+                    ret = false;
+                    break;
                 }
-                qDebug() << "item: " << output;
+
+                ++it;
+                if (it != end) {
+                    res.append(",");
+                }
             }
-            cass_iterator_free(items_iterator);
-
-
-            /////////////////////////////////
-
+            res.append("}");
+        } else {
+            qDebug() << __func__ << "Error in Line " <<__LINE__ << "Can't get variant list";
         }
-#endif
+
         break;
     }
     default: {

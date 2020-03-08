@@ -11,7 +11,7 @@
     } while(0)
 
 CassTable::CassTable(QString keySpace, QString tableName,
-                     const QMap<QString,QVariant::Type> &columns,
+                     const QList<QPair<QString, QVariant::Type> > &columns,
                      const QString& primKeys):
     m_columns(columns),
     m_tableName(tableName),
@@ -79,14 +79,14 @@ bool CassTable::CreateTable()
     query.createTable(QString("%1.%2").arg(m_keySpace).arg(m_tableName)).
             lbrace();
 
-    QMap<QString, QVariant::Type>::const_iterator col = m_columns.constBegin();
+   auto col = m_columns.constBegin();
     while (col != m_columns.constEnd()) {
-        if( col.value() == QVariant::List) {
+        if( col->second == QVariant::List) {
             //TODO: Fix me for any list type
             //MapQVarCass::qvarTypeCassName(col.value())
-            query.collectionSetType(col.key(),"INT" );
+            query.collectionSetType(col->first,"INT" );
         } else {
-            query.keyType(col.key(),MapQVarCass::qvarTypeCassName(col.value()));
+            query.keyType(col->first,MapQVarCass::qvarTypeCassName(col->second));
         }
 
         ++col;
@@ -226,15 +226,15 @@ bool  CassTable::SelectFromTable(const QString &filter, QMap<QString, QVariant> 
         while (cass_iterator_next(rows)) {
 
             QVariant res;
-            QMap<QString, QVariant::Type>::const_iterator col = m_columns.constBegin();
+            auto col = m_columns.constBegin();
             qDebug() << "===============================================";
             while (col != m_columns.constEnd()) {
 
                 row = cass_iterator_get_row(rows);
-                col_val = cass_row_get_column_by_name(row, col.key().toUtf8().
+                col_val = cass_row_get_column_by_name(row, col->first.toUtf8().
                                                       constData());
-                MapQVarCass::convertCassToQVariant(col_val, col.value(), res);
-                qDebug() << col.key() << ": " << res.toString();
+                MapQVarCass::convertCassToQVariant(col_val, col->second, res);
+                qDebug() << col->first << ": " << res.toString();
                 ++col;
             }
         }

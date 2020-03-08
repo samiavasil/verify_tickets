@@ -4,17 +4,6 @@
 #include "CassTable.h"
 #include <QDateTime>
 
-typedef struct {
-    int mu_id  ;
-    int sale_id;
-    int qty;
-    QString qr;
-    QString code;
-    QString codename;
-} Ajr_data_t;
-
-
-
 class AJRSale : public CassTable
 {
 public:
@@ -31,8 +20,7 @@ public:
     } Column_t;
 
     static AJRSale& Instance();
-    bool InserRowInSalesTable(Ajr_data_t &data);
-    bool inserRowInSalesTable(QMap<AJRSale::Column_t, QVariant> &row);
+    bool InserRowInSalesTable(QMap<AJRSale::Column_t, QVariant> &row);
 
     static inline  QVariant createMuId(int mu_id);
     static inline  QVariant createSaleId(int sale_id);

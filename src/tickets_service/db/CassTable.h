@@ -2,6 +2,7 @@
 #define CASSTABLE_H
 
 #include<QMap>
+#include<QPair>
 #include<QVariant>
 #include<QString>
 #include <cassandra.h>
@@ -10,7 +11,7 @@ class CassTable
 {
 public:
     explicit CassTable(QString keySpace, QString tableName,
-                       const QMap<QString, QVariant::Type> &columns,
+                       const QList<QPair<QString, QVariant::Type>> &columns,
                        const QString& primKeys);
     virtual ~CassTable();
 
@@ -29,7 +30,7 @@ public:
     virtual bool SelectFromTable(const QString &filter, QMap<QString, QVariant> &result);
 
 protected:
-    const QMap<QString, QVariant::Type> m_columns;
+    const QList<QPair<QString, QVariant::Type>> m_columns;
     QString m_tableName;
     QString m_keySpace;
     QString m_primKeys;

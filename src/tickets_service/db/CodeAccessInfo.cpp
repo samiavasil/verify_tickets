@@ -1,12 +1,6 @@
 #include "CodeAccessInfo.h"
+#include "MapQVarCass.h"
 #include <QDebug>
-
-#define CODE         "code"
-#define CODENAME     "codename"
-#define INFO         "info"
-#define DEADLEVEL "deadlevel"
-#define MUIDS   "mu_ids"
-
 
 #define ASSERT_ERROR(text, check)  do { \
     bool ok = (check); \
@@ -18,16 +12,18 @@
     } \
     while (0)
 
-static const QMap<QString, QVariant::Type> columns({
-                                                     {CODE        , QVariant::String},
-                                                     {CODENAME    , QVariant::String},
-                                                     {INFO        , QVariant::String},
-                                                     {DEADLEVEL   , QVariant::Int},
-                                                     {MUIDS       , QVariant::List},
+
+static const QMap<CodeAccessInfo::Column_t, QPair<QString, QVariant::Type>> colType(
+                                                    {
+                                                       {CodeAccessInfo::CODE,      {"code",      QVariant::String}  },
+                                                       {CodeAccessInfo::CODENAME,  {"codename",  QVariant::String}  },
+                                                       {CodeAccessInfo::INFO,      {"info",      QVariant::String}     },
+                                                       {CodeAccessInfo::DEADLEVEL, {"deadlevel", QVariant::Int} },
+                                                       {CodeAccessInfo::MUIDS,     {"mu_ids",    QVariant::List}    },
                                                    });
 
 CodeAccessInfo::CodeAccessInfo(QString keySpace, QString tableName):
-    CassTable(keySpace, tableName, columns, "code, codename, deadlevel")
+    CassTable(keySpace, tableName, colType.values(), "code")
 {
 
 }
@@ -38,44 +34,108 @@ CodeAccessInfo &CodeAccessInfo::Instance()
     return codeAccessInfo;
 }
 
-bool CodeAccessInfo::InserRowInCodeAccessTable(CodeAccess_t &data) {
-    QMap<QString, QString> row;
-
-    row.insert(CODE     , QString("'%1'").arg(data.code).toUtf8().constData());
-    row.insert(CODENAME , QString("'%1'").arg(data.codename).toUtf8().constData());
-    row.insert(INFO     , QString("'%1'").arg(data.info).toUtf8().constData());
-    row.insert(DEADLEVEL, QString("%1").arg(data.deadLevel).toUtf8().constData());
-    QString muids;
-    foreach(auto mu_id, data.muIDs) {
-        if (!muids.isEmpty()) {
-            muids.append(", ");
-        }
-        muids.append(QString("%1").arg(mu_id));
+bool CodeAccessInfo::InserRowInCodeAccessTable(QMap<CodeAccessInfo::Column_t , QVariant> &row)
+{
+    QMap<QString, QString> row_str;
+    auto col = row.constBegin();
+    while (col != row.constEnd()) {
+        QString str;
+        MapQVarCass::convertQVariantToStrout(col.value(), colType.value(col.key()).second, str);
+        row_str.insert(colType.value(col.key()).first, str);
+        col++;
     }
-    muids.prepend("{");
-    muids.append("}");
-    row.insert(MUIDS   , QString("%1").arg(muids).toUtf8().constData());
-
-    return InsertRow(row);
+    return InsertRow(row_str);
 }
 
 bool CodeAccessInfo::PrepareCodeAccessTable() {
-    const QList<CodeAccess_t> dataList =  {
-        {"1016", "Единичен Възр.", "Цена 6лв", 0, {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17} },
-        {"1003", "Единичен Дете.", "Цена 3лв", 0, {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17} },
-        {"1118", "Арх. + Етн. Възр.", "Цена 8лв", 0, {1,2} },
-        {"1104", "Арх. + Етн. Дете", "Цена 4лв", 0, {1,2} },
-        {"11110", "Арх. + Стефан Възр.", "Цена 10лв", 0, {1,3} },
-        {"11105", "Арх. + Стефан Дете", "Цена 5лв", 0, {1,3} },
-        {"11115", "Арх. + Стефан + 2 Възр.", "Цена 15лв", 2, {1,3} },
-        {"11108", "Арх. + Стефан + 2  Дете", "Цена 8лв", 2, {1,3} },
-        {"111018", "Всички 6 църкви  Възр.", "Цена 18лв", 2, {4,5,6,7,8,9} },
-        {"11009", "Всички 6 църкви  Дете", "Цена 9лв", 2, {4,5,6,7,8,9} },
-        {"11125", "Всички 6 църкви  Възр.", "Цена 25лв", 2, {10,11,12,13,14,15,16,17} },
-        {"11012", "Всички 6 църкви  Дете", "Цена 12лв", 2, {10,11,12,13,14,15,16,17} },
+
+    const QList<QMap<CodeAccessInfo::Column_t , QVariant>> dataList =  {
+        {
+            {CodeAccessInfo::CODE,      "1016"},
+            {CodeAccessInfo::CODENAME,  "Единичен Възр."},
+            {CodeAccessInfo::INFO,      "Цена 6лв"},
+            {CodeAccessInfo::DEADLEVEL, 0},
+            {CodeAccessInfo::MUIDS,     QVariant::fromValue<QList<int>>({1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17})}
+        },
+        {
+            {CodeAccessInfo::CODE,      "1003"},
+            {CodeAccessInfo::CODENAME,  "Единичен Дете."},
+            {CodeAccessInfo::INFO,      "Цена 3лв"},
+            {CodeAccessInfo::DEADLEVEL, 0},
+            {CodeAccessInfo::MUIDS,     QVariant::fromValue<QList<int>>({1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17})}
+        },
+        {
+            {CodeAccessInfo::CODE,     "1118"},
+            {CodeAccessInfo::CODENAME, "Арх. + Етн. Възр."},
+            {CodeAccessInfo::INFO,     "Цена 8лв"},
+            {CodeAccessInfo::DEADLEVEL,0},
+            {CodeAccessInfo::MUIDS,    QVariant::fromValue<QList<int>>({1,2})}
+        },
+        {
+            {CodeAccessInfo::CODE,     "1104"},
+            {CodeAccessInfo::CODENAME, "Арх. + Етн. Дете"},
+            {CodeAccessInfo::INFO,     "Цена 4лв"},
+            {CodeAccessInfo::DEADLEVEL,0},
+            {CodeAccessInfo::MUIDS,    QVariant::fromValue<QList<int>>({1,2})}
+        },
+        {
+            {CodeAccessInfo::CODE,     "11110"},
+            {CodeAccessInfo::CODENAME, "Арх. + Стефан Възр."},
+            {CodeAccessInfo::INFO,     "Цена 10лв"},
+            {CodeAccessInfo::DEADLEVEL,0},
+            {CodeAccessInfo::MUIDS,    QVariant::fromValue<QList<int>>({1,3})}
+        },
+        {
+            {CodeAccessInfo::CODE,     "11105"},
+            {CodeAccessInfo::CODENAME, "Арх. + Стефан Дете"},
+            {CodeAccessInfo::INFO,     "Цена 5лв"},
+            {CodeAccessInfo::DEADLEVEL,0},
+            {CodeAccessInfo::MUIDS,    QVariant::fromValue<QList<int>>({1,3})}
+        },
+        {
+            {CodeAccessInfo::CODE,     "11115"},
+            {CodeAccessInfo::CODENAME, "Арх. + Стефан + 2 Възр."},
+            {CodeAccessInfo::INFO,     "Цена 15лв"},
+            {CodeAccessInfo::DEADLEVEL,2},
+            {CodeAccessInfo::MUIDS,    QVariant::fromValue<QList<int>>({1,3})}
+        },
+        {
+            {CodeAccessInfo::CODE,     "11108"},
+            {CodeAccessInfo::CODENAME, "Арх. + Стефан + 2  Дете"},
+            {CodeAccessInfo::INFO,     "Цена 8лв"},
+            {CodeAccessInfo::DEADLEVEL,2},
+            {CodeAccessInfo::MUIDS,    QVariant::fromValue<QList<int>>({1,3})}
+        },
+        {
+            {CodeAccessInfo::CODE,     "111018"},
+            {CodeAccessInfo::CODENAME, "Всички 6 църкви  Възр."},
+            {CodeAccessInfo::INFO,     "Цена 18лв"},
+            {CodeAccessInfo::DEADLEVEL,0},
+            {CodeAccessInfo::MUIDS,    QVariant::fromValue<QList<int>>({4,5,6,7,8,9})}
+        },
+        {
+            {CodeAccessInfo::CODE,     "11009"},
+            {CodeAccessInfo::CODENAME, "Всички 6 църкви  Дете"},
+            {CodeAccessInfo::INFO,     "Цена 9лв"},
+            {CodeAccessInfo::DEADLEVEL,0},
+            {CodeAccessInfo::MUIDS,    QVariant::fromValue<QList<int>>({4,5,6,7,8,9})}
+        },
+        {
+            {CodeAccessInfo::CODE,     "11125"},
+            {CodeAccessInfo::CODENAME, "Всички 8 музея  Възр."},
+            {CodeAccessInfo::INFO,     "Цена 25лв"},
+            {CodeAccessInfo::DEADLEVEL,0},
+            {CodeAccessInfo::MUIDS,    QVariant::fromValue<QList<int>>({10,11,12,13,14,15,16,17})}
+        },
+        {
+            {CodeAccessInfo::CODE,     "11012"},
+            {CodeAccessInfo::CODENAME, "Всички 8 музея  Дете"},
+            {CodeAccessInfo::INFO,     "Цена 12лв"},
+            {CodeAccessInfo::DEADLEVEL,0},
+            {CodeAccessInfo::MUIDS,    QVariant::fromValue<QList<int>>({10,11,12,13,14,15,16,17})}
+        },
     };
-
-
+        qDebug() << dataList[0].value(CodeAccessInfo::MUIDS).type();
     foreach (auto data, dataList) {
        ASSERT_ERROR("Insert row: ",InserRowInCodeAccessTable(data));
     }

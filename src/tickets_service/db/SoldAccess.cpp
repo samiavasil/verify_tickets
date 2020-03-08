@@ -1,30 +1,19 @@
+#include "MapQVarCass.h"
 #include "SoldAccess.h"
 
-#define ID             "id"
-#define MUSEUM_ID      "mu_id"
-#define SALE_ID        "sale_id"
-#define SITE_ID        "site_id"
-#define DOOR_ID        "door_id"
-#define USED_CNT       "used_cnt"
-#define LIFETIME       "lifetime"
-#define FAIL_OVER_FLAG "fail_over_flag"
-#define TIMESTAMP      "timestamp"
-
-
-
-
-
-static const QMap<QString, QVariant::Type> columns({   {ID, QVariant::Uuid},
-                                                       {MUSEUM_ID, QVariant::Int},
-                                                       {SALE_ID, QVariant::Int},
-                                                       {SITE_ID, QVariant::Int},
-                                                       {DOOR_ID, QVariant::Int},
-                                                       {USED_CNT, QVariant::Int},
-                                                       {LIFETIME, QVariant::Int},
-                                                       {FAIL_OVER_FLAG, QVariant::Bool},
-                                                       {TIMESTAMP, QVariant::DateTime},
-                                                   });
-
+static const QMap<SoldAccess::Column_t, QPair<QString, QVariant::Type>> colType(
+{
+            {SoldAccess::ID,             {"id", QVariant::Uuid}      },
+            {SoldAccess::MUSEUM_ID,      {"mu_id", QVariant::Int}},
+            {SoldAccess::SALE_ID,        {"sale_id", QVariant::Int}  },
+            {SoldAccess::SITE_ID,        {"site_id", QVariant::Int}  },
+            {SoldAccess::DOOR_ID,        {"door_id", QVariant::Int}  },
+            {SoldAccess::USED_CNT,       {"used_cnt", QVariant::Int} },
+            {SoldAccess::LIFETIME,       {"lifetime", QVariant::Int} },
+            {SoldAccess::FAIL_OVER_FLAG, {"fail_over_flag", QVariant::Bool} },
+            {SoldAccess::TIMESTAMP,      {"timestamp", QVariant::DateTime} }
+        }
+        );
 
 SoldAccess &SoldAccess::Instance()
 {
@@ -33,22 +22,20 @@ SoldAccess &SoldAccess::Instance()
 }
 
 SoldAccess::SoldAccess(QString keySpace, QString tableName):
-    CassTable(keySpace, tableName, columns, "(id)")
+    CassTable(keySpace, tableName, colType.values(), "(id)")
 {
 
 }
 
-bool SoldAccess::InserRowInSoldAccessTable(SoldAccess_t &data) {
-    QMap<QString, QString> row;
-
-    row.insert(ID, "uuid()");
-    row.insert(MUSEUM_ID, QString("%1").arg(data.mu_id).toUtf8().constData());
-    row.insert(SALE_ID, QString("%1").arg(data.sale_id).toUtf8().constData());
-    /*=======================*/
-    row.insert(DOOR_ID, QString("%1").arg(-1).toUtf8().constData());
-    row.insert(LIFETIME, "0");
-    row.insert(FAIL_OVER_FLAG, "false");
-    row.insert(TIMESTAMP, "0");
-
-    return InsertRow(row);
+bool SoldAccess::InserRowInSoldAccessTable(QMap<SoldAccess::Column_t , QVariant> &row)
+{
+    QMap<QString, QString> row_str;
+    auto col = row.constBegin();
+    while (col != row.constEnd()) {
+        QString str;
+        MapQVarCass::convertQVariantToStrout(col.value(), colType.value(col.key()).second, str);
+        row_str.insert(colType.value(col.key()).first, str);
+        col++;
+    }
+    return InsertRow(row_str);
 }

@@ -5,6 +5,20 @@
 class SiteDescriptor : public CassTable
 {
 public:
+    typedef enum {
+        MU_ID,
+        NAME,
+        INFO,
+        ACCESS_TYPE,
+        OBJ_TYPE,
+        DOORS,
+    } Column_t;
+
+    static SiteDescriptor& Instance();
+    bool PrepareSiteDescriptorTable();
+    bool InserRowInSiteDescriptorTable(QMap<SiteDescriptor::Column_t, QVariant> &row);
+
+protected:
     SiteDescriptor(QString keySpace, QString tableName);
 };
 
