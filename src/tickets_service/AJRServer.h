@@ -12,11 +12,11 @@ public:
 protected:
     virtual void Receive();
     inline bool ParseJsonInput(QByteArray &buff, QList<QMap<AJRSale::Column_t, QVariant> > &out);
+    bool TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &data);
     bool ProcessAjurData(QList<QMap<AJRSale::Column_t , QVariant>> &data);
 
 protected:
     int m_lastId;
-
 };
 
 #endif // AJRSERVER_H

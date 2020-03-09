@@ -79,28 +79,37 @@ bool MapQVarCass::convertCassToQVariant(const CassValue *in, QVariant::Type type
         break;
     }
     case QVariant::List:  {
-        QVariant list;
+        QVariantList list;
         if (cass_value_is_collection(in)) {
 
-            res = list;
-            ret = true;
+
             //////////////////////////////
             CassIterator* items_iterator = nullptr;
-            cass_int32_t output;
+
             items_iterator = cass_iterator_from_collection(in);
             while (cass_iterator_next(items_iterator)) {
                 const CassValue * val = cass_iterator_get_value(items_iterator);
-                output = -1;
 
-                if (cass_value_type(val) == CASS_VALUE_TYPE_INT) {
+                switch (cass_value_type(val)) {
+
+                case  CASS_VALUE_TYPE_INT: {
+                    cass_int32_t output = -1;
                     cass_value_get_int32(val, &output);
+                    list.append(output);
+                    qDebug() << "item: " << output;
+                    break;
                 }
-                qDebug() << "item: " << output;
+                default:
+                    qDebug() <<__func__ << ":" << __LINE__
+                            << " Undefined type: " << cass_value_type(val);
+                    break;
+                }
+
             }
             cass_iterator_free(items_iterator);
-
-
             /////////////////////////////////
+            res = list;
+            ret = true;
 
         }
         break;
@@ -119,7 +128,6 @@ bool MapQVarCass::convertQVariantToStrout(const QVariant &in, QVariant::Type typ
 
     switch (type) {
 
-    case QVariant::Uuid:
     case QVariant::String: {
         res = QString("'%1'").arg(in.toString());
         ret = true;
@@ -141,6 +149,11 @@ bool MapQVarCass::convertQVariantToStrout(const QVariant &in, QVariant::Type typ
         break;
     }
     case QVariant::DateTime:  {
+        res = in.toString();
+        ret = true;
+        break;
+    }
+    case QVariant::Uuid:  {
         res = in.toString();
         ret = true;
         break;

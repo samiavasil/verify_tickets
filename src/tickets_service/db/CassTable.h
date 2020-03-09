@@ -27,7 +27,8 @@ public:
     virtual bool DropKeySpace();
     virtual bool InsertRow(const QMap<QString, QString> &data);
     virtual bool UpdateRow();
-    virtual bool SelectFromTable(const QString &filter, QMap<QString, QVariant> &result);
+    virtual bool SelectFromTable(QList<QMap<QString, QVariant>> &result,
+                                 const QString &filter="*", const QString &where=QString());
 
 protected:
     const QList<QPair<QString, QVariant::Type>> m_columns;

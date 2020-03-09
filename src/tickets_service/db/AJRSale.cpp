@@ -14,14 +14,14 @@
 
 static const QMap<AJRSale::Column_t, QPair<QString, QVariant::Type>> colType(
                                                     {
-                                                       {AJRSale::MU_ID,       {MUSEUM_ID_STR,    QVariant::Int}     },
-                                                       {AJRSale::SALE_ID,     {SALE_ID_STR,      QVariant::Int}     },
-                                                       {AJRSale::QR,          {QR_STR,           QVariant::String}  },
-                                                       {AJRSale::CODE,        {CODE_STR,         QVariant::String}  },
-                                                       {AJRSale::CODENAME,    {CODENAME_STR,     QVariant::String}  },
-                                                       {AJRSale::QTY,         {QTY_STR,          QVariant::Int}     },
+                                                       {AJRSale::MU_ID,       {MUSEUM_ID_STR,    QVariant::Int}      },
+                                                       {AJRSale::SALE_ID,     {SALE_ID_STR,      QVariant::Int}      },
+                                                       {AJRSale::QR,          {QR_STR,           QVariant::String}   },
+                                                       {AJRSale::CODE,        {CODE_STR,         QVariant::String}   },
+                                                       {AJRSale::CODENAME,    {CODENAME_STR,     QVariant::String}   },
+                                                       {AJRSale::QTY,         {QTY_STR,          QVariant::Int}      },
                                                        {AJRSale::TIMESTAMP_IN,{TIMESTAMP_IN_STR, QVariant::DateTime} },
-                                                       {AJRSale::TRANSFERED,  {TRANSFERED_STR,   QVariant::Bool}    },
+                                                       {AJRSale::TRANSFERED,  {TRANSFERED_STR,   QVariant::Bool}     },
                                                    });
 
 AJRSale &AJRSale::Instance()

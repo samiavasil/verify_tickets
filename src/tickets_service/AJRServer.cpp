@@ -9,6 +9,8 @@
 #include "db/SiteDescriptor.h"
 #include "db/SoldAccess.h"
 
+#include<QDebug>
+
 #define MUSEUM_ID_STR    "mu_id"
 #define MSALE_ID_STR      "sale_id"
 #define QR_STR           "qr"
@@ -43,44 +45,41 @@ AJRServer::AJRServer(QObject *parent, const ServerConfigurator& config):
 {
     //TODO: Move me
 
-    qDebug() << "Create KeySpace: " << AJRSale::Instance().CreateKeySpace();
+    //   qDebug() << "Create KeySpace: " << AJRSale::Instance().CreateKeySpace();
 
     // qDebug() << "Drop Table AJRSale::Instance(): " << AJRSale::Instance().DropTable();
-    qDebug() << "Create Table ajrSale: " << AJRSale::Instance().CreateTable();
+    //    qDebug() << "Create Table ajrSale: " << AJRSale::Instance().CreateTable();
 
-    QMap<QString, QVariant> result;
-    qDebug() << "Dump Table " << AJRSale::Instance().SelectFromTable(QString("*"), result);
+    QList<QMap<QString, QVariant>> result;
+    qDebug() << "Dump Table " << AJRSale::Instance().SelectFromTable(result);
 
 
-    // qDebug() << "Drop Table codeAccessInfo: " << codeAccessInfo.DropTable();
+    qDebug() << "Drop Table codeAccessInfo: " << CodeAccessInfo::Instance().DropTable();
     qDebug() << "Create Table code_Access_info: " << CodeAccessInfo::Instance().CreateTable();
     qDebug() << "Prepare Table code_Access_info: " << CodeAccessInfo::Instance().PrepareCodeAccessTable();
 
-    qDebug() << "Dump Table CodeAccessInfo" << CodeAccessInfo::Instance().SelectFromTable(QString("*"), result);
+    qDebug() << "Dump Table CodeAccessInfo" << CodeAccessInfo::Instance().SelectFromTable(result);
 
 
     DeadTickets deadTickets("test_keyspace_xx", "deadTickets");
     // qDebug() << "Drop Table deadTickets: " << deadTickets.DropTable();
-    qDebug() << "Create Table deadTickets: " << deadTickets.CreateTable();
+    //   qDebug() << "Create Table deadTickets: " << deadTickets.CreateTable();
 
 
     // qDebug() << "Drop Table fiscUnit: " << fiscUnit.DropTable();
-    qDebug() << "Create Table fiscUnit: " << FiscUnit::Instance().CreateTable();
-    qDebug() << "PrepareFiscUnitTable: " << FiscUnit::Instance().PrepareFiscUnitTable();
+    //    qDebug() << "Create Table fiscUnit: " << FiscUnit::Instance().CreateTable();
+    //   qDebug() << "PrepareFiscUnitTable: " << FiscUnit::Instance().PrepareFiscUnitTable();
 
     // qDebug() << "Drop Table siteDescriptor: " << siteDescriptor.DropTable();
-    qDebug() << "Create Table SiteDescriptor: " << SiteDescriptor::Instance().CreateTable();
-    qDebug() << "PrepareSiteDescriptorTable: " << SiteDescriptor::Instance().PrepareSiteDescriptorTable();
+    //   qDebug() << "Create Table SiteDescriptor: " << SiteDescriptor::Instance().CreateTable();
+    //   qDebug() << "PrepareSiteDescriptorTable: " << SiteDescriptor::Instance().PrepareSiteDescriptorTable();
 
-    // qDebug() << "Drop Table soldAccess: " << soldAccess.DropTable();
-    qDebug() << "Create Table soldAccess: " << SoldAccess::Instance().CreateTable();
+    //   qDebug() << "Drop Table soldAccess: " << SoldAccess::Instance().DropTable();
+    //   qDebug() << "Create Table soldAccess: " << SoldAccess::Instance().CreateTable();
 
-    /*
-     * QList<Ajr_data_t> out;
-     * QByteArray buf("[{\"mu_id\":1,\"sale_id\":16,\"qr\":\"02496214*19861*2020-01-30*11:01:36*7\",\"code\":\"1016\",\"codename\":\"Единичен. възр.\",\"qty\":\"1\"},{\"mu_id\":1,\"sale_id\":17,\"qr\":\"02496214*19861*2020-01-30*11:01:36*7\",\"code\":\"2323\",\"codename\":\"Нещо си\",\"qty\":\"1\"}]");
-     * ParseJsonInput(buf, out);
-     */
-
+#if defined (SIMULATE)
+    Receive();
+#endif
 }
 
 static bool getVal(QJsonObject& jsObj,  const char* field, QVariant& val, QVariant::Type type = QVariant::String) {
@@ -149,11 +148,12 @@ bool AJRServer::ParseJsonInput(QByteArray& buff, QList<QMap<AJRSale::Column_t , 
                 goto RET_ERROR;
             }
             ajr_data.insert(AJRSale::QTY ,val);
+            ajr_data.insert(AJRSale::TIMESTAMP_IN ,0);
+            ajr_data.insert(AJRSale::TRANSFERED ,false);
             out.append(ajr_data);
         }
         status = true;
     }
-
 RET_ERROR:
 
     return status;
@@ -167,12 +167,48 @@ bool AJRServer::ProcessAjurData(QList<QMap<AJRSale::Column_t, QVariant> > &data)
     for (i = 0; i < data.count(); i++) {
         ASSERT_ERROR("AJRSale Insert row: ",
                      AJRSale::Instance().InserRowInSalesTable(data[i]));
+    }
+    if(i > 0) {
+        status = true;
+    }
+RET_ERROR:
+    return status;
+}
+
+bool AJRServer::TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &data) {
+    int i;
+    bool status = false;
+    QList<QMap<QString, QVariant>> code_access;
+
+
+    for (i = 0; i < data.count(); i++) {
         QMap<SoldAccess::Column_t , QVariant> soldData({
-                                                    {SoldAccess::MUSEUM_ID, data[i].value(AJRSale::MU_ID, -1)},
-                                                    {SoldAccess::SALE_ID, data[i].value(AJRSale::SALE_ID, -1)}
-                                                  });
-        ASSERT_ERROR("SoldAccess Insert row: ",
-                     SoldAccess::Instance().InserRowInSoldAccessTable(soldData));
+                                                           {SoldAccess::ID, "uuid()"},
+                                                           {SoldAccess::MUSEUM_ID, data[i].value(AJRSale::MU_ID, -1)},
+                                                           {SoldAccess::SALE_ID, data[i].value(AJRSale::SALE_ID, -1)},
+                                                           {SoldAccess::SITE_ID, -1},
+                                                           {SoldAccess::DOOR_ID, -1},
+                                                           {SoldAccess::USED_CNT, 0},
+                                                           {SoldAccess::LIFETIME, 0}, //??
+                                                           {SoldAccess::FAIL_OVER_FLAG, false},
+                                                           {SoldAccess::TIMESTAMP, 0},
+                                                       });
+
+
+        ASSERT_ERROR("SelectFromTable: ",CodeAccessInfo::Instance().
+                     SelectFromTable(code_access, "*", QString("code = '%1'").
+                                     arg(data[i].value(AJRSale::CODE).toString())));
+
+        ASSERT_ERROR("Code acces should be 1", code_access.count() == 1);
+        qDebug() << code_access[0].value("site_ids").type();
+        //QVariantList site_ids = ;
+
+
+        foreach (auto site_id, code_access[0].value("site_ids").toList()) {
+            soldData[SoldAccess::SITE_ID] = site_id.toInt();
+            ASSERT_ERROR("SoldAccess Insert row: ",
+                         SoldAccess::Instance().InserRowInSoldAccessTable(soldData));
+        }
     }
     if(i > 0) {
         status = true;
@@ -184,26 +220,44 @@ RET_ERROR:
 void AJRServer ::Receive()
 {
     bool status = false;
-    int mu_id   = -1;
-    int sale_id = -1;
+    QString result;
     QList<QMap<AJRSale::Column_t , QVariant>> data;
+
+#if defined (SIMULATE)
+    QByteArray buf("[{\"mu_id\":1,\"sale_id\":16,\"qr\":\"02496214*19861*2020-01-30*11:01:36*7\",\"code\":\"1016\",\"codename\":\"Единичен. възр.\",\"qty\":\"1\"},{\"mu_id\":1,\"sale_id\":17,\"qr\":\"02496214*19861*2020-01-30*11:01:36*7\",\"code\":\"2323\",\"codename\":\"Нещо си\",\"qty\":\"1\"}]");
+#else
     QTcpSocket* clientSocket = qobject_cast<QTcpSocket*>(sender());
     //Fix me
     QByteArray buf = clientSocket->readAll();
 
-    if(ParseJsonInput(buf, data)) {
-        if(ProcessAjurData(data)) {
-            status = true;
-            mu_id = data[0].value(AJRSale::MU_ID, -1).toInt();//TODO m_lastId initialize on the begining from DB
-            sale_id = data[0].value(AJRSale::SALE_ID, -1).toInt();
-            m_lastId = mu_id;
-        }
+#endif
+    ASSERT_ERROR("SoldAccess Insert row: ", ParseJsonInput(buf, data));
+
+    if(ProcessAjurData(data)) {
+        status = true;
+        m_lastId = data[0].value(AJRSale::MU_ID, -1).toInt();
     }
 
-    QString result = QString("[{\"mu_id\":%1,\"sale_id\":%2,\"status\":%3}]\n\r").
-            arg(mu_id).arg(sale_id).arg(status?1:0);
+#if !defined (SIMULATE)
+    /*Reply to Ajur*/
+    result = QString("[{\"mu_id\":%1,\"sale_id\":%2,\"status\":%3}]\n\r").
+            arg(m_lastId).arg(data[0].
+            value(AJRSale::SALE_ID, -1).toInt()).arg(status?1:0);
     clientSocket->write(result.toUtf8().constData());
+
+#endif
+    ASSERT_ERROR("SoldAccess Transfer: ", TransferSoldAccess(data));
+
+RET_ERROR:
+
+#if defined (SIMULATE)
+    int a;
+#else
     //TODO: Fix me
     clientSocket->readAll();
+#endif
 }
+
+
+
 

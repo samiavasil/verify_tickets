@@ -19,7 +19,7 @@ public:
         CODENAME,
         INFO,
         DEADLEVEL,
-        MUIDS,
+        SITE_IDS,
     } Column_t;
 
     static CodeAccessInfo& Instance();

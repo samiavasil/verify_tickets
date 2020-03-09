@@ -79,7 +79,7 @@ bool CassTable::CreateTable()
     query.createTable(QString("%1.%2").arg(m_keySpace).arg(m_tableName)).
             lbrace();
 
-   auto col = m_columns.constBegin();
+    auto col = m_columns.constBegin();
     while (col != m_columns.constEnd()) {
         if( col->second == QVariant::List) {
             //TODO: Fix me for any list type
@@ -185,7 +185,8 @@ bool CassTable::UpdateRow()
     return ret;
 }
 
-bool  CassTable::SelectFromTable(const QString &filter, QMap<QString, QVariant> &result) {
+bool  CassTable::SelectFromTable( QList<QMap<QString, QVariant>> &result,
+                                  const QString &filter, const QString &where) {
 
     CassError rc = CASS_OK;
     CassStatement* statement = nullptr;
@@ -197,8 +198,12 @@ bool  CassTable::SelectFromTable(const QString &filter, QMap<QString, QVariant> 
     CHECK_SESSION(session);
 
     result.clear();
-    query.select(filter).from(QString("%1.%2").arg(m_keySpace).arg(m_tableName));
-
+    if (where.isEmpty()) {
+        query.select(filter).from(QString("%1.%2").arg(m_keySpace).arg(m_tableName)).semicolon();
+    } else {
+        query.select(filter).from(QString("%1.%2").arg(m_keySpace).
+                                  arg(m_tableName)).where(where).semicolon();
+    }
     qDebug() << query.query();
 
     statement = cass_statement_new(query.query().toUtf8().constData(), 0);
@@ -225,7 +230,8 @@ bool  CassTable::SelectFromTable(const QString &filter, QMap<QString, QVariant> 
 
         while (cass_iterator_next(rows)) {
 
-            QVariant res;
+            QMap<QString, QVariant> rowMap;
+            QVariant colVar;
             auto col = m_columns.constBegin();
             qDebug() << "===============================================";
             while (col != m_columns.constEnd()) {
@@ -233,10 +239,12 @@ bool  CassTable::SelectFromTable(const QString &filter, QMap<QString, QVariant> 
                 row = cass_iterator_get_row(rows);
                 col_val = cass_row_get_column_by_name(row, col->first.toUtf8().
                                                       constData());
-                MapQVarCass::convertCassToQVariant(col_val, col->second, res);
-                qDebug() << col->first << ": " << res.toString();
+                MapQVarCass::convertCassToQVariant(col_val, col->second, colVar);
+                qDebug() << col->first << ": " << colVar.toString();
+                rowMap.insert(col->first, colVar);
                 ++col;
             }
+            result.append(rowMap);
         }
         qDebug() << "===============================================";
         cass_result_free(cas_res);

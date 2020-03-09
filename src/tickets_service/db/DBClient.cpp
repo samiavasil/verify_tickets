@@ -80,7 +80,7 @@ void on_host_listener(CassHostListenerEvent event, CassInet inet, void* data) {
 }
 
 DBClient::DBClient():m_credentials({ "museum", "cassandra" }),
-    m_hosts("192.168.2.221,192.168.2.222,192.168.4.221,192.168.4.222"),
+    m_hosts("192.168.4.221,192.168.4.222, 192.168.2.221,192.168.2.222"),
     m_protocol(4),
     m_cluster(nullptr),
     m_session(nullptr),
