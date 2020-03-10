@@ -3,7 +3,7 @@
 
 static const QMap<SoldAccess::Column_t, QPair<QString, QVariant::Type>> colType(
 {
-            {SoldAccess::ID,             {"id", QVariant::Uuid}      },
+/*            {SoldAccess::ID,             {"id", QVariant::Uuid}      },*/
             {SoldAccess::MUSEUM_ID,      {"mu_id", QVariant::Int}},
             {SoldAccess::SALE_ID,        {"sale_id", QVariant::Int}  },
             {SoldAccess::SITE_ID,        {"site_id", QVariant::Int}  },
@@ -22,7 +22,7 @@ SoldAccess &SoldAccess::Instance()
 }
 
 SoldAccess::SoldAccess(QString keySpace, QString tableName):
-    CassTable(keySpace, tableName, colType.values(), "(id)")
+    CassTable(keySpace, tableName, colType.values(), "(mu_id, sale_id, site_id)")
 {
 
 }

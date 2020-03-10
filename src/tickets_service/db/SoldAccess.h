@@ -12,7 +12,7 @@ class SoldAccess : public CassTable
 public:
 
     typedef enum {
-        ID,
+/*        ID,*/
         MUSEUM_ID,
         SALE_ID,
         SITE_ID,

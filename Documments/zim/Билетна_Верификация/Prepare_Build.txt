@@ -1,0 +1,23 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2020-03-10T10:11:03+02:00
+
+====== Prepare Build ======
+Created вторник 10 март 2020
+
+**Install packages:**
+{{{code: lang="sh" linenumbers="True"
+apt-get install build-essential
+apt-get install qt5-default
+apt  install cmake
+apt  install libuv1-dev libssl-de
+}}}
+
+
+Get Sources:
+{{{code: lang="sh" linenumbers="True"
+git clone https://github.com/samiavasil/verify_tickets.git
+cd verify_tickets
+
+}}}
+

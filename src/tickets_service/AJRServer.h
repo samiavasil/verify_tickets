@@ -17,6 +17,8 @@ protected:
 
 protected:
     int m_lastId;
+private:
+    void prepareTables();
 };
 
 #endif // AJRSERVER_H

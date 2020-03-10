@@ -43,18 +43,26 @@
 AJRServer::AJRServer(QObject *parent, const ServerConfigurator& config):
     TCPServer(parent, config)
 {
+
+    prepareTables();
+#if defined (SIMULATE)
+    Receive();
+#endif
+}
+
+void AJRServer::prepareTables() {
     //TODO: Move me
 
-    //   qDebug() << "Create KeySpace: " << AJRSale::Instance().CreateKeySpace();
+    qDebug() << "Create KeySpace: " << AJRSale::Instance().CreateKeySpace();
 
     // qDebug() << "Drop Table AJRSale::Instance(): " << AJRSale::Instance().DropTable();
-    //    qDebug() << "Create Table ajrSale: " << AJRSale::Instance().CreateTable();
+    qDebug() << "Create Table ajrSale: " << AJRSale::Instance().CreateTable();
 
     QList<QMap<QString, QVariant>> result;
     qDebug() << "Dump Table " << AJRSale::Instance().SelectFromTable(result);
 
 
-    qDebug() << "Drop Table codeAccessInfo: " << CodeAccessInfo::Instance().DropTable();
+    //  qDebug() << "Drop Table codeAccessInfo: " << CodeAccessInfo::Instance().DropTable();
     qDebug() << "Create Table code_Access_info: " << CodeAccessInfo::Instance().CreateTable();
     qDebug() << "Prepare Table code_Access_info: " << CodeAccessInfo::Instance().PrepareCodeAccessTable();
 
@@ -63,23 +71,19 @@ AJRServer::AJRServer(QObject *parent, const ServerConfigurator& config):
 
     DeadTickets deadTickets("test_keyspace_xx", "deadTickets");
     // qDebug() << "Drop Table deadTickets: " << deadTickets.DropTable();
-    //   qDebug() << "Create Table deadTickets: " << deadTickets.CreateTable();
+    qDebug() << "Create Table deadTickets: " << deadTickets.CreateTable();
 
 
     // qDebug() << "Drop Table fiscUnit: " << fiscUnit.DropTable();
-    //    qDebug() << "Create Table fiscUnit: " << FiscUnit::Instance().CreateTable();
-    //   qDebug() << "PrepareFiscUnitTable: " << FiscUnit::Instance().PrepareFiscUnitTable();
+    qDebug() << "Create Table fiscUnit: " << FiscUnit::Instance().CreateTable();
+    qDebug() << "PrepareFiscUnitTable: " << FiscUnit::Instance().PrepareFiscUnitTable();
 
     // qDebug() << "Drop Table siteDescriptor: " << siteDescriptor.DropTable();
-    //   qDebug() << "Create Table SiteDescriptor: " << SiteDescriptor::Instance().CreateTable();
-    //   qDebug() << "PrepareSiteDescriptorTable: " << SiteDescriptor::Instance().PrepareSiteDescriptorTable();
+    qDebug() << "Create Table SiteDescriptor: " << SiteDescriptor::Instance().CreateTable();
+    qDebug() << "PrepareSiteDescriptorTable: " << SiteDescriptor::Instance().PrepareSiteDescriptorTable();
 
     //   qDebug() << "Drop Table soldAccess: " << SoldAccess::Instance().DropTable();
-    //   qDebug() << "Create Table soldAccess: " << SoldAccess::Instance().CreateTable();
-
-#if defined (SIMULATE)
-    Receive();
-#endif
+    qDebug() << "Create Table soldAccess: " << SoldAccess::Instance().CreateTable();
 }
 
 static bool getVal(QJsonObject& jsObj,  const char* field, QVariant& val, QVariant::Type type = QVariant::String) {
@@ -183,7 +187,6 @@ bool AJRServer::TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &da
 
     for (i = 0; i < data.count(); i++) {
         QMap<SoldAccess::Column_t , QVariant> soldData({
-                                                           {SoldAccess::ID, "uuid()"},
                                                            {SoldAccess::MUSEUM_ID, data[i].value(AJRSale::MU_ID, -1)},
                                                            {SoldAccess::SALE_ID, data[i].value(AJRSale::SALE_ID, -1)},
                                                            {SoldAccess::SITE_ID, -1},
