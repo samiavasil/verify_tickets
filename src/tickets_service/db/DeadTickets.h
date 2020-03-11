@@ -11,8 +11,11 @@ public:
         LIVE_CTR
     } Column_t;
 
-    DeadTickets(QString keySpace, QString tableName);
+    static DeadTickets &Instance();
     bool InserRowInDeadTickets(QMap<DeadTickets::Column_t, QVariant> &row);
+protected:
+    DeadTickets(QString keySpace, QString tableName);
+
 };
 
 #endif // DEADTICKETS_H

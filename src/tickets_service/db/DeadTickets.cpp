@@ -12,6 +12,14 @@ static const QMap<DeadTickets::Column_t, QPair<QString, QVariant::Type>> colType
             {DeadTickets::LIVE_CTR,    {"live_ctr",QVariant::Int}  },
         });
 
+
+DeadTickets &DeadTickets::Instance()
+{
+    static DeadTickets DeadTickets("test_keyspace_xx", "deadTickets");
+    return DeadTickets;
+}
+
+
 DeadTickets::DeadTickets(QString keySpace, QString tableName):
     CassTable(keySpace, tableName, colType.values(), "(mu_id, sale_id)")
 {

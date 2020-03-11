@@ -68,9 +68,8 @@ void AJRServer::prepareTables() {
     qDebug() << "Dump Table CodeAccessInfo" << CodeAccessInfo::Instance().SelectFromTable(result);
 
 
-    DeadTickets deadTickets("test_keyspace_xx", "deadTickets");
-    // qDebug() << "Drop Table deadTickets: " << deadTickets.DropTable();
-    qDebug() << "Create Table deadTickets: " << deadTickets.CreateTable();
+    // qDebug() << "Drop Table deadTickets: " << DeadTickets::Instance().DropTable();
+    qDebug() << "Create Table deadTickets: " << DeadTickets::Instance().CreateTable();
 
 
     // qDebug() << "Drop Table fiscUnit: " << fiscUnit.DropTable();
@@ -188,12 +187,12 @@ bool AJRServer::TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &da
         QMap<SoldAccess::Column_t , QVariant> soldData({
                                                            {SoldAccess::MUSEUM_ID, data[i].value(AJRSale::MU_ID, -1)},
                                                            {SoldAccess::SALE_ID, data[i].value(AJRSale::SALE_ID, -1)},
-                                                           {SoldAccess::SITE_ID, -1},
+                                                          /* {SoldAccess::SITE_ID, -1},
                                                            {SoldAccess::DOOR_ID, -1},
                                                            {SoldAccess::USED_CNT, 0},
                                                            {SoldAccess::LIFETIME, 0}, //??
                                                            {SoldAccess::FAIL_OVER_FLAG, false},
-                                                           {SoldAccess::TIMESTAMP, 0},
+                                                           {SoldAccess::TIMESTAMP, 0},*/
                                                        });
 
 
@@ -205,17 +204,36 @@ bool AJRServer::TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &da
 
         int access_type = code_access[0].value("access_type").toInt(&is_ok);
         ASSERT_ERROR("Get ACCESS_TYPE", is_ok);
-       qDebug() << "ACCESS_TYPE  :"  << access_type;
+        int dead_level = code_access[0].value("deadlevel").toInt(&is_ok);
+        ASSERT_ERROR("Get DEAD_LEVEL", is_ok);
+
+        qDebug() << "ACCESS_TYPE  :"  << access_type;
+
         if (access_type != CodeAccessInfo::SINGLE) {
 
             ASSERT_ERROR("Get SIDE_ID", is_ok);
+            if (dead_level > 0) {
+                QMap<DeadTickets::Column_t , QVariant> deadTicket({
+                                                                   {DeadTickets::MU_ID, data[0].value(AJRSale::MU_ID, -1)},
+                                                                   {DeadTickets::SALE_ID, data[0].value(AJRSale::SALE_ID, -1)},
+                                                                   {DeadTickets::LIVE_CTR, dead_level},
+                                                               });
+                ASSERT_ERROR("SoldAccess Insert row: ",
+                             DeadTickets::Instance().InserRowInDeadTickets(deadTicket));
+            }
             foreach (auto site_id, code_access[0].value("site_ids").toList()) {
                 soldData[SoldAccess::SITE_ID] = site_id.toInt(&is_ok);
                 ASSERT_ERROR("Get SIDE_ID", is_ok);
                 ASSERT_ERROR("SoldAccess Insert row: ",
                              SoldAccess::Instance().InserRowInSoldAccessTable(soldData));
             }
+
         }
+
+        data[i][AJRSale::TRANSFERED] = true;
+        ASSERT_ERROR("AJRSale Insert row: ",
+                     AJRSale::Instance().InserRowInSalesTable(data[i]));
+
     }
     if(i > 0) {
         status = true;
