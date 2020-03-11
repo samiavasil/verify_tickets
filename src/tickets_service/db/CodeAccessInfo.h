@@ -19,8 +19,14 @@ public:
         CODENAME,
         INFO,
         DEADLEVEL,
+        ACCESS_TYPE,
         SITE_IDS,
     } Column_t;
+
+    typedef enum {
+        SINGLE   = 1,
+        MULTIPLE = 2
+    } AccessType_t;
 
     static CodeAccessInfo& Instance();
     bool PrepareCodeAccessTable();

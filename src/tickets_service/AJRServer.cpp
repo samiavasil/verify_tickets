@@ -28,10 +28,9 @@
 #define ASSERT_ERROR(text, check)  do { \
     bool ok = (check); \
     if(!ok) { \
-    qDebug() << "Assert error:" << (text) << __func__ << " Line" << __LINE__; \
+    qDebug() << "Error:" << (text) << __func__ << " Line" << __LINE__; \
     goto RET_ERROR; \
     } \
-    qDebug() << (text)<< (ok); \
     } \
     while (0)
 
@@ -182,8 +181,8 @@ RET_ERROR:
 bool AJRServer::TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &data) {
     int i;
     bool status = false;
+    bool is_ok;
     QList<QMap<QString, QVariant>> code_access;
-
 
     for (i = 0; i < data.count(); i++) {
         QMap<SoldAccess::Column_t , QVariant> soldData({
@@ -203,14 +202,19 @@ bool AJRServer::TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &da
                                      arg(data[i].value(AJRSale::CODE).toString())));
 
         ASSERT_ERROR("Code acces should be 1", code_access.count() == 1);
-        qDebug() << code_access[0].value("site_ids").type();
-        //QVariantList site_ids = ;
 
+        int access_type = code_access[0].value("access_type").toInt(&is_ok);
+        ASSERT_ERROR("Get ACCESS_TYPE", is_ok);
+       qDebug() << "ACCESS_TYPE  :"  << access_type;
+        if (access_type != CodeAccessInfo::SINGLE) {
 
-        foreach (auto site_id, code_access[0].value("site_ids").toList()) {
-            soldData[SoldAccess::SITE_ID] = site_id.toInt();
-            ASSERT_ERROR("SoldAccess Insert row: ",
-                         SoldAccess::Instance().InserRowInSoldAccessTable(soldData));
+            ASSERT_ERROR("Get SIDE_ID", is_ok);
+            foreach (auto site_id, code_access[0].value("site_ids").toList()) {
+                soldData[SoldAccess::SITE_ID] = site_id.toInt(&is_ok);
+                ASSERT_ERROR("Get SIDE_ID", is_ok);
+                ASSERT_ERROR("SoldAccess Insert row: ",
+                             SoldAccess::Instance().InserRowInSoldAccessTable(soldData));
+            }
         }
     }
     if(i > 0) {

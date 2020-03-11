@@ -2,15 +2,15 @@ format 222
 
 classcanvas 128898 class_ref 200706 // ajur_Sales
   classdiagramsettings show_members_full_definition yes member_max_width 0 end
-  xyz 319.6 20.7 2000
+  xyz 318.6 16.7 2000
 end
 classcanvas 129666 class_ref 207234 // site
   classdiagramsettings show_members_stereotype yes member_max_width 0 end
-  xyz 733.1 69.3 2000
+  xyz 734.1 67.3 2000
 end
 classcanvas 130050 class_ref 220290 // Sold_access
   classdiagramsettings show_members_stereotype yes member_max_width 0 end
-  xyz 166.9 356.1 2000
+  xyz 170.9 355.1 2000
 end
 classcanvas 130178 class_ref 220418 // dead_tickets
   classdiagramsettings member_max_width 0 end
@@ -18,42 +18,33 @@ classcanvas 130178 class_ref 220418 // dead_tickets
 end
 classcanvas 131202 class_ref 233474 // Fisc_unit
   classdiagramsettings member_max_width 0 end
-  xyz 535.6 369.4 2000
+  xyz 507.6 370.4 2000
 end
 classcanvas 136834 class_ref 240002 // code_access_info
   classdiagramsettings show_members_stereotype yes member_max_width 0 end
   color lightmediumgreen
-  xyz 507.3 175.1 2000
+  xyz 506.3 174.1 2000
 end
 note 144514 "Barcode Reader:  Map to   mu_id, door_id"
-  xyzwh 63.5 674 2000 277 49
+  xyzwh 63.5 675 2000 277 49
 note 144770 "Ajur JSON "
-  xyzwh 154 15.9 2000 70 41
+  xyzwh 161 9.9 2000 70 41
 note 144898 "Barcode Reader
-SITE_ID -    config file site_id
-DOOR_ID - port"
-  xyzwh 4.8 66.3 2000 125 88
+QR_SITE_ID -    config file site_id
+DOOR_ID - port
+"
+  xyzwh 10.8 79.3 2000 125 88
 note 145410 "DOORS
 acess
 obj_type
 "
-  xyzwh 740.1 359.9 2000 75 113
-relationcanvas 136962 relation_ref 168450 // <association>
-  geometry HVH unfixed
-  decenter_begin 341
-  decenter_end 924
-  from ref 129666 z 2001 to point 657.5 115
-  line 137090 z 2001 to point 657.5 288
-  line 137218 z 2001 to ref 136834
-  no_role_a no_role_b
-  no_multiplicity_a no_multiplicity_b
-end
+  xyzwh 741.1 359.9 2000 75 113
 relationcanvas 141954 relation_ref 175490 // <association>
   geometry HVH unfixed
   decenter_begin 249
   decenter_end 448
-  from ref 128898 z 2001 to point 146 61
-  line 142082 z 2001 to point 146 431
+  from ref 128898 z 2001 to point 146 67
+  line 142082 z 2001 to point 146 448
   line 142210 z 2001 to ref 130050
   no_role_a no_role_b
   no_multiplicity_a no_multiplicity_b
@@ -62,35 +53,31 @@ relationcanvas 142338 relation_ref 175618 // <association>
   geometry HVH unfixed
   decenter_begin 547
   decenter_end 249
-  from ref 130178 z 2001 to point 285.5 452
-  line 142466 z 2001 to point 285.5 61
+  from ref 130178 z 2001 to point 285 452
+  line 142466 z 2001 to point 285 67
   line 142594 z 2001 to ref 128898
   no_role_a no_role_b
   no_multiplicity_a no_multiplicity_b
 end
 line 139394 -_-_ geometry HVH unfixed decenter_begin 543 decenter_end 376
-  from ref 128898 z 2001 to point 483.5 111
-  line 139522 z 2001 to point 483.5 220
+  from ref 128898 z 2001 to point 483 129
+  line 139522 z 2001 to point 483 237
   line 139650 z 2001 to ref 136834
 line 139778 -_-_ geometry HVH unfixed decenter_begin 633 decenter_end 507
-  from ref 128898 z 2001 to point 460 127
-  line 139906 z 2001 to point 460 236
+  from ref 128898 z 2001 to point 460 148
+  line 139906 z 2001 to point 460 259
   line 140034 z 2001 to ref 136834
-line 142722 -_-_ geometry HVH unfixed decenter_begin 759 decenter_end 840
-  from ref 136834 z 2001 to point 307.5 267
-  line 142850 z 2001 to point 307.5 485
+line 142722 -_-_ geometry HVH unfixed decenter_begin 682 decenter_end 840
+  from ref 136834 z 2001 to point 307 289
+  line 142850 z 2001 to point 307 485
   line 142978 z 2001 to ref 130178
 line 143106 -_-_ decenter_begin 641 decenter_end 907
-  from ref 130050 z 2001 to point 147.5 490
-  line 143490 z 2001 to point 146 590
-  line 143618 z 2001 to point 822 590
-  line 143362 z 2001 to point 823.5 220
+  from ref 130050 z 2001 to point 147 489
+  line 143490 z 2001 to point 147 583
+  line 143618 z 2001 to point 831 588
+  line 143362 z 2001 to point 830 220
+  line 148354 z 2001 to point 823 220
   line 143746 z 2001 to ref 129666
-line 145922 -_-_ decenter_begin 554
-  from ref 130050 z 2002 to point 132 472
-  line 146178 z 2002 to point 131.5 568
-  line 146306 z 2002 to point 691.5 571.5
-  line 146050 z 2002 to ref 136962
 line 146434 -_-_ decenter_begin 376 decenter_end 452
   from ref 144898 z 2001 to ref 128898
 line 146562 -_-_ decenter_begin 463 decenter_end 64
@@ -99,4 +86,13 @@ line 146946 -_-_
   from ref 129666 z 2001 to ref 145410
 line 147074 -_-_
   from ref 131202 z 2001 to ref 145410
+line 147330 -_-_ geometry HVH decenter_begin 791 decenter_end 335
+  from ref 136834 z 2001 to point 675 308
+  line 147458 z 2001 to point 675 122
+  line 147586 z 2001 to ref 129666
+line 147714 -_-_ decenter_begin 558
+  from ref 130050 z 2006 to point 121 471
+  line 148098 z 2006 to point 121 607
+  line 148226 z 2006 to point 704 606
+  line 147842 z 2006 to ref 147586
 end

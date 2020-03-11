@@ -1,6 +1,6 @@
 format 222
 "CassanbdraDB" // CassanbdraDB
-  revision 32
+  revision 33
   modified_by 2 "vvasilev"
   // class settings
   
@@ -248,7 +248,7 @@ CREATE TABLE ${name} ${definition}${comment};
 "
       
       comment "Ajure sakes"
-      attribute 171266 "mu_id"
+      attribute 171266 "aj_site_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -569,6 +569,20 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
+      attribute 251650 "access_type"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+	comment "Single or Multiple museum access.
+If is 0 - access to  one of sites deined in site_ids.
+If it is a 1 - access to all sites defined in site_ids."
+      end
+
       attribute 225282 "site_ids"
 	default explicit_type "int"
 	stereotype "list"
@@ -780,7 +794,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 169858 "mu_id"
+      attribute 169858 "aj_site_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -791,7 +805,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 244994 "site_id"
+      attribute 244994 "qr_site_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -877,9 +891,8 @@ CREATE TABLE ${name} ${definition}${comment};
       comment "“аблица на посещени€та по неопределените
 обекти
 "
-      attribute 170242 "mu_id"
+      attribute 170242 "aj_site_id"
 	default explicit_type "int"
-	stereotype "PK"
 	cpp_decl ""
 	java_decl ""
 	php_decl ""

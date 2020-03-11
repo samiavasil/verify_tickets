@@ -39,8 +39,8 @@ bool MapQVarCass::convertCassToQVariant(const CassValue *in, QVariant::Type type
         break;
     }
     case QVariant::Int: {
-        cass_int64_t e;
-        ERR_CHECK(cass_value_get_int64(in, &e));
+        cass_int32_t e;
+        ERR_CHECK(cass_value_get_int32(in, &e));
         res = int(e);
         ret = true;
         break;
