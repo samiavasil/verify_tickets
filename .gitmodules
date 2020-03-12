@@ -1,3 +1,6 @@
 [submodule "src/external/cpp-driver"]
 	path = src/external/cpp-driver
 	url = https://github.com/datastax/cpp-driver.git
+[submodule "src/external/qtmqtt"]
+	path = src/external/qtmqtt
+	url = https://code.qt.io/cgit/qt/qtmqtt.git/
