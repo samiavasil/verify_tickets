@@ -1,7 +1,6 @@
 QT -= gui
 QT += core
-QT += network
-
+QT += network mqtt
 CONFIG += c++11 console
 CONFIG -= app_bundle
 
@@ -23,6 +22,7 @@ LIBS        += -lcassandra_static -lz -lssl -lcrypto -luv
 
 SOURCES += \
         AJRServer.cpp \
+    Comar.cpp \
         Configurator.cpp \
          Daemon.cpp \
         QRServer.cpp \
@@ -48,6 +48,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     AJRServer.h \
+    Comar.h \
     Configurator.h \
     Daemon.h \
     QRServer.h \
