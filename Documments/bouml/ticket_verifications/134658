@@ -1,6 +1,6 @@
 format 222
 "CassanbdraDB" // CassanbdraDB
-  revision 33
+  revision 35
   modified_by 2 "vvasilev"
   // class settings
   
@@ -248,7 +248,7 @@ CREATE TABLE ${name} ${definition}${comment};
 "
       
       comment "Ajure sakes"
-      attribute 171266 "aj_site_id"
+      attribute 155522 "sale_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -259,7 +259,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 155522 "sale_id"
+      attribute 171266 "aj_site_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -771,18 +771,6 @@ CREATE TABLE ${name} ${definition}${comment};
       comment "This table is used for insertion of sold access.
 
 "
-      attribute 169602 "id"
-	default explicit_type "int"
-	stereotype "PK"
-	cpp_decl ""
-	java_decl ""
-	php_decl ""
-	python_decl ""
-	idl_decl ""
-	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
-	MysqlColumn
-      end
-
       attribute 169730 "sales_id"
 	default explicit_type "int"
 	cpp_decl ""
@@ -891,7 +879,7 @@ CREATE TABLE ${name} ${definition}${comment};
       comment "“аблица на посещени€та по неопределените
 обекти
 "
-      attribute 170242 "aj_site_id"
+      attribute 170370 "sales_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -902,7 +890,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	MysqlColumn
       end
 
-      attribute 170370 "sales_id"
+      attribute 170242 "aj_site_id"
 	default explicit_type "int"
 	cpp_decl ""
 	java_decl ""
@@ -955,6 +943,7 @@ CREATE TABLE ${name} ${definition}${comment};
 	    classrelation_ref 178050 // <association>
 	  b role_name "" public
 	    classrelation_ref 178178 // <association>
+	  association_type class_ref 220290 // Sold_access
       end
     end
 
@@ -991,6 +980,114 @@ CREATE TABLE ${name} ${definition}${comment};
 
       attribute 211330 "name_address"
 	default explicit_type "string"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+    end
+
+    class 246530 "Doors"
+      visibility package stereotype "table"
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl "DROP TABLE IF EXISTS ${name};
+CREATE TABLE ${name} ${definition}${comment};
+"
+      
+      comment "Describe doors
+"
+      attribute 258178 "id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+	comment "Primary key"
+      end
+
+      attribute 258306 "site_id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 258434 "name"
+	default explicit_type "text"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 258562 "topic"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+	comment "Current door status"
+      end
+    end
+
+    class 246658 "Topics"
+      visibility package stereotype "table"
+      cpp_decl ""
+      java_decl ""
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl "DROP TABLE IF EXISTS ${name};
+CREATE TABLE ${name} ${definition}${comment};
+"
+      
+      attribute 258946 "id"
+	default explicit_type "int"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 258690 "error"
+	default explicit_type "text"
+	constraint "Topic for errors notifications"
+	cpp_decl ""
+	java_decl ""
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl "  ${name} ${type}${notnull}${default}${autoincr}${comment}"
+	MysqlColumn
+      end
+
+      attribute 258818 "switch_on"
+	default explicit_type ""
 	cpp_decl ""
 	java_decl ""
 	php_decl ""

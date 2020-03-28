@@ -3,6 +3,13 @@ Wiki-Format: zim 0.4
 Creation-Date: 2020-02-20T19:15:05+02:00
 
 ====== Cassandra CQL ======
+
+===== Install Casandra =====
+
+https://www.hostinger.com/tutorials/set-up-and-install-cassandra-ubuntu/
+
+===== CQL Cassandra =====
+
 Created четвъртък 20 февруари 2020
 
 [[http://cassandra.apache.org/doc/latest/cql/types.html|CQL types]]

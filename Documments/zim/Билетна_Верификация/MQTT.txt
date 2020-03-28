@@ -1,0 +1,9 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2020-03-12T23:29:03+02:00
+
+====== MQTT ======
+Created четвъртък 12 март 2020
+
+**QTMQTT**
+https://code.qt.io/cgit/qt/qtmqtt.git/
