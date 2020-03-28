@@ -3,7 +3,7 @@
 #include "db/MapQVarCass.h"
 
 
-#define MUSEUM_ID_STR    "mu_id"
+#define MUSEUM_ID_STR    "aj_site_id"
 #define SALE_ID_STR      "sale_id"
 #define QR_STR           "qr"
 #define CODE_STR         "code"
@@ -14,7 +14,7 @@
 
 static const QMap<AJRSale::Column_t, QPair<QString, QVariant::Type>> colType(
                                                     {
-                                                       {AJRSale::MU_ID,       {MUSEUM_ID_STR,    QVariant::Int}      },
+                                                       {AJRSale::AJ_SITE_ID,       {MUSEUM_ID_STR,    QVariant::Int}      },
                                                        {AJRSale::SALE_ID,     {SALE_ID_STR,      QVariant::Int}      },
                                                        {AJRSale::QR,          {QR_STR,           QVariant::String}   },
                                                        {AJRSale::CODE,        {CODE_STR,         QVariant::String}   },
@@ -31,7 +31,7 @@ AJRSale &AJRSale::Instance()
 }
 
 AJRSale::AJRSale(QString keySpace, QString tableName):
-    CassTable(keySpace, tableName, colType.values(), "mu_id, sale_id")
+    CassTable(keySpace, tableName, colType.values(), "aj_site_id, sale_id")
 {
 
 }

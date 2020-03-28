@@ -34,10 +34,12 @@ SOURCES += \
     db/CodeAccessInfo.cpp \
     db/DBClient.cpp \
     db/DeadTickets.cpp \
+    db/Doors.cpp \
     db/FiscUnit.cpp \
     db/MapQVarCass.cpp \
     db/SiteDescriptor.cpp \
     db/SoldAccess.cpp \
+    db/Topics.cpp \
         main.cpp \
     TextMetaType.cpp
 
@@ -61,8 +63,10 @@ HEADERS += \
     db/CodeAccessInfo.h \
     db/DBClient.h \
     db/DeadTickets.h \
+    db/Doors.h \
     db/FiscUnit.h \
     db/MapQVarCass.h \
     db/MapQvarCassCfg.h \
     db/SiteDescriptor.h \
-    db/SoldAccess.h
+    db/SoldAccess.h \
+    db/Topics.h

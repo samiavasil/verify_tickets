@@ -16,10 +16,9 @@ public:
     {
         switch (type) {
         case QtDebugMsg:
-            if(m_comar) {
-               m_comar->publish(QMqttTopicName("Cassandra/Vasil")
+
+            Comar::Instance().publish(QMqttTopicName("Cassandra/Vasil")
                                                 , msg.toLatin1(), 2, true);
-            }
             fprintf(stderr, "%s\n", msg.toStdString().c_str());
             break;
         case QtWarningMsg:
@@ -35,15 +34,8 @@ public:
             break;
         }
     }
-    static void setComar(Comar* comar) {
-        m_comar = comar;
-    }
-private:
-    static  Comar* m_comar;
+
 };
-
-Comar* msg::m_comar;
-
 
 
 int main(int argc, char *argv[])
@@ -55,16 +47,14 @@ int main(int argc, char *argv[])
     ServerConfigurator cfg1(QHostAddress::Any, 12346, false);
     msg m;
 
+    Comar::Instance().connectToHost();
+
     qInstallMessageHandler(m.myMessageOutput);
 
     DBClient::Instance().connectSession();
 
     AJRServer ajr_server(nullptr, cfg);
     QRServer qr_server(nullptr, cfg1);
-    Comar comshu(&a, "87.97.172.156", 7328);
-    comshu.connectToHost();
-    m.setComar(&comshu);
-
 
     qDebug() << QCoreApplication::libraryPaths();
 

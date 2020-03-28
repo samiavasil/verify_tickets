@@ -9,7 +9,7 @@ class AJRSale : public CassTable
 public:
 
     typedef enum {
-        MU_ID,
+        AJ_SITE_ID,
         SALE_ID,
         QR,
         CODE,

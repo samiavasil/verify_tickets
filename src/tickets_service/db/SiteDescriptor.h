@@ -6,7 +6,7 @@ class SiteDescriptor : public CassTable
 {
 public:
     typedef enum {
-        MU_ID,
+        SITE_ID,
         NAME,
         INFO,
         ACCESS_TYPE,

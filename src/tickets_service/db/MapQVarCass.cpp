@@ -71,9 +71,12 @@ bool MapQVarCass::convertCassToQVariant(const CassValue *in, QVariant::Type type
     }
     case QVariant::DateTime:  {
         QDateTime timestamp;
-        cass_int32_t out;
-        ERR_CHECK(cass_value_get_int32(in, &out));
-        timestamp.setMSecsSinceEpoch(out);
+        cass_int64_t time;
+
+        if( !cass_value_is_null(in) ) {
+            ERR_CHECK(cass_value_get_int64(in, &time));
+            timestamp.setMSecsSinceEpoch(time);
+        }
         res = timestamp;
         ret = true;
         break;
@@ -149,7 +152,12 @@ bool MapQVarCass::convertQVariantToStrout(const QVariant &in, QVariant::Type typ
         break;
     }
     case QVariant::DateTime:  {
-        res = in.toString();
+        if (in.canConvert(QVariant::DateTime)) {
+            QDateTime time = in.toDateTime();
+            res = QString("'%1'").arg(in.toString());
+        } else {
+            res = QString("%1").arg("null");
+        }
         ret = true;
         break;
     }

@@ -6,7 +6,7 @@ class DeadTickets: public CassTable
 {
 public:
     typedef enum {
-        MU_ID,
+        AJ_SITE_ID,
         SALE_ID,
         LIVE_CTR
     } Column_t;

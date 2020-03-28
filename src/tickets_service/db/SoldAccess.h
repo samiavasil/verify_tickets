@@ -13,12 +13,11 @@ public:
 
     typedef enum {
 /*        ID,*/
-        MUSEUM_ID,
+        AJ_SITE_ID,
         SALE_ID,
-        SITE_ID,
+        QR_SITE_ID,
         DOOR_ID,
         USED_CNT,
-        LIFETIME,
         FAIL_OVER_FLAG,
         TIMESTAMP
     } Column_t;

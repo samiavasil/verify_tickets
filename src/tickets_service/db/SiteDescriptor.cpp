@@ -14,7 +14,7 @@
 
 static const QMap<SiteDescriptor::Column_t, QPair<QString, QVariant::Type>> colType(
 {
-            {SiteDescriptor::MU_ID,       {"mu_id",       QVariant::Int} },
+            {SiteDescriptor::SITE_ID,     {"site_id",       QVariant::Int} },
             {SiteDescriptor::NAME,        {"name",        QVariant::String} },
             {SiteDescriptor::INFO,        {"info",        QVariant::String} },
             {SiteDescriptor::ACCESS_TYPE, {"access_type", QVariant::String} },
@@ -24,7 +24,7 @@ static const QMap<SiteDescriptor::Column_t, QPair<QString, QVariant::Type>> colT
         );
 
 SiteDescriptor::SiteDescriptor(QString keySpace, QString tableName):
-    CassTable(keySpace, tableName, colType.values(), "(mu_id)")
+    CassTable(keySpace, tableName, colType.values(), "(site_id)")
 {
 
 }
@@ -52,7 +52,7 @@ bool SiteDescriptor::PrepareSiteDescriptorTable() {
 
     const QList<QMap<SiteDescriptor::Column_t , QVariant>> dataList =  {
         {
-            { SiteDescriptor::MU_ID       , 1},
+            { SiteDescriptor::SITE_ID     , 1},
             { SiteDescriptor::NAME        , "Музей 1"},
             { SiteDescriptor::INFO        , "Питай на касата :Р"},
             { SiteDescriptor::ACCESS_TYPE , 0},
@@ -60,7 +60,7 @@ bool SiteDescriptor::PrepareSiteDescriptorTable() {
             {SiteDescriptor::DOORS        , QVariant::fromValue<QList<int>>({1,2})}
         },
         {
-            { SiteDescriptor::MU_ID       , 2},
+            { SiteDescriptor::SITE_ID       , 2},
             { SiteDescriptor::NAME        , "Музей 2"},
             { SiteDescriptor::INFO        , "Това да не ти е бюро справки ? :Р"},
             { SiteDescriptor::ACCESS_TYPE , 0},
@@ -68,7 +68,7 @@ bool SiteDescriptor::PrepareSiteDescriptorTable() {
             {SiteDescriptor::DOORS        , QVariant::fromValue<QList<int>>({3,4,5})}
         },
         {
-            { SiteDescriptor::MU_ID       , 3},
+            { SiteDescriptor::SITE_ID       , 3},
             { SiteDescriptor::NAME        , "Музей 3"},
             { SiteDescriptor::INFO        , "Абе я си взимай билет и не питай."},
             { SiteDescriptor::ACCESS_TYPE , 0},

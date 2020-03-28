@@ -35,10 +35,6 @@
     while (0)
 
 
-
-
-
-
 AJRServer::AJRServer(QObject *parent, const ServerConfigurator& config):
     TCPServer(parent, config)
 {
@@ -54,33 +50,30 @@ void AJRServer::prepareTables() {
 
     qDebug() << "Create KeySpace: " << AJRSale::Instance().CreateKeySpace();
 
-    // qDebug() << "Drop Table AJRSale::Instance(): " << AJRSale::Instance().DropTable();
+   // qDebug() << "Drop Table AJRSale::Instance(): " << AJRSale::Instance().DropTable();
     qDebug() << "Create Table ajrSale: " << AJRSale::Instance().CreateTable();
 
     QList<QMap<QString, QVariant>> result;
     qDebug() << "Dump Table " << AJRSale::Instance().SelectFromTable(result);
 
-
-    //  qDebug() << "Drop Table codeAccessInfo: " << CodeAccessInfo::Instance().DropTable();
+ //   qDebug() << "Drop Table codeAccessInfo: " << CodeAccessInfo::Instance().DropTable();
     qDebug() << "Create Table code_Access_info: " << CodeAccessInfo::Instance().CreateTable();
     qDebug() << "Prepare Table code_Access_info: " << CodeAccessInfo::Instance().PrepareCodeAccessTable();
 
     qDebug() << "Dump Table CodeAccessInfo" << CodeAccessInfo::Instance().SelectFromTable(result);
 
-
-    // qDebug() << "Drop Table deadTickets: " << DeadTickets::Instance().DropTable();
+//    qDebug() << "Drop Table deadTickets: " << DeadTickets::Instance().DropTable();
     qDebug() << "Create Table deadTickets: " << DeadTickets::Instance().CreateTable();
 
-
-    // qDebug() << "Drop Table fiscUnit: " << fiscUnit.DropTable();
+ //   qDebug() << "Drop Table fiscUnit: " << FiscUnit::Instance().DropTable();
     qDebug() << "Create Table fiscUnit: " << FiscUnit::Instance().CreateTable();
     qDebug() << "PrepareFiscUnitTable: " << FiscUnit::Instance().PrepareFiscUnitTable();
 
-    // qDebug() << "Drop Table siteDescriptor: " << siteDescriptor.DropTable();
+ //   qDebug() << "Drop Table siteDescriptor: " << SiteDescriptor::Instance().DropTable();
     qDebug() << "Create Table SiteDescriptor: " << SiteDescriptor::Instance().CreateTable();
     qDebug() << "PrepareSiteDescriptorTable: " << SiteDescriptor::Instance().PrepareSiteDescriptorTable();
 
-    //   qDebug() << "Drop Table soldAccess: " << SoldAccess::Instance().DropTable();
+//    qDebug() << "Drop Table soldAccess: " << SoldAccess::Instance().DropTable();
     qDebug() << "Create Table soldAccess: " << SoldAccess::Instance().CreateTable();
 }
 
@@ -124,7 +117,7 @@ bool AJRServer::ParseJsonInput(QByteArray& buff, QList<QMap<AJRSale::Column_t , 
                 qDebug() << __func__ << " : Can't get mu_id";
                 goto RET_ERROR;
             }
-            ajr_data.insert(AJRSale::MU_ID ,val);
+            ajr_data.insert(AJRSale::AJ_SITE_ID ,val);
 
             GET_VAR_AND_CHECK(jsObj, MSALE_ID_STR, val, QVariant::Int);
             val.toInt(&ok);
@@ -185,7 +178,7 @@ bool AJRServer::TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &da
 
     for (i = 0; i < data.count(); i++) {
         QMap<SoldAccess::Column_t , QVariant> soldData({
-                                                           {SoldAccess::MUSEUM_ID, data[i].value(AJRSale::MU_ID, -1)},
+                                                           {SoldAccess::AJ_SITE_ID, data[i].value(AJRSale::AJ_SITE_ID, -1)},
                                                            {SoldAccess::SALE_ID, data[i].value(AJRSale::SALE_ID, -1)},
                                                           /* {SoldAccess::SITE_ID, -1},
                                                            {SoldAccess::DOOR_ID, -1},
@@ -214,7 +207,7 @@ bool AJRServer::TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &da
             ASSERT_ERROR("Get SIDE_ID", is_ok);
             if (dead_level > 0) {
                 QMap<DeadTickets::Column_t , QVariant> deadTicket({
-                                                                   {DeadTickets::MU_ID, data[0].value(AJRSale::MU_ID, -1)},
+                                                                   {DeadTickets::AJ_SITE_ID, data[0].value(AJRSale::AJ_SITE_ID, -1)},
                                                                    {DeadTickets::SALE_ID, data[0].value(AJRSale::SALE_ID, -1)},
                                                                    {DeadTickets::LIVE_CTR, dead_level},
                                                                });
@@ -222,7 +215,7 @@ bool AJRServer::TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &da
                              DeadTickets::Instance().InserRowInDeadTickets(deadTicket));
             }
             foreach (auto site_id, code_access[0].value("site_ids").toList()) {
-                soldData[SoldAccess::SITE_ID] = site_id.toInt(&is_ok);
+                soldData[SoldAccess::QR_SITE_ID] = site_id.toInt(&is_ok);
                 ASSERT_ERROR("Get SIDE_ID", is_ok);
                 ASSERT_ERROR("SoldAccess Insert row: ",
                              SoldAccess::Instance().InserRowInSoldAccessTable(soldData));
@@ -260,7 +253,7 @@ void AJRServer ::Receive()
 
     if(ProcessAjurData(data)) {
         status = true;
-        m_lastId = data[0].value(AJRSale::MU_ID, -1).toInt();
+        m_lastId = data[0].value(AJRSale::AJ_SITE_ID, -1).toInt();
     }
 
 #if !defined (SIMULATE)

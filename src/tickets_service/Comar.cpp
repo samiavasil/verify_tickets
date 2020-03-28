@@ -2,6 +2,12 @@
 #include <QDebug>
 #include <QtMqtt/QMqttClient>
 
+Comar &Comar::Instance()
+{
+    static Comar sComar(nullptr, "87.97.172.156", 7328);
+    return sComar;
+}
+
 Comar::Comar(QObject *parent,
              const QString &hostname,
              quint16 port) : QObject(parent)
@@ -32,6 +38,7 @@ Comar::Comar(QObject *parent,
     m_client->setUsername("mqtt");
     m_client->setPassword("778899123Abv!");
 }
+
 
 Comar::~Comar()
 {
