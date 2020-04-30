@@ -1,0 +1,20 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2020-04-04T18:39:03+03:00
+
+====== Cassandra configurations ======
+Created събота 04 април 2020
+
+===== Cassandra youtube =====
+https://www.youtube.com/playlist?list=PLalrWAGybpB-L1PGA-NfFu2uiWHEsdscD
+https://www.youtube.com/watch?v=BaeIIp89dhA
+				
+
+===== Docummentation: =====
+[[https://docs.datastax.com/en/archived/cassandra/3.0/cassandra/operations/opsAddDCToCluster.html|Adding a datacenter to a cluster]]
+
+Без аутентикация конфигурация:
+[[./cassandra.tar.gz]] 
+
+[[https://docs.datastax.com/en/cassandra-oss/3.0/cassandra/configuration/secureConfigNativeAuth.html|Configuring authentication]]	
+[[https://docs.datastax.com/en/security/5.1/security/secSystemKeyspace.html|Setting security keyspaces replication factors]]
