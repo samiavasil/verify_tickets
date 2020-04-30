@@ -1,7 +1,8 @@
-#include "DBClient.h"
+﻿#include "DBClient.h"
 #include <QDebug>
+#include "Configurator.h"
 
-void on_auth_initial(CassAuthenticator* auth, void* data) {
+ void on_auth_initial(CassAuthenticator* auth, void* data) {
     /*
    * This callback is used to initiate a request to begin an authentication
    * exchange. Required resources can be acquired and initialized here.
@@ -19,20 +20,21 @@ void on_auth_initial(CassAuthenticator* auth, void* data) {
    */
     const DBClient *client = static_cast<const DBClient*>(data);
     Q_ASSERT(client != nullptr);
-    const Credentials credentials = client->credentials();
+    QString user = Configurator::Instance().user();
+    QString password = Configurator::Instance().password();
 
-    size_t username_size = strlen(credentials.username);
-    size_t password_size = strlen(credentials.password);
+    size_t username_size = strlen(user.toUtf8().constData());
+    size_t password_size = strlen(password.toUtf8().constData());
     size_t size = username_size + password_size + 2;
 
     char* response = cass_authenticator_response(auth, size);
 
     /* Credentials are prefixed with '\0' */
     response[0] = '\0';
-    memcpy(response + 1, credentials.username, username_size);
+    memcpy(response + 1, user.toUtf8().constData(), username_size);
 
     response[username_size + 1] = '\0';
-    memcpy(response + username_size + 2, credentials.password, password_size);
+    memcpy(response + username_size + 2, password.toUtf8().constData(), password_size);
 }
 
 void on_auth_challenge(CassAuthenticator* auth, void* data, const char* token, size_t token_size) {
@@ -79,16 +81,11 @@ void on_host_listener(CassHostListenerEvent event, CassInet inet, void* data) {
     }
 }
 
-//DBClient::DBClient():m_credentials({ "museum", "cassandra" }),
-//
-DBClient::DBClient():m_credentials({ "museum", "cassandra" }),
-    m_hosts("192.168.4.221,192.168.4.222, 192.168.2.221,192.168.2.222"),
-    m_protocol(4),
+DBClient::DBClient():
     m_cluster(nullptr),
     m_session(nullptr),
     m_connState(NOT_CONNECTED)
 {
-
 }
 
 DBClient &DBClient::Instance()
@@ -119,9 +116,10 @@ bool DBClient::connectSession()
 
     cass_cluster_set_host_listener_callback(m_cluster, on_host_listener, this);
 
-    cass_cluster_set_protocol_version(m_cluster, m_protocol);
+    cass_cluster_set_protocol_version(m_cluster, Configurator::Instance().protocol());
 
-    cass_cluster_set_contact_points(m_cluster, m_hosts.toLocal8Bit().constData());
+    cass_cluster_set_contact_points(m_cluster, Configurator::Instance().hosts().
+                                    toLocal8Bit().constData());
 
     /* Set custom authentication callbacks and credentials */
     cass_cluster_set_authenticator_callbacks(m_cluster, &auth_callbacks, nullptr, this);
@@ -146,36 +144,6 @@ bool DBClient::connectSession()
         m_connState = CONNECTED;
 
     return ret;
-}
-
-QString DBClient::hosts() const
-{
-    return m_hosts;
-}
-
-void DBClient::setHosts(const QString &hosts)
-{
-    m_hosts = hosts;
-}
-
-Credentials DBClient::credentials() const
-{
-    return m_credentials;
-}
-
-void DBClient::setCredentials(const Credentials &credentials)
-{
-    m_credentials = credentials;
-}
-
-int DBClient::protocol() const
-{
-    return m_protocol;
-}
-
-void DBClient::setProtocol(int protocol)
-{
-    m_protocol = protocol;
 }
 
 DBClient::connectionState DBClient::connState() const

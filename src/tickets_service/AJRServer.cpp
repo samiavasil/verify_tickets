@@ -48,9 +48,10 @@ AJRServer::AJRServer(QObject *parent, const ServerConfigurator& config):
 void AJRServer::prepareTables() {
     //TODO: Move me
 
+ //   AJRSale::Instance().setKeySpace("Vesko_Space");
     qDebug() << "Create KeySpace: " << AJRSale::Instance().CreateKeySpace();
 
-   // qDebug() << "Drop Table AJRSale::Instance(): " << AJRSale::Instance().DropTable();
+ //   qDebug() << "Drop Table AJRSale::Instance(): " << AJRSale::Instance().DropTable();
     qDebug() << "Create Table ajrSale: " << AJRSale::Instance().CreateTable();
 
     QList<QMap<QString, QVariant>> result;
@@ -65,7 +66,7 @@ void AJRServer::prepareTables() {
 //    qDebug() << "Drop Table deadTickets: " << DeadTickets::Instance().DropTable();
     qDebug() << "Create Table deadTickets: " << DeadTickets::Instance().CreateTable();
 
- //   qDebug() << "Drop Table fiscUnit: " << FiscUnit::Instance().DropTable();
+//    qDebug() << "Drop Table fiscUnit: " << FiscUnit::Instance().DropTable();
     qDebug() << "Create Table fiscUnit: " << FiscUnit::Instance().CreateTable();
     qDebug() << "PrepareFiscUnitTable: " << FiscUnit::Instance().PrepareFiscUnitTable();
 

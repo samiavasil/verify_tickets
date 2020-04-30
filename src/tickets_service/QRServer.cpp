@@ -8,6 +8,7 @@
 #include "Comar.h"
 #include <QJsonDocument>
 #include <qjsonobject.h>
+#include "Configurator.h"
 
 QRServer::QRServer(QObject *parent, const ServerConfigurator& config):
     TCPServer(parent, config)
@@ -32,12 +33,19 @@ void QRServer ::Receive()
     int door_id = 3;
     //TBD
     int LIFETIME = 10;
+
  qDebug() << "QR: " << qr;
     QStringList split_site_door = qr.split(":");
     if (split_site_door.count() >= 3 ) {
         qr_site_id = split_site_door[0].toInt(&ok);
         if (!ok) {
             qDebug() << "Can't get qr_site_id";
+            //TBD: MQTT Wrong code event generation.
+            return;
+        }
+
+        if (qr_site_id != Configurator::Instance().site_id()) {
+            qDebug() << "qr_site_id is not the same as site_id";
             //TBD: MQTT Wrong code event generation.
             return;
         }

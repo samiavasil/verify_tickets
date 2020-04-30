@@ -7,8 +7,12 @@
 class Configurator
 {
 public:
-    const Configurator& Instance();
-
+    static Configurator &Instance();
+    int site_id() const;
+    int protocol();
+    QString hosts();
+    QString user();
+    QString password();
 protected:
     Configurator();
 protected:
