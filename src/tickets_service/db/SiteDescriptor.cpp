@@ -23,15 +23,15 @@ static const QMap<SiteDescriptor::Column_t, QPair<QString, QVariant::Type>> colT
         }
         );
 
-SiteDescriptor::SiteDescriptor(QString keySpace, QString tableName):
-    CassTable(keySpace, tableName, colType.values(), "(site_id)")
+SiteDescriptor::SiteDescriptor(QString tableName, QString keySpace):
+    CassTable( tableName, colType.values(), "(site_id)", keySpace)
 {
 
 }
 
 SiteDescriptor &SiteDescriptor::Instance()
 {
-    static SiteDescriptor SiteDescriptor("test_keyspace_xx", "site_descriptor");
+    static SiteDescriptor SiteDescriptor;
     return SiteDescriptor;
 }
 

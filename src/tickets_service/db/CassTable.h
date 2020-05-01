@@ -10,9 +10,9 @@
 class CassTable
 {
 public:
-    explicit CassTable(QString keySpace, QString tableName,
+    explicit CassTable( QString tableName,
                        const QList<QPair<QString, QVariant::Type>> &columns,
-                       const QString& primKeys);
+                       const QString& primKeys, QString keySpace);
     virtual ~CassTable();
 
     QString keySpace() const;

@@ -15,12 +15,12 @@ static const QMap<SoldAccess::Column_t, QPair<QString, QVariant::Type>> colType(
 
 SoldAccess &SoldAccess::Instance()
 {
-    static SoldAccess sAccess("test_keyspace_xx", "sold_Access");
+    static SoldAccess sAccess;
     return sAccess;
 }
 
-SoldAccess::SoldAccess(QString keySpace, QString tableName):
-    CassTable(keySpace, tableName, colType.values(), "(aj_site_id, sale_id, qr_site_id)")
+SoldAccess::SoldAccess(QString tableName, QString keySpace):
+    CassTable(tableName, colType.values(), "(aj_site_id, sale_id, qr_site_id)", keySpace)
 {
 
 }

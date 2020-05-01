@@ -23,15 +23,15 @@ static const QMap<CodeAccessInfo::Column_t, QPair<QString, QVariant::Type>> colT
                                                        {CodeAccessInfo::SITE_IDS,  {"site_ids",  QVariant::List}    },
                                                    });
 
-CodeAccessInfo::CodeAccessInfo(QString keySpace, QString tableName):
-    CassTable(keySpace, tableName, colType.values(), "code")
+CodeAccessInfo::CodeAccessInfo( QString tableName, QString keySpace):
+    CassTable( tableName, colType.values(), "code", keySpace)
 {
 
 }
 
 CodeAccessInfo &CodeAccessInfo::Instance()
 {
-    static CodeAccessInfo codeAccessInfo("test_keyspace_xx", "code_Access_info");
+    static CodeAccessInfo codeAccessInfo;
     return codeAccessInfo;
 }
 

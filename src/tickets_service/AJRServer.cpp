@@ -48,33 +48,36 @@ AJRServer::AJRServer(QObject *parent, const ServerConfigurator& config):
 void AJRServer::prepareTables() {
     //TODO: Move me
 
- //   AJRSale::Instance().setKeySpace("Vesko_Space");
-    qDebug() << "Create KeySpace: " << AJRSale::Instance().CreateKeySpace();
+    //   AJRSale::Instance().setKeySpace("Vesko_Space");
 
- //   qDebug() << "Drop Table AJRSale::Instance(): " << AJRSale::Instance().DropTable();
+    /* TBD: Should be deprecated - Creating keyspaces and network topology should be
+       defined externaly not in aspplication. App will know only the name of keyspace.*/
+   // qDebug() << "Create KeySpace: " << AJRSale::Instance().CreateKeySpace();
+
+    //   qDebug() << "Drop Table AJRSale::Instance(): " << AJRSale::Instance().DropTable();
     qDebug() << "Create Table ajrSale: " << AJRSale::Instance().CreateTable();
 
     QList<QMap<QString, QVariant>> result;
     qDebug() << "Dump Table " << AJRSale::Instance().SelectFromTable(result);
 
- //   qDebug() << "Drop Table codeAccessInfo: " << CodeAccessInfo::Instance().DropTable();
+    //   qDebug() << "Drop Table codeAccessInfo: " << CodeAccessInfo::Instance().DropTable();
     qDebug() << "Create Table code_Access_info: " << CodeAccessInfo::Instance().CreateTable();
     qDebug() << "Prepare Table code_Access_info: " << CodeAccessInfo::Instance().PrepareCodeAccessTable();
 
     qDebug() << "Dump Table CodeAccessInfo" << CodeAccessInfo::Instance().SelectFromTable(result);
 
-//    qDebug() << "Drop Table deadTickets: " << DeadTickets::Instance().DropTable();
+    //    qDebug() << "Drop Table deadTickets: " << DeadTickets::Instance().DropTable();
     qDebug() << "Create Table deadTickets: " << DeadTickets::Instance().CreateTable();
 
-//    qDebug() << "Drop Table fiscUnit: " << FiscUnit::Instance().DropTable();
+    //    qDebug() << "Drop Table fiscUnit: " << FiscUnit::Instance().DropTable();
     qDebug() << "Create Table fiscUnit: " << FiscUnit::Instance().CreateTable();
     qDebug() << "PrepareFiscUnitTable: " << FiscUnit::Instance().PrepareFiscUnitTable();
 
- //   qDebug() << "Drop Table siteDescriptor: " << SiteDescriptor::Instance().DropTable();
+    //   qDebug() << "Drop Table siteDescriptor: " << SiteDescriptor::Instance().DropTable();
     qDebug() << "Create Table SiteDescriptor: " << SiteDescriptor::Instance().CreateTable();
     qDebug() << "PrepareSiteDescriptorTable: " << SiteDescriptor::Instance().PrepareSiteDescriptorTable();
 
-//    qDebug() << "Drop Table soldAccess: " << SoldAccess::Instance().DropTable();
+    //    qDebug() << "Drop Table soldAccess: " << SoldAccess::Instance().DropTable();
     qDebug() << "Create Table soldAccess: " << SoldAccess::Instance().CreateTable();
 }
 
@@ -181,12 +184,12 @@ bool AJRServer::TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &da
         QMap<SoldAccess::Column_t , QVariant> soldData({
                                                            {SoldAccess::AJ_SITE_ID, data[i].value(AJRSale::AJ_SITE_ID, -1)},
                                                            {SoldAccess::SALE_ID, data[i].value(AJRSale::SALE_ID, -1)},
-                                                          /* {SoldAccess::SITE_ID, -1},
-                                                           {SoldAccess::DOOR_ID, -1},
-                                                           {SoldAccess::USED_CNT, 0},
-                                                           {SoldAccess::LIFETIME, 0}, //??
-                                                           {SoldAccess::FAIL_OVER_FLAG, false},
-                                                           {SoldAccess::TIMESTAMP, 0},*/
+                                                           /* {SoldAccess::SITE_ID, -1},
+                                                                                                              {SoldAccess::DOOR_ID, -1},
+                                                                                                              {SoldAccess::USED_CNT, 0},
+                                                                                                              {SoldAccess::LIFETIME, 0}, //??
+                                                                                                              {SoldAccess::FAIL_OVER_FLAG, false},
+                                                                                                              {SoldAccess::TIMESTAMP, 0},*/
                                                        });
 
 
@@ -208,10 +211,10 @@ bool AJRServer::TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &da
             ASSERT_ERROR("Get SIDE_ID", is_ok);
             if (dead_level > 0) {
                 QMap<DeadTickets::Column_t , QVariant> deadTicket({
-                                                                   {DeadTickets::AJ_SITE_ID, data[0].value(AJRSale::AJ_SITE_ID, -1)},
-                                                                   {DeadTickets::SALE_ID, data[0].value(AJRSale::SALE_ID, -1)},
-                                                                   {DeadTickets::LIVE_CTR, dead_level},
-                                                               });
+                                                                      {DeadTickets::AJ_SITE_ID, data[0].value(AJRSale::AJ_SITE_ID, -1)},
+                                                                      {DeadTickets::SALE_ID, data[0].value(AJRSale::SALE_ID, -1)},
+                                                                      {DeadTickets::LIVE_CTR, dead_level},
+                                                                  });
                 ASSERT_ERROR("SoldAccess Insert row: ",
                              DeadTickets::Instance().InserRowInDeadTickets(deadTicket));
             }

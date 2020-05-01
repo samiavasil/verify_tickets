@@ -14,7 +14,7 @@ public:
     static DeadTickets &Instance();
     bool InserRowInDeadTickets(QMap<DeadTickets::Column_t, QVariant> &row);
 protected:
-    DeadTickets(QString keySpace, QString tableName);
+    DeadTickets(QString tableName = "deadTickets", QString keySpace = QString());
 
 };
 

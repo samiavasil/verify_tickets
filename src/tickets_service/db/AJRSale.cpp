@@ -26,12 +26,12 @@ static const QMap<AJRSale::Column_t, QPair<QString, QVariant::Type>> colType(
 
 AJRSale &AJRSale::Instance()
 {
-    static AJRSale ajrSale("test_keyspace_xx", "Ajur_Sale");
+    static AJRSale ajrSale;
     return ajrSale;
 }
 
-AJRSale::AJRSale(QString keySpace, QString tableName):
-    CassTable(keySpace, tableName, colType.values(), "aj_site_id, sale_id")
+AJRSale::AJRSale(QString tableName, QString keySpace):
+    CassTable( tableName, colType.values(), "aj_site_id, sale_id", keySpace)
 {
 
 }

@@ -33,7 +33,7 @@ public:
     bool InserRowInCodeAccessTable(QMap<CodeAccessInfo::Column_t, QVariant> &row);
 
 protected:
-    CodeAccessInfo(QString keySpace, QString tableName);
+    CodeAccessInfo(QString tableName = "code_Access_info", QString keySpace = QString());
 };
 
 #endif // CODEACCESSINFO_H

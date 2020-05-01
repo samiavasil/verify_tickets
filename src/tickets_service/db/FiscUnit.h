@@ -18,7 +18,7 @@ public:
 public slots:
     bool PrepareFiscUnitTable();
 protected:
-    FiscUnit(QString keySpace, QString tableName);
+    FiscUnit(QString tableName = "fiscUnit", QString keySpace = QString());
 
 };
 

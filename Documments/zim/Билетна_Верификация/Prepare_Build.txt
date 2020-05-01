@@ -31,6 +31,8 @@ deb http://ppa.launchpad.net/beineri/opt-qt-5.12.6-bionic/ubuntu bionic main
 deb-src http://ppa.launchpad.net/beineri/opt-qt-5.12.6-bionic/ubuntu bionic main 
 }}}
 
+apt --fix-broken install
+
 
 
 [[https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04|How To Install and Use Docker on Ubuntu 18.04]]

@@ -19,7 +19,7 @@ public:
     bool InserRowInSiteDescriptorTable(QMap<SiteDescriptor::Column_t, QVariant> &row);
 
 protected:
-    SiteDescriptor(QString keySpace, QString tableName);
+    SiteDescriptor(QString tableName = "site_descriptor", QString keySpace = QString());
 };
 
 #endif // SITEDESCRIPTOR_H

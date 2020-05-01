@@ -19,7 +19,7 @@ public:
 public slots:
     bool PrepareTopicsTable();
 protected:
-    Topics(QString keySpace, QString tableName);
+    Topics(QString tableName = "Topics", QString keySpace = QString());
 
 };
 #endif // TOPICS_H

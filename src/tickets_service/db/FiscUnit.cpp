@@ -21,12 +21,12 @@ static const QMap<FiscUnit::Column_t, QPair<QString, QVariant::Type>> colType(
 
 FiscUnit &FiscUnit::Instance()
 {
-    static FiscUnit FiscUnit("test_keyspace_xx", "fiscUnit");
+    static FiscUnit FiscUnit;
     return FiscUnit;
 }
 
-FiscUnit::FiscUnit(QString keySpace, QString tableName):
-    CassTable(keySpace, tableName, colType.values(), "(fisc_str)")
+FiscUnit::FiscUnit(QString tableName, QString keySpace):
+    CassTable(tableName, colType.values(), "(fisc_str)", keySpace)
 {
 
 }

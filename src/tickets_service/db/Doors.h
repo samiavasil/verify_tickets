@@ -20,7 +20,7 @@ public:
 public slots:
     bool PrepareDoorsTable();
 protected:
-    Doors(QString keySpace, QString tableName);
+    Doors(QString tableName = "Doors", QString keySpace = QString());
 
 };
 #endif // DOORS_H

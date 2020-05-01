@@ -28,7 +28,7 @@ public:
     static inline  QVariant createCode(const QString& code);
 
 protected:
-    AJRSale(QString keySpace = "test_keyspace_xx", QString tableName = "ajurSales");
+    AJRSale( QString tableName = "Ajur_Sale", QString keySpace = QString());
 };
 
 #endif // AJRSALE_H

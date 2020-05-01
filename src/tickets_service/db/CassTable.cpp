@@ -2,6 +2,7 @@
 #include "BuildQuery.h"
 #include "MapQVarCass.h"
 #include "DBClient.h"
+#include "Configurator.h"
 #include<QDebug>
 
 #define CHECK_SESSION(x) do { \
@@ -10,15 +11,18 @@
     } \
     } while(0)
 
-CassTable::CassTable(QString keySpace, QString tableName,
+CassTable::CassTable(QString tableName,
                      const QList<QPair<QString, QVariant::Type> > &columns,
-                     const QString& primKeys):
+                     const QString& primKeys, QString keySpace):
     m_columns(columns),
     m_tableName(tableName),
-    m_keySpace(keySpace),
     m_primKeys(primKeys)
 {
-
+    if (keySpace.isNull()) {
+        m_keySpace = Configurator::Instance().keyspace();
+    } else {
+        m_keySpace = keySpace;
+    }
 }
 
 CassTable::~CassTable()
@@ -56,6 +60,8 @@ void print_error(CassFuture* future) {
 CassError execute_query(CassSession* session, const char* query) {
     CassError rc = CASS_OK;
     CassStatement* statement = cass_statement_new(query, 0);
+//TBD SET RIGHT CONS LEVEL
+//     cass_statement_set_consistency(statement, CASS_CONSISTENCY_ONE);
 
     CassFuture* future = cass_session_execute(session, statement);
     cass_future_wait(future);
@@ -112,15 +118,18 @@ bool CassTable::DropTable()
     return (CASS_OK == execute_query(session, query.query().toUtf8().constData()));
 }
 
+    /* TBD: Should be deprecated - Creating keyspaces and network topology should be
+       defined externaly not in aspplication. App will know only the name of keyspace.*/
 bool CassTable::CreateKeySpace()
 {
     BuildQuery query;
     CassSession *session = DBClient::Instance().session();
 
     CHECK_SESSION(session);
-    query.createKeySpace(m_keySpace).replication(BuildQuery::SimpleStrategy, 2);
+    query.createKeySpace(m_keySpace).replication(BuildQuery::NetworkTopologyStrategy, 1);
 
     qDebug() << query.query();
+    /* Ensure the session executed statement has strong consistency */
 
     return (CASS_OK == execute_query(session, query.query().toUtf8().constData()));
 }

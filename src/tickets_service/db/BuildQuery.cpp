@@ -39,9 +39,12 @@ BuildQuery &BuildQuery::dropKeySpace(const QString &space)
     return *this;
 }
 
+/* TBD: Should be deprecated - Creating keyspaces and network topology should be
+   defined externaly not in aspplication. App will know only the name of keyspace.*/
 BuildQuery &BuildQuery::replication(BuildQuery::strategyType_t strategy,
                                       int stratInt, bool durableWrites)
 {
+    /*
     m_query = QString("%1  WITH REPLICATION = { 'class':'%2', '%3':%4 }"
                        " AND DURABLE_WRITES = %5").
             arg(m_query).
@@ -49,6 +52,13 @@ BuildQuery &BuildQuery::replication(BuildQuery::strategyType_t strategy,
             arg(m_stratMap[strategy][1]).
             arg( stratInt).
             arg(durableWrites);
+*/
+    m_query = QString("%1  WITH REPLICATION = { 'class':'%2', 'dc1':1,'dc2':1,'dc3':1, 'dc4':1 , 'dc5':1,'dc6':1,'dc7':1, 'dc8':1 }"
+                       " AND DURABLE_WRITES = %5").
+            arg(m_query).
+            arg(m_stratMap[strategy][0]).
+            arg(durableWrites);
+
     return *this;
 }
 

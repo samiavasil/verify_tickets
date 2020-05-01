@@ -13,6 +13,7 @@ public:
     QString hosts();
     QString user();
     QString password();
+    QString keyspace();
 protected:
     Configurator();
 protected:

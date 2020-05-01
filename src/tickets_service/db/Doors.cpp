@@ -21,12 +21,12 @@ static const QMap<Doors::Column_t, QPair<QString, QVariant::Type>> colType({
 
 Doors &Doors::Instance()
 {
-    static Doors Doors("test_keyspace_xx", "Doors");
+    static Doors Doors;
     return Doors;
 }
 
-Doors::Doors(QString keySpace, QString tableName):
-    CassTable(keySpace, tableName, colType.values(), "(fisc_str)")
+Doors::Doors( QString tableName, QString keySpace):
+    CassTable(tableName, colType.values(), "(fisc_str)", keySpace)
 {
 
 }

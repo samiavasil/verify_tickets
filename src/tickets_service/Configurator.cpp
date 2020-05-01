@@ -7,6 +7,7 @@
 #define CASSANDRA_DEFAULT_HOSTS     "192.168.4.221,192.168.4.222, 192.168.2.221,192.168.2.222"
 #define CASSANDRA_DEFAULT_USER      "cassandra"
 #define CASSANDRA_DEFAULT_PASSWORD  "cassandra"
+#define CASSANDRA_DEFAULT_KEYSPACE  "test_keyspace_xx"
 
 using namespace std;
 Configurator &Configurator::Instance()
@@ -84,4 +85,15 @@ QString Configurator::password()
     }
 
     return password.toString();
+}
+
+QString Configurator::keyspace()
+{
+    QVariant keyspace = m_cfg.value("cassandra/keyspace");
+    if (keyspace.isNull()) {
+        m_cfg.setValue("cassandra/keyspace", CASSANDRA_DEFAULT_KEYSPACE);
+        keyspace = CASSANDRA_DEFAULT_KEYSPACE;
+    }
+
+    return keyspace.toString();
 }

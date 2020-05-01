@@ -1,0 +1,70 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2020-05-02T11:20:40+03:00
+
+====== Ъпгрейд 32бит линукс до 64 ======
+Created събота 02 май 2020
+
+https://angrysysadmins.tech/index.php/2019/06/bailey/ubuntu-change-from-32-bit-to-64-bit-mostly/
+
+{{{code: lang="sh" linenumbers="True"
+echo foreign-architecture amd64 | tee /etc/dpkg/dpkgcfgd/multiarch
+
+dpkg --add-architecture amd64
+
+apt update
+apt install linux-image-4.15.0-50:amd64
+apt install gcc-multilib
+apt upgrade
+}}}
+
+
+Настрой grub да боотне тоя 64 битов кернел
+Команда 1
+{{{code: lang="sh" linenumbers="True"
+
+$ grep submenu /boot/grub/grub.cfg
+submenu 'Advanced options for Debian GNU/Linux' $menuentry_id_option 'gnulinux-advanced-38ea4a12-6cfe-4ed9-a8b5-036295e62ffc' {
+}}}
+
+Команда 2
+{{{code: lang="sh" linenumbers="True"
+
+$ grep gnulinux /boot/grub/grub.cfg
+menuentry 'Debian GNU/Linux' --class debian --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-38ea4a12-6cfe-4ed9-a8b5-036295e62ffc' {
+submenu 'Advanced options for Debian GNU/Linux' $menuentry_id_option 'gnulinux-advanced-38ea4a12-6cfe-4ed9-a8b5-036295e62ffc' {
+    menuentry 'Debian GNU/Linux, with Linux 4.18.0-0.bpo.1-rt-amd64' --class debian --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-4.18.0-0.bpo.1-rt-amd64-advanced-38ea4a12-6cfe-4ed9-a8b5-036295e62ffc' {
+    menuentry 'Debian GNU/Linux, with Linux 4.18.0-0.bpo.1-rt-amd64 (recovery mode)' --class debian --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-4.18.0-0.bpo.1-rt-amd64-recovery-38ea4a12-6cfe-4ed9-a8b5-036295e62ffc' {
+    menuentry 'Debian GNU/Linux, with Linux 4.18.0-0.bpo.1-amd64' --class debian --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-4.18.0-0.bpo.1-amd64-advanced-38ea4a12-6cfe-4ed9-a8b5-036295e62ffc' {
+    menuentry 'Debian GNU/Linux, with Linux 4.18.0-0.bpo.1-amd64 (recovery mode)' --class debian --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-4.18.0-0.bpo.1-amd64-recovery-38ea4a12-6cfe-4ed9-a8b5-036295e62ffc' {
+    menuentry 'Debian GNU/Linux, with Linux 4.17.0-0.bpo.1-amd64' --class debian --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-4.17.0-0.bpo.1-amd64-advanced-38ea4a12-6cfe-4ed9-a8b5-036295e62ffc' {
+    menuentry 'Debian GNU/Linux, with Linux 4.17.0-0.bpo.1-amd64 (recovery mode)' --class debian --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-4.17.0-0.bpo.1-amd64-recovery-38ea4a12-6cfe-4ed9-a8b5-036295e62ffc' {
+    menuentry 'Debian GNU/Linux, with Linux 4.9.0-8-amd64' --class debian --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-4.9.0-8-amd64-advanced-38ea4a12-6cfe-4ed9-a8b5-036295e62ffc' {
+    menuentry 'Debian GNU/Linux, with Linux 4.9.0-8-amd64 (recovery mode)' --class debian --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-4.9.0-8-amd64-recovery-38ea4a12-6cfe-4ed9-a8b5-036295e62ffc' {
+}}}
+
+
+Във файл /etc/default/grub замести GRUB_DEFAULT=0 със сглобката на $menuentry_id_option(ot komanda 1) > $menuentry_id_option(kernela  komanda 2).
+Ето така:
+{{{code: lang="sh" linenumbers="True"
+#GRUB_DEFAULT=0
+
+GRUB_DEFAULT="gnulinux-advanced-38ea4a12-6cfe-4ed9-a8b5-036295e62ffc>gnulinux-4.18.0-0.bpo.1-amd64-advanced-38ea4a12-6cfe-4ed9-a8b5-036295e62ffc"
+}}}
+
+Ъпдейт grub конфигурацията
+{{{code: lang="sh" linenumbers="True"
+$ sudo update-grub
+}}}
+
+
+Овори файла sources.list и пред всяко URL добави  [ arch=amd64 ]
+След което командите:
+{{{code: lang="sh" linenumbers="True"
+apt update
+dpkg --get-selections | grep -v deinstall | cut -f1 > list.log
+
+for i in $(cat list.log); do apt install --reinstall "$i"; done
+}}}
+
+

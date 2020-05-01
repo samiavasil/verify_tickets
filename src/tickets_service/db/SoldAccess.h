@@ -24,7 +24,7 @@ public:
     static SoldAccess& Instance();
     bool InserRowInSoldAccessTable(QMap<SoldAccess::Column_t, QVariant> &row);
 protected:
-    SoldAccess(QString keySpace, QString tableName);
+    SoldAccess(QString tableName = "sold_Access", QString keySpace = QString());
 };
 
 #endif // SOLDACCESS_H
