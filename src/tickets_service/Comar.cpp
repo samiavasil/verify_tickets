@@ -1,10 +1,11 @@
 #include "Comar.h"
 #include <QDebug>
 #include <QtMqtt/QMqttClient>
+#include "Configurator.h"
 
 Comar &Comar::Instance()
 {
-    static Comar sComar(nullptr, "87.97.172.156", 7328);
+    static Comar sComar(nullptr, Configurator::Instance().Comar().host, Configurator::Instance().Comar().port);
     return sComar;
 }
 
@@ -35,8 +36,8 @@ Comar::Comar(QObject *parent,
         qDebug() << this << content;
     });
 
-    m_client->setUsername("mqtt");
-    m_client->setPassword("778899123Abv!");
+    m_client->setUsername(Configurator::Instance().Comar().user);
+    m_client->setPassword(Configurator::Instance().Comar().password);
 }
 
 
@@ -77,7 +78,7 @@ void Comar::updateLogStateChange()
 
     if(state == m_client->Connected) {
         auto subscription = m_client->subscribe(
-                    QMqttTopicFilter("Cassandra/Veso"), 0);
+                    QMqttTopicFilter(Configurator::Instance().Comar().topic), 0);
         if (!subscription) {
             qDebug() << "Error: Could not subscribe."
                         " Is there a valid connection?";

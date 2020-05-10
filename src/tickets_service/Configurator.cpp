@@ -3,11 +3,16 @@
 #include <string>
 #include <QDebug>
 
-#define CASSANDRA_DEFAULT_VERSION 4
-#define CASSANDRA_DEFAULT_HOSTS     "192.168.4.221,192.168.4.222, 192.168.2.221,192.168.2.222"
-#define CASSANDRA_DEFAULT_USER      "cassandra"
-#define CASSANDRA_DEFAULT_PASSWORD  "cassandra"
-#define CASSANDRA_DEFAULT_KEYSPACE  "test_keyspace_xx"
+#define CASSANDRA_DEFAULT_VERSION    4
+#define CASSANDRA_DEFAULT_HOSTS      "192.168.4.221,192.168.4.222, 192.168.2.221,192.168.2.222"
+#define CASSANDRA_DEFAULT_USER       "cassandra"
+#define CASSANDRA_DEFAULT_PASSWORD   "cassandra"
+#define CASSANDRA_DEFAULT_KEYSPACE   "test_keyspace_xx"
+#define CASSANDRA_DEFAULT_COMAR_HOST "87.97.172.156"
+#define CASSANDRA_DEFAULT_COMAR_PORT 7328
+#define CASSANDRA_DEFAULT_COMAR_USER "mqtt"
+#define CASSANDRA_DEFAULT_COMAR_PASS "778899123Abv!"
+#define CASSANDRA_DEFAULT_COMAR_TOPIC "Cassandra/Veso"
 
 using namespace std;
 Configurator &Configurator::Instance()
@@ -23,19 +28,53 @@ int Configurator::site_id() const
 
 Configurator::Configurator():m_cfg("./config.ini", QSettings::IniFormat)
 {
+    QVariant value;
     m_cfg.setIniCodec("UTF-8");
-    //m_cfg.setValue("animal/snake", 58);
 
     if (m_cfg.value("site_config/site_id").isNull()) {
         m_cfg.setValue("site_config/site_id", 10);
     }
-
-    int site_id = m_cfg.value("site_config/site_id", -1).toInt();
-
     bool debug = m_cfg.value("site_config/debug", false).toBool();
-    qDebug() << "site_id: "<< site_id << ", debug: " << debug;
-    //   string p;
-    //   cin >> p;
+
+    value = m_cfg.value("comar_config/host");
+    if (value.isNull()) {
+        value = CASSANDRA_DEFAULT_COMAR_HOST;
+        m_cfg.setValue("comar_config/host", value);
+    }
+    m_Comar.host = value.toString();
+
+    value = m_cfg.value("comar_config/port");
+    if (value.isNull()) {
+        value = CASSANDRA_DEFAULT_COMAR_PORT;
+        m_cfg.setValue("comar_config/port", value);
+    }
+    m_Comar.port = static_cast<quint16>(value.toInt());
+
+    value = m_cfg.value("comar_config/user");
+    if (value.isNull()) {
+        value = CASSANDRA_DEFAULT_COMAR_USER;
+        m_cfg.setValue("comar_config/user", CASSANDRA_DEFAULT_COMAR_USER);
+    }
+    m_Comar.user = value.toString();
+
+    value = m_cfg.value("comar_config/pass");
+    if (value.isNull()) {
+        value = CASSANDRA_DEFAULT_COMAR_PASS;
+        m_cfg.setValue("comar_config/pass", CASSANDRA_DEFAULT_COMAR_PASS);
+    }
+    m_Comar.password = value.toString();
+
+    value = m_cfg.value("comar_config/topic");
+    if (value.isNull()) {
+        value = CASSANDRA_DEFAULT_COMAR_TOPIC;
+        m_cfg.setValue("comar_config/topic", CASSANDRA_DEFAULT_COMAR_TOPIC);
+    }
+    m_Comar.topic = value.toString();
+}
+
+const ComarCfg &Configurator::Comar() const
+{
+    return m_Comar;
 }
 
 int Configurator::protocol() {
