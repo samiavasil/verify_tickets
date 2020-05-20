@@ -14,9 +14,9 @@
 
 static const QMap<FiscUnit::Column_t, QPair<QString, QVariant::Type>> colType(
 {
-            {FiscUnit::FISC_STR,     {"fisc_str",     QVariant::String} },
-            {FiscUnit::NAME_ADDRESS, {"name_address", QVariant::String} },
-            {FiscUnit::CASS_NODE_ID, {"cass_node_id", QVariant::Int} },
+            {FiscUnit::ID,         {"id",         QVariant::Int} },
+            {FiscUnit::FISCAL_MEM, {"fiscal_mem", QVariant::String} },
+            {FiscUnit::SITE_ID,    {"site_id",    QVariant::Int} },
         });
 
 FiscUnit &FiscUnit::Instance()
@@ -26,7 +26,7 @@ FiscUnit &FiscUnit::Instance()
 }
 
 FiscUnit::FiscUnit(QString tableName, QString keySpace):
-    CassTable(tableName, colType.values(), "(fisc_str)", keySpace)
+    CassTable(tableName, colType.values(), "(id)", keySpace)
 {
 
 }
@@ -47,21 +47,6 @@ bool FiscUnit::InserRowInFiscUnit(QMap<FiscUnit::Column_t , QVariant> &row)
 bool FiscUnit::PrepareFiscUnitTable() {
 
     const QList<QMap<FiscUnit::Column_t , QVariant>> dataList =  {
-        {
-            { FiscUnit::FISC_STR           , "50179218"},
-            { FiscUnit::NAME_ADDRESS       , "Музей 1"},
-            { FiscUnit::CASS_NODE_ID       , 1},
-        },
-        {
-            { FiscUnit::FISC_STR           , "50179219"},
-            { FiscUnit::NAME_ADDRESS       , "Музей 2"},
-            { FiscUnit::CASS_NODE_ID       , 2},
-        },
-        {
-            { FiscUnit::FISC_STR          , "50179220"},
-            { FiscUnit::NAME_ADDRESS      , "Музей 3"},
-            { FiscUnit::CASS_NODE_ID      , 3},
-        }
     };
 
     foreach (auto data, dataList) {

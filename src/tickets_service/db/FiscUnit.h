@@ -7,9 +7,9 @@ class FiscUnit: public CassTable
 public:
 
     typedef enum {
-        FISC_STR,
-        NAME_ADDRESS,
-        CASS_NODE_ID
+        ID,
+        FISCAL_MEM,
+        SITE_ID
     } Column_t;
 
     static FiscUnit &Instance();

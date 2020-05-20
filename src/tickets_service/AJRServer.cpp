@@ -5,8 +5,10 @@
 
 #include "db/CodeAccessInfo.h"
 #include "db/DeadTickets.h"
+#include "db/Doors.h"
 #include "db/FiscUnit.h"
 #include "db/SiteDescriptor.h"
+#include "db/SoldAccess.h"
 #include "db/SoldAccess.h"
 
 #include<QDebug>
@@ -52,7 +54,7 @@ void AJRServer::prepareTables() {
 
     /* TBD: Should be deprecated - Creating keyspaces and network topology should be
        defined externaly not in aspplication. App will know only the name of keyspace.*/
-   // qDebug() << "Create KeySpace: " << AJRSale::Instance().CreateKeySpace();
+    /* qDebug() << "Create KeySpace: " << AJRSale::Instance().CreateKeySpace();*/
 
     //   qDebug() << "Drop Table AJRSale::Instance(): " << AJRSale::Instance().DropTable();
     qDebug() << "Create Table ajrSale: " << AJRSale::Instance().CreateTable();
@@ -60,24 +62,27 @@ void AJRServer::prepareTables() {
     QList<QMap<QString, QVariant>> result;
     qDebug() << "Dump Table " << AJRSale::Instance().SelectFromTable(result);
 
-    //   qDebug() << "Drop Table codeAccessInfo: " << CodeAccessInfo::Instance().DropTable();
+    /*qDebug() << "Drop Table codeAccessInfo: " << CodeAccessInfo::Instance().DropTable();*/
     qDebug() << "Create Table code_Access_info: " << CodeAccessInfo::Instance().CreateTable();
-    qDebug() << "Prepare Table code_Access_info: " << CodeAccessInfo::Instance().PrepareCodeAccessTable();
+    /*qDebug() << "Prepare Table code_Access_info: " << CodeAccessInfo::Instance().PrepareCodeAccessTable();*/
 
     qDebug() << "Dump Table CodeAccessInfo" << CodeAccessInfo::Instance().SelectFromTable(result);
 
-    //    qDebug() << "Drop Table deadTickets: " << DeadTickets::Instance().DropTable();
+    /* qDebug() << "Drop Table deadTickets: " << DeadTickets::Instance().DropTable();*/
     qDebug() << "Create Table deadTickets: " << DeadTickets::Instance().CreateTable();
 
-    //    qDebug() << "Drop Table fiscUnit: " << FiscUnit::Instance().DropTable();
+    /* qDebug() << "Drop Table Doors: " << Doors::Instance().DropTable();*/
+    qDebug() << "Create Table Doors: " << Doors::Instance().CreateTable();
+
+    /* qDebug() << "Drop Table fiscUnit: " << FiscUnit::Instance().DropTable(); */
     qDebug() << "Create Table fiscUnit: " << FiscUnit::Instance().CreateTable();
-    qDebug() << "PrepareFiscUnitTable: " << FiscUnit::Instance().PrepareFiscUnitTable();
+    /* qDebug() << "PrepareFiscUnitTable: " << FiscUnit::Instance().PrepareFiscUnitTable();*/
 
-    //   qDebug() << "Drop Table siteDescriptor: " << SiteDescriptor::Instance().DropTable();
+    /* qDebug() << "Drop Table siteDescriptor: " << SiteDescriptor::Instance().DropTable();*/
     qDebug() << "Create Table SiteDescriptor: " << SiteDescriptor::Instance().CreateTable();
-    qDebug() << "PrepareSiteDescriptorTable: " << SiteDescriptor::Instance().PrepareSiteDescriptorTable();
+    /*qDebug() << "PrepareSiteDescriptorTable: " << SiteDescriptor::Instance().PrepareSiteDescriptorTable();*/
 
-    //    qDebug() << "Drop Table soldAccess: " << SoldAccess::Instance().DropTable();
+    /* qDebug() << "Drop Table soldAccess: " << SoldAccess::Instance().DropTable(); */
     qDebug() << "Create Table soldAccess: " << SoldAccess::Instance().CreateTable();
 }
 
@@ -218,6 +223,7 @@ bool AJRServer::TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &da
                 ASSERT_ERROR("SoldAccess Insert row: ",
                              DeadTickets::Instance().InserRowInDeadTickets(deadTicket));
             }
+
             foreach (auto site_id, code_access[0].value("site_ids").toList()) {
                 soldData[SoldAccess::QR_SITE_ID] = site_id.toInt(&is_ok);
                 ASSERT_ERROR("Get SIDE_ID", is_ok);

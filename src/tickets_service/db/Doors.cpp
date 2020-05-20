@@ -13,10 +13,10 @@
     while (0)
 
 static const QMap<Doors::Column_t, QPair<QString, QVariant::Type>> colType({
-            {Doors::ID,      {"id",     QVariant::Int} },
-            {Doors::SITE_ID, {"name_address", QVariant::Int} },
+            {Doors::DOOR_ID, {"door_id",     QVariant::Int} },
+            {Doors::SITE_ID, {"site_id", QVariant::Int} },
             {Doors::NAME,    {"name", QVariant::QVariant::String} },
-            {Doors::TOPIC,   {"topic", QVariant::Int} },
+            {Doors::INFO,    {"info", QVariant::String} },
         });
 
 Doors &Doors::Instance()
@@ -26,7 +26,7 @@ Doors &Doors::Instance()
 }
 
 Doors::Doors( QString tableName, QString keySpace):
-    CassTable(tableName, colType.values(), "(fisc_str)", keySpace)
+    CassTable(tableName, colType.values(), "(door_id, site_id)", keySpace)
 {
 
 }
@@ -48,17 +48,17 @@ bool Doors::PrepareDoorsTable() {
 
     const QList<QMap<Doors::Column_t , QVariant>> dataList =  {
         {
-            { Doors::ID       , 1},
+            { Doors::DOOR_ID       , 1},
             { Doors::SITE_ID  , 1},
             { Doors::NAME     , "Музей 1. Предна Вратня"},
         },
         {
-            { Doors::ID       , 2},
+            { Doors::DOOR_ID       , 2},
             { Doors::SITE_ID  , 1},
             { Doors::NAME     , "Музей 1. Задна Вратня"},
         },
         {
-            { Doors::ID       , 3},
+            { Doors::DOOR_ID       , 3},
             { Doors::SITE_ID  , 2},
             { Doors::NAME     , "Музей 2. Единствена Вратня"},
         }

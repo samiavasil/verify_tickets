@@ -28,13 +28,13 @@ void QRServer ::Receive()
     bool enable_access = false;
     bool ok;
     bool already_used = false;
-   /*TBD: Read from QR*/
-    int qr_site_id = 5;
-    int door_id = 3;
+    int qr_site_id = -1;
+    int door_id = -1;
+
     //TBD
     int LIFETIME = 10;
 
- qDebug() << "QR: " << qr;
+    qDebug() << "QR: " << qr;
     QStringList split_site_door = qr.split(":");
     if (split_site_door.count() >= 3 ) {
         qr_site_id = split_site_door[0].toInt(&ok);
@@ -44,13 +44,15 @@ void QRServer ::Receive()
             return;
         }
 
+            /*Check that QR site_id is the same as in configuration file */
         if (qr_site_id != Configurator::Instance().site_id()) {
             qDebug() << "qr_site_id is not the same as site_id";
             //TBD: MQTT Wrong code event generation.
             return;
         }
-        qr.remove(0, split_site_door[0].length() + 1);
 
+        qr.remove(0, split_site_door[0].length() + 1);
+            /*Get door ID*/
         door_id = split_site_door[1].toInt(&ok);
         if (!ok) {
             qDebug() << "Can't get qr_site_id";
@@ -74,12 +76,12 @@ void QRServer ::Receive()
         if (list.count() > 1) {
             //QR = 50179218*181*2020-02-28*20:07:00*25
             QList<QMap<QString, QVariant>> fisc_unit;
-            FiscUnit::Instance().SelectFromTable(fisc_unit, "fisc_str",
-                                                 QString("fisc_str='%1'").
+            FiscUnit::Instance().SelectFromTable(fisc_unit, "fiscal_mem",
+                                                 QString("fiscal_mem='%1'").
                                                  arg(list[0]));
             //Check fiscal units
             if (fisc_unit.count() > 0) {
-                qDebug() << "Продадено от фискален апарат" << fisc_unit[0].value("fisc_str");
+                qDebug() << "Продадено от фискален апарат" << fisc_unit[0].value("fiscal_mem");
             }
         }
     } else {
@@ -221,8 +223,14 @@ void QRServer ::Receive()
         }
     }
 
+    QString topic_simple = QString("site%1door%2/msg").arg(qr_site_id).arg(door_id);
+    QString topic = QString("site%1door%2/full_msg").arg(qr_site_id).arg(door_id);
+    int qty = 0;
+
     if (enable_access) {
+
         QDateTime cur_timestamp;
+
         cur_timestamp.setMSecsSinceEpoch(1213342); //TBD Add real timestamp
         //TBD add 1 full sold access
         QMap<SoldAccess::Column_t , QVariant> soldData(
@@ -243,32 +251,31 @@ void QRServer ::Receive()
             return;
         }
         //Notify to open
-        int qty = ajr_sale[0].value("qty").toInt();
-        QString topic_simple = QString("site%1door%2/msg").arg(qr_site_id).arg(door_id);
-        QString topic = QString("site%1door%2/full_msg").arg(qr_site_id).arg(door_id);
-        QJsonObject object =  {
-            {"door_id",  door_id},
-            {"site_id",  qr_site_id},
-            {"qty",      qty},
-            {"set_door", enable_access?"true" : "false"},
-            {"codename", codename},
-        };
-        QJsonDocument json(object);
-
-        Comar::Instance().publish(topic, enable_access?"true" : "false", 1, false);
-
-        Comar::Instance().publish(topic, json.toJson(), 1, false);
-
-        qDebug() << "topic: "  << topic
-                 << ", Site: " << qr_site_id
-                 << ", Open the door: " << door_id
-                 << ", qty: " << qty;
-
-        qDebug() << "Json: " << json.toJson();
-
+        qty = ajr_sale[0].value("qty").toInt();
         qDebug() << "Open the door";
 
     }
+
+    QJsonObject object =  {
+        {"door_id",  door_id},
+        {"site_id",  qr_site_id},
+        {"qty",      qty},
+        {"set_door", enable_access ? "true" : "false"},
+        {"codename", codename},
+    };
+
+    QJsonDocument json(object);
+
+    Comar::Instance().publish(topic_simple, enable_access ? "true" : "false", 1, false);
+
+    Comar::Instance().publish(topic, json.toJson(), 1, false);
+
+    qDebug() << "topic: "  << topic
+             << ", Site: " << qr_site_id
+             << ", Open the door: " << door_id
+             << ", qty: " << qty;
+
+    qDebug() << "Json: " << json.toJson();
 
 
     //clientSocket->write("Server says Hello");

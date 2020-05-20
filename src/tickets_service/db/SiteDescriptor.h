@@ -9,9 +9,8 @@ public:
         SITE_ID,
         NAME,
         INFO,
-        ACCESS_TYPE,
-        OBJ_TYPE,
         DOORS,
+        NODE_STATUS,
     } Column_t;
 
     static SiteDescriptor& Instance();

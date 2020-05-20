@@ -8,10 +8,10 @@ class Doors: public CassTable
 public:
 
     typedef enum {
-        ID,
+        DOOR_ID,
         SITE_ID,
         NAME,
-        TOPIC
+        INFO
     } Column_t;
 
     static Doors &Instance();

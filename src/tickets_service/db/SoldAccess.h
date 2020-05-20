@@ -17,9 +17,10 @@ public:
         SALE_ID,
         QR_SITE_ID,
         DOOR_ID,
-        USED_CNT,
         FAIL_OVER_FLAG,
-        TIMESTAMP
+        QTY,
+        TIMESTAMP,
+        USED_CNT,
     } Column_t;
     static SoldAccess& Instance();
     bool InserRowInSoldAccessTable(QMap<SoldAccess::Column_t, QVariant> &row);

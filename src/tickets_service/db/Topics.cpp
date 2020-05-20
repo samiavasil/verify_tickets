@@ -26,7 +26,7 @@ Topics &Topics::Instance()
 }
 
 Topics::Topics(QString tableName, QString keySpace):
-    CassTable(tableName, colType.values(), "(fisc_str)", keySpace)
+    CassTable(tableName, colType.values(), "(fiscal_mem)", keySpace)
 {
 
 }

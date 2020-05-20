@@ -3,13 +3,14 @@
 
 static const QMap<SoldAccess::Column_t, QPair<QString, QVariant::Type>> colType(
 {
+            {SoldAccess::SALE_ID,        {"sale_id", QVariant::Int}  },
             {SoldAccess::AJ_SITE_ID,     {"aj_site_id", QVariant::Int}},
             {SoldAccess::QR_SITE_ID,     {"qr_site_id", QVariant::Int}  },
-            {SoldAccess::SALE_ID,        {"sale_id", QVariant::Int}  },
             {SoldAccess::DOOR_ID,        {"door_id", QVariant::Int}  },
-            {SoldAccess::USED_CNT,       {"used_cnt", QVariant::Int} },
             {SoldAccess::FAIL_OVER_FLAG, {"fail_over_flag", QVariant::Bool} },
-            {SoldAccess::TIMESTAMP,      {"timestamp", QVariant::DateTime} }
+            {SoldAccess::QTY,             {"qty", QVariant::Int}  },
+            {SoldAccess::TIMESTAMP,      {"timestamp", QVariant::DateTime} },
+            {SoldAccess::USED_CNT,       {"used_cnt", QVariant::Int} },
         }
         );
 

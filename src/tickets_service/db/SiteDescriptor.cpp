@@ -17,9 +17,8 @@ static const QMap<SiteDescriptor::Column_t, QPair<QString, QVariant::Type>> colT
             {SiteDescriptor::SITE_ID,     {"site_id",       QVariant::Int} },
             {SiteDescriptor::NAME,        {"name",        QVariant::String} },
             {SiteDescriptor::INFO,        {"info",        QVariant::String} },
-            {SiteDescriptor::ACCESS_TYPE, {"access_type", QVariant::String} },
-            {SiteDescriptor::OBJ_TYPE,    {"obj_type",    QVariant::String} },
-            {SiteDescriptor::DOORS,       {"doors",       QVariant::List} }
+            {SiteDescriptor::DOORS,       {"doors",       QVariant::List} },
+            {SiteDescriptor::NODE_STATUS, {"node_status", QVariant::Bool} },
         }
         );
 
@@ -55,25 +54,22 @@ bool SiteDescriptor::PrepareSiteDescriptorTable() {
             { SiteDescriptor::SITE_ID     , 1},
             { SiteDescriptor::NAME        , "Музей 1"},
             { SiteDescriptor::INFO        , "Питай на касата :Р"},
-            { SiteDescriptor::ACCESS_TYPE , 0},
-            { SiteDescriptor::OBJ_TYPE    , 1},
-            {SiteDescriptor::DOORS        , QVariant::fromValue<QList<int>>({1,2})}
+            {SiteDescriptor::DOORS        , QVariant::fromValue<QList<int>>({1,2})},
+            {SiteDescriptor::NODE_STATUS, true },
         },
         {
             { SiteDescriptor::SITE_ID       , 2},
             { SiteDescriptor::NAME        , "Музей 2"},
             { SiteDescriptor::INFO        , "Това да не ти е бюро справки ? :Р"},
-            { SiteDescriptor::ACCESS_TYPE , 0},
-            { SiteDescriptor::OBJ_TYPE    , 1},
-            {SiteDescriptor::DOORS        , QVariant::fromValue<QList<int>>({3,4,5})}
+            {SiteDescriptor::DOORS        , QVariant::fromValue<QList<int>>({3,4,5})},
+            {SiteDescriptor::NODE_STATUS, true },
         },
         {
             { SiteDescriptor::SITE_ID       , 3},
             { SiteDescriptor::NAME        , "Музей 3"},
             { SiteDescriptor::INFO        , "Абе я си взимай билет и не питай."},
-            { SiteDescriptor::ACCESS_TYPE , 0},
-            { SiteDescriptor::OBJ_TYPE    , 2},
-            {SiteDescriptor::DOORS        , QVariant::fromValue<QList<int>>({6,7})}
+            {SiteDescriptor::DOORS        , QVariant::fromValue<QList<int>>({6,7})},
+            {SiteDescriptor::NODE_STATUS, true },
         }
     };
 
