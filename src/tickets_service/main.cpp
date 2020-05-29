@@ -7,7 +7,7 @@
 #include "TCPServer.h"
 #include "db/DBClient.h"
 #include <QDateTime>
-#include "Comar.h"
+#include "MqttManager.h"
 
 class msg{
 public:
@@ -17,7 +17,7 @@ public:
         switch (type) {
         case QtDebugMsg:
 
-            Comar::Instance().publish(QMqttTopicName("Cassandra/Vasil")
+            MqttManager::Instance().publish(QMqttTopicName("Cassandra/Vasil")
                                                 , msg.toLatin1(), 2, true);
             fprintf(stderr, "%s\n", msg.toStdString().c_str());
             break;
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     ServerConfigurator cfg1(QHostAddress::Any, 12346, false);
     msg m;
 
-    Comar::Instance().connectToHost();
+    MqttManager::Instance().connectToHost();
 
     qInstallMessageHandler(m.myMessageOutput);
 

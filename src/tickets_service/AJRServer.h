@@ -14,9 +14,10 @@ protected:
     inline bool ParseJsonInput(QByteArray &buff, QList<QMap<AJRSale::Column_t, QVariant> > &out);
     bool TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &data);
     bool ProcessAjurData(QList<QMap<AJRSale::Column_t , QVariant>> &data);
-
+    void DoConsistencyTransfer();
 protected:
     int m_lastId;
+
 private:
     void prepareTables();
 };

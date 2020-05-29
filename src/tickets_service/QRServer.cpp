@@ -5,7 +5,7 @@
 #include "db/FiscUnit.h"
 #include "db/SiteDescriptor.h"
 #include "db/SoldAccess.h"
-#include "Comar.h"
+#include "MqttManager.h"
 #include <QJsonDocument>
 #include <qjsonobject.h>
 #include "Configurator.h"
@@ -266,9 +266,9 @@ void QRServer ::Receive()
 
     QJsonDocument json(object);
 
-    Comar::Instance().publish(topic_simple, enable_access ? "true" : "false", 1, false);
+    MqttManager::Instance().publish(topic_simple, enable_access ? "true" : "false", 1, false);
 
-    Comar::Instance().publish(topic, json.toJson(), 1, false);
+    MqttManager::Instance().publish(topic, json.toJson(), 1, false);
 
     qDebug() << "topic: "  << topic
              << ", Site: " << qr_site_id

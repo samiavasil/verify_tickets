@@ -26,7 +26,7 @@ SoldAccess::SoldAccess(QString tableName, QString keySpace):
 
 }
 
-bool SoldAccess::InserRowInSoldAccessTable(QMap<SoldAccess::Column_t , QVariant> &row)
+bool SoldAccess::InserRowInSoldAccessTable(QMap<SoldAccess::Column_t, QVariant> &row)
 {
     QMap<QString, QString> row_str;
     auto col = row.constBegin();

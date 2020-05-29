@@ -12,7 +12,6 @@ class SoldAccess : public CassTable
 public:
 
     typedef enum {
-/*        ID,*/
         AJ_SITE_ID,
         SALE_ID,
         QR_SITE_ID,

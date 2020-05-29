@@ -3,6 +3,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 
+#include "Configurator.h"
 #include "db/CodeAccessInfo.h"
 #include "db/DeadTickets.h"
 #include "db/Doors.h"
@@ -10,6 +11,7 @@
 #include "db/SiteDescriptor.h"
 #include "db/SoldAccess.h"
 #include "db/SoldAccess.h"
+
 
 #include<QDebug>
 
@@ -84,6 +86,30 @@ void AJRServer::prepareTables() {
 
     /* qDebug() << "Drop Table soldAccess: " << SoldAccess::Instance().DropTable(); */
     qDebug() << "Create Table soldAccess: " << SoldAccess::Instance().CreateTable();
+
+    if (Configurator::Instance().check_consistency()) {
+        DoConsistencyTransfer();
+    } else {
+        qDebug() << "NO Consistency check";
+    }
+}
+
+void AJRServer::DoConsistencyTransfer() {
+
+    QList<QMap<QString, QVariant>> sales;
+    AJRSale::Instance().SelectFromTable(sales, "*", "transfered=false ALLOW FILTERING");
+    qDebug() << "DO Consistency check";
+    foreach (auto sale, sales) {
+        QList<QMap<AJRSale::Column_t, QVariant> > data ({{
+                                                             {AJRSale::AJ_SITE_ID, sale.value("aj_site_id", -1)},
+                                                             {AJRSale::SALE_ID, sale.value("sale_id", -1)},
+                                                             {AJRSale::CODE, sale.value("code", -1)},
+                                                             {AJRSale::TRANSFERED, sale.value("transfered", -1)}
+                                                         }});
+
+        TransferSoldAccess(data);
+    }
+    Configurator::Instance().set_consistency_checked();
 }
 
 static bool getVal(QJsonObject& jsObj,  const char* field, QVariant& val, QVariant::Type type = QVariant::String) {
@@ -94,12 +120,17 @@ static bool getVal(QJsonObject& jsObj,  const char* field, QVariant& val, QVaria
         if(!val.convert(int(type))) {
             val = QVariant();
         }
-        //        qDebug() << field << ": " << val;
     }
 
     return val.isValid();
 }
 
+/**
+ * @brief AJRServer::ParseJsonInput
+ * @param buff
+ * @param out
+ * @return
+ */
 bool AJRServer::ParseJsonInput(QByteArray& buff, QList<QMap<AJRSale::Column_t , QVariant>> &out) {
     bool status = false;
     QJsonParseError error;
@@ -151,9 +182,9 @@ bool AJRServer::ParseJsonInput(QByteArray& buff, QList<QMap<AJRSale::Column_t , 
                 qDebug() << __func__ << " : Can't get qty";
                 goto RET_ERROR;
             }
-            ajr_data.insert(AJRSale::QTY ,val);
-            ajr_data.insert(AJRSale::TIMESTAMP_IN ,0);
-            ajr_data.insert(AJRSale::TRANSFERED ,false);
+            ajr_data.insert(AJRSale::QTY, val);
+            ajr_data.insert(AJRSale::TIMESTAMP_IN, QDateTime::currentSecsSinceEpoch());
+            ajr_data.insert(AJRSale::TRANSFERED, false);
             out.append(ajr_data);
         }
         status = true;
@@ -189,20 +220,13 @@ bool AJRServer::TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &da
         QMap<SoldAccess::Column_t , QVariant> soldData({
                                                            {SoldAccess::AJ_SITE_ID, data[i].value(AJRSale::AJ_SITE_ID, -1)},
                                                            {SoldAccess::SALE_ID, data[i].value(AJRSale::SALE_ID, -1)},
-                                                           /* {SoldAccess::SITE_ID, -1},
-                                                                                                              {SoldAccess::DOOR_ID, -1},
-                                                                                                              {SoldAccess::USED_CNT, 0},
-                                                                                                              {SoldAccess::LIFETIME, 0}, //??
-                                                                                                              {SoldAccess::FAIL_OVER_FLAG, false},
-                                                                                                              {SoldAccess::TIMESTAMP, 0},*/
                                                        });
-
 
         ASSERT_ERROR("SelectFromTable: ",CodeAccessInfo::Instance().
                      SelectFromTable(code_access, "*", QString("code = '%1'").
                                      arg(data[i].value(AJRSale::CODE).toString())));
 
-        ASSERT_ERROR("Code acces should be 1", code_access.count() == 1);
+        ASSERT_ERROR("Code acces isn't defined correctly in code_access table", code_access.count() == 1);
 
         int access_type = code_access[0].value("access_type").toInt(&is_ok);
         ASSERT_ERROR("Get ACCESS_TYPE", is_ok);
@@ -250,15 +274,10 @@ void AJRServer ::Receive()
     bool status = false;
     QString result;
     QList<QMap<AJRSale::Column_t , QVariant>> data;
-
-#if defined (SIMULATE)
-    QByteArray buf("[{\"mu_id\":1,\"sale_id\":16,\"qr\":\"02496214*19861*2020-01-30*11:01:36*7\",\"code\":\"1016\",\"codename\":\"Единичен. възр.\",\"qty\":\"1\"},{\"mu_id\":1,\"sale_id\":17,\"qr\":\"02496214*19861*2020-01-30*11:01:36*7\",\"code\":\"2323\",\"codename\":\"Нещо си\",\"qty\":\"1\"}]");
-#else
     QTcpSocket* clientSocket = qobject_cast<QTcpSocket*>(sender());
     //Fix me
     QByteArray buf = clientSocket->readAll();
 
-#endif
     ASSERT_ERROR("SoldAccess Insert row: ", ParseJsonInput(buf, data));
 
     if(ProcessAjurData(data)) {
@@ -266,26 +285,15 @@ void AJRServer ::Receive()
         m_lastId = data[0].value(AJRSale::AJ_SITE_ID, -1).toInt();
     }
 
-#if !defined (SIMULATE)
     /*Reply to Ajur*/
     result = QString("[{\"mu_id\":%1,\"sale_id\":%2,\"status\":%3}]\n\r").
             arg(m_lastId).arg(data[0].
             value(AJRSale::SALE_ID, -1).toInt()).arg(status?1:0);
     clientSocket->write(result.toUtf8().constData());
 
-#endif
     ASSERT_ERROR("SoldAccess Transfer: ", TransferSoldAccess(data));
 
 RET_ERROR:
 
-#if defined (SIMULATE)
-    int a;
-#else
-    //TODO: Fix me
     clientSocket->readAll();
-#endif
 }
-
-
-
-

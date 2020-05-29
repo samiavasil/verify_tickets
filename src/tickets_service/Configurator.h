@@ -9,8 +9,8 @@ typedef struct {
     quint16 port;
     QString user;
     QString password;
-    QString topic;
-} ComarCfg;
+    QString feadback;
+} MqttCfg;
 
 class Configurator
 {
@@ -21,13 +21,15 @@ public:
     QString hosts();
     QString user();
     QString password();
-    QString keyspace(); 
-    const ComarCfg &Comar() const;
+    QString keyspace();
+    bool check_consistency();
+    void set_consistency_checked();
+    const MqttCfg &Mqtt() const;
 protected:
     Configurator();
 protected:
     QSettings m_cfg;
-    ComarCfg  m_Comar;
+    MqttCfg  m_Mqtt;
 };
 
 #endif // CONFIGURATOR_H

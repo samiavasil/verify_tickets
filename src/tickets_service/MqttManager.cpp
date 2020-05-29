@@ -1,23 +1,23 @@
-#include "Comar.h"
+#include "MqttManager.h"
 #include <QDebug>
 #include <QtMqtt/QMqttClient>
 #include "Configurator.h"
 
-Comar &Comar::Instance()
+MqttManager &MqttManager::Instance()
 {
-    static Comar sComar(nullptr, Configurator::Instance().Comar().host, Configurator::Instance().Comar().port);
-    return sComar;
+    static MqttManager sMqtt(nullptr, Configurator::Instance().Mqtt().host, Configurator::Instance().Mqtt().port);
+    return sMqtt;
 }
 
-Comar::Comar(QObject *parent,
+MqttManager::MqttManager(QObject *parent,
              const QString &hostname,
              quint16 port) : QObject(parent)
 {
     m_client = new QMqttClient(this);
     m_client->setHostname(hostname);
     m_client->setPort(port);
-    connect(m_client, &QMqttClient::stateChanged, this, &Comar::updateLogStateChange);
-    connect(m_client, &QMqttClient::disconnected, this, &Comar::brokerDisconnected);
+    connect(m_client, &QMqttClient::stateChanged, this, &MqttManager::updateLogStateChange);
+    connect(m_client, &QMqttClient::disconnected, this, &MqttManager::brokerDisconnected);
 
     connect(m_client, &QMqttClient::messageReceived, this, [this](const QByteArray &message, const QMqttTopicName &topic) {
         const QString content = QDateTime::currentDateTime().toString()
@@ -36,37 +36,37 @@ Comar::Comar(QObject *parent,
         qDebug() << this << content;
     });
 
-    m_client->setUsername(Configurator::Instance().Comar().user);
-    m_client->setPassword(Configurator::Instance().Comar().password);
+    m_client->setUsername(Configurator::Instance().Mqtt().user);
+    m_client->setPassword(Configurator::Instance().Mqtt().password);
 }
 
 
-Comar::~Comar()
+MqttManager::~MqttManager()
 {
 
 }
 
-const QString Comar::hostname()
+const QString MqttManager::hostname()
 {
     return m_client->hostname();
 }
 
-void Comar::setHostname(const QString &hostname)
+void MqttManager::setHostname(const QString &hostname)
 {
     m_client->setHostname(hostname);
 }
 
-void Comar::connectToHost()
+void MqttManager::connectToHost()
 {
     m_client->connectToHost();
 }
 
-qint32 Comar::publish(const QMqttTopicName &topic, const QByteArray &message,
+qint32 MqttManager::publish(const QMqttTopicName &topic, const QByteArray &message,
                       quint8 qos, bool retain) {
     return m_client->publish(topic, message, qos, retain);
 }
 
-void Comar::updateLogStateChange()
+void MqttManager::updateLogStateChange()
 {
     auto state = m_client->state();
     const QString content = QDateTime::currentDateTime().toString()
@@ -78,13 +78,13 @@ void Comar::updateLogStateChange()
 
     if(state == m_client->Connected) {
         auto subscription = m_client->subscribe(
-                    QMqttTopicFilter(Configurator::Instance().Comar().topic), 0);
+                    QMqttTopicFilter(Configurator::Instance().Mqtt().feadback), 0);
         if (!subscription) {
             qDebug() << "Error: Could not subscribe."
                         " Is there a valid connection?";
             return;
         }
-        connect(subscription, &QMqttSubscription::messageReceived, this, &Comar::messageReceived);
+        connect(subscription, &QMqttSubscription::messageReceived, this, &MqttManager::messageReceived);
 
         connect(subscription, &QMqttSubscription::qosChanged, [this](quint8 qos) {
             qDebug() << this << "QOS changed to: " << QString::number(qos);
@@ -114,13 +114,13 @@ void Comar::updateLogStateChange()
     }
 }
 
-void Comar::brokerDisconnected()
+void MqttManager::brokerDisconnected()
 {
     qDebug() << "Disconnected";
 }
 
 
-void Comar::messageReceived(const QMqttMessage &msg)
+void MqttManager::messageReceived(const QMqttMessage &msg)
 {
     qDebug() << msg.payload();
 }

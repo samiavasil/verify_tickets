@@ -22,9 +22,9 @@ LIBS        += -lcassandra_static -lz -lssl -lcrypto -luv
 
 SOURCES += \
         AJRServer.cpp \
-    Comar.cpp \
         Configurator.cpp \
          Daemon.cpp \
+    MqttManager.cpp \
         QRServer.cpp \
         ServerConfigurator.cpp \
         TCPServer.cpp \
@@ -50,9 +50,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     AJRServer.h \
-    Comar.h \
     Configurator.h \
     Daemon.h \
+    MqttManager.h \
     QRServer.h \
     ServerConfigurator.h \
     TCPServer.h \

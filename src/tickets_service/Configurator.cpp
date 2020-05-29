@@ -8,11 +8,13 @@
 #define CASSANDRA_DEFAULT_USER       "cassandra"
 #define CASSANDRA_DEFAULT_PASSWORD   "cassandra"
 #define CASSANDRA_DEFAULT_KEYSPACE   "test_keyspace_xx"
-#define CASSANDRA_DEFAULT_COMAR_HOST "87.97.172.156"
-#define CASSANDRA_DEFAULT_COMAR_PORT 7328
-#define CASSANDRA_DEFAULT_COMAR_USER "mqtt"
-#define CASSANDRA_DEFAULT_COMAR_PASS "778899123Abv!"
-#define CASSANDRA_DEFAULT_COMAR_TOPIC "Cassandra/Veso"
+
+#define CASSANDRA_DEFAULT_MQTT_HOST "87.97.172.156"
+#define CASSANDRA_DEFAULT_MQTT_PORT 7328
+#define CASSANDRA_DEFAULT_MQTT_USER "mqtt"
+#define CASSANDRA_DEFAULT_MQTT_PASS "778899123Abv!"
+#define CASSANDRA_DEFAULT_MQTT_FB_TOPIC "Museum/Feadback"
+#define CASSANDRA_DEFAULT_CONSISTENCY "Ako sakash da aktivirash proverka na DB consistenciata, set his value to: check"
 
 using namespace std;
 Configurator &Configurator::Instance()
@@ -36,45 +38,45 @@ Configurator::Configurator():m_cfg("./config.ini", QSettings::IniFormat)
     }
     bool debug = m_cfg.value("site_config/debug", false).toBool();
 
-    value = m_cfg.value("comar_config/host");
+    value = m_cfg.value("mqtt_config/host");
     if (value.isNull()) {
-        value = CASSANDRA_DEFAULT_COMAR_HOST;
-        m_cfg.setValue("comar_config/host", value);
+        value = CASSANDRA_DEFAULT_MQTT_HOST;
+        m_cfg.setValue("mqtt_config/host", value);
     }
-    m_Comar.host = value.toString();
+    m_Mqtt.host = value.toString();
 
-    value = m_cfg.value("comar_config/port");
+    value = m_cfg.value("mqtt_config/port");
     if (value.isNull()) {
-        value = CASSANDRA_DEFAULT_COMAR_PORT;
-        m_cfg.setValue("comar_config/port", value);
+        value = CASSANDRA_DEFAULT_MQTT_PORT;
+        m_cfg.setValue("mqtt_config/port", value);
     }
-    m_Comar.port = static_cast<quint16>(value.toInt());
+    m_Mqtt.port = static_cast<quint16>(value.toInt());
 
-    value = m_cfg.value("comar_config/user");
+    value = m_cfg.value("mqtt_config/user");
     if (value.isNull()) {
-        value = CASSANDRA_DEFAULT_COMAR_USER;
-        m_cfg.setValue("comar_config/user", CASSANDRA_DEFAULT_COMAR_USER);
+        value = CASSANDRA_DEFAULT_MQTT_USER;
+        m_cfg.setValue("mqtt_config/user", CASSANDRA_DEFAULT_MQTT_USER);
     }
-    m_Comar.user = value.toString();
+    m_Mqtt.user = value.toString();
 
-    value = m_cfg.value("comar_config/pass");
+    value = m_cfg.value("mqtt_config/pass");
     if (value.isNull()) {
-        value = CASSANDRA_DEFAULT_COMAR_PASS;
-        m_cfg.setValue("comar_config/pass", CASSANDRA_DEFAULT_COMAR_PASS);
+        value = CASSANDRA_DEFAULT_MQTT_PASS;
+        m_cfg.setValue("mqtt_config/pass", CASSANDRA_DEFAULT_MQTT_PASS);
     }
-    m_Comar.password = value.toString();
+    m_Mqtt.password = value.toString();
 
-    value = m_cfg.value("comar_config/topic");
+    value = m_cfg.value("mqtt_config/feadback");
     if (value.isNull()) {
-        value = CASSANDRA_DEFAULT_COMAR_TOPIC;
-        m_cfg.setValue("comar_config/topic", CASSANDRA_DEFAULT_COMAR_TOPIC);
+        value = CASSANDRA_DEFAULT_MQTT_FB_TOPIC;
+        m_cfg.setValue("mqtt_config/feadback", CASSANDRA_DEFAULT_MQTT_FB_TOPIC);
     }
-    m_Comar.topic = value.toString();
+    m_Mqtt.feadback = value.toString();
 }
 
-const ComarCfg &Configurator::Comar() const
+const MqttCfg &Configurator::Mqtt() const
 {
-    return m_Comar;
+    return m_Mqtt;
 }
 
 int Configurator::protocol() {
@@ -135,4 +137,24 @@ QString Configurator::keyspace()
     }
 
     return keyspace.toString();
+}
+
+bool Configurator::check_consistency()
+{
+    bool check_consistency = false;
+    QVariant consitency = m_cfg.value("cassandra/consitency");
+
+    if (consitency.isNull()) {
+       m_cfg.setValue("cassandra/consitency", CASSANDRA_DEFAULT_CONSISTENCY);
+    } else {
+        if(!QString::compare(consitency.toString(), "check", Qt::CaseInsensitive)) {
+            check_consistency = true;
+        }
+    }
+    return check_consistency;
+}
+
+void Configurator::set_consistency_checked()
+{
+    m_cfg.setValue("cassandra/consitency", "checked");
 }
