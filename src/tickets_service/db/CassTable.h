@@ -31,9 +31,10 @@ public:
     virtual bool UpdateRow();
     virtual bool SelectFromTable(QList<QMap<QString, QVariant>> &result,
                                  const QString &filter="*", const QString &where=QString());
+    virtual bool InsertRowsInTable(const QList<QMap<QString, QVariant> > &rows);
 
 protected:
-    const QList<QPair<QString, QVariant::Type>> m_columns;
+    QMap<QString, QVariant::Type> m_columns;
     QString m_tableName;
     QString m_keySpace;
     QString m_primKeys;

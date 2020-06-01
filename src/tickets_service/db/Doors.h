@@ -14,13 +14,7 @@ public:
         INFO
     } Column_t;
 
-    static Doors &Instance();
-    bool InserRowInDoors(QMap<Doors::Column_t, QVariant> &row);
-
-public slots:
-    bool PrepareDoorsTable();
-protected:
     Doors(QString tableName = "Doors", QString keySpace = QString());
-
+    bool PrepareDoorsTable();
 };
 #endif // DOORS_H

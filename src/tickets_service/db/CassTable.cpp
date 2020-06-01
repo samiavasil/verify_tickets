@@ -14,10 +14,12 @@
 CassTable::CassTable(QString tableName,
                      const QList<QPair<QString, QVariant::Type> > &columns,
                      const QString& primKeys, QString keySpace):
-    m_columns(columns),
     m_tableName(tableName),
     m_primKeys(primKeys)
 {
+    foreach (auto col, columns) {
+        m_columns[col.first] = col.second;
+    }
     if (keySpace.isNull()) {
         m_keySpace = Configurator::Instance().keyspace();
     } else {
@@ -87,12 +89,12 @@ bool CassTable::CreateTable()
 
     auto col = m_columns.constBegin();
     while (col != m_columns.constEnd()) {
-        if( col->second == QVariant::List) {
+        if( col.value() == QVariant::List) {
             //TODO: Fix me for any list type
             //MapQVarCass::qvarTypeCassName(col.value())
-            query.collectionSetType(col->first,"INT" );
+            query.collectionSetType(col.key(),"INT" );
         } else {
-            query.keyType(col->first,MapQVarCass::qvarTypeCassName(col->second));
+            query.keyType(col.key(),MapQVarCass::qvarTypeCassName(col.value()));
         }
 
         ++col;
@@ -145,6 +147,22 @@ bool CassTable::DropKeySpace()
     qDebug() << query.query();
 
     return (CASS_OK == execute_query(session, query.query().toUtf8().constData()));
+}
+
+bool CassTable::InsertRowsInTable(const QList<QMap<QString, QVariant>> &rows)
+{
+    foreach (auto row, rows) {
+        QMap<QString, QString> row_str;
+        auto col = row.constBegin();
+        while (col != row.constEnd()) {
+            QString str;
+            MapQVarCass::convertQVariantToStrout(col.value(), m_columns.value(col.key()), str);
+            row_str.insert(col.key(), str);
+            col++;
+        }
+        InsertRow(row_str);
+    }
+    return true;
 }
 
 bool CassTable::InsertRow(const QMap<QString, QString> &data)
@@ -246,11 +264,11 @@ bool  CassTable::SelectFromTable( QList<QMap<QString, QVariant>> &result,
             while (col != m_columns.constEnd()) {
 
                 row = cass_iterator_get_row(rows);
-                col_val = cass_row_get_column_by_name(row, col->first.toUtf8().
+                col_val = cass_row_get_column_by_name(row, col.key().toUtf8().
                                                       constData());
-                MapQVarCass::convertCassToQVariant(col_val, col->second, colVar);
-                qDebug() << col->first << ": " << colVar.toString();
-                rowMap.insert(col->first, colVar);
+                MapQVarCass::convertCassToQVariant(col_val, col.value(), colVar);
+                qDebug() << col.key() << ": " << colVar.toString();
+                rowMap.insert(col.key(), colVar);
                 ++col;
             }
             result.append(rowMap);
@@ -263,3 +281,5 @@ bool  CassTable::SelectFromTable( QList<QMap<QString, QVariant>> &result,
 
     return ret;
 }
+
+

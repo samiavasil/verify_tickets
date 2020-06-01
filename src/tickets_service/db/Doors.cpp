@@ -12,60 +12,40 @@
     } \
     while (0)
 
-static const QMap<Doors::Column_t, QPair<QString, QVariant::Type>> colType({
-            {Doors::DOOR_ID, {"door_id",     QVariant::Int} },
-            {Doors::SITE_ID, {"site_id", QVariant::Int} },
-            {Doors::NAME,    {"name", QVariant::QVariant::String} },
-            {Doors::INFO,    {"info", QVariant::String} },
+static const QList<QPair<QString, QVariant::Type>> colType({
+             {"door_id",     QVariant::Int},
+             {"site_id", QVariant::Int},
+             {"name", QVariant::QVariant::String},
+             {"info", QVariant::String},
         });
 
-Doors &Doors::Instance()
-{
-    static Doors Doors;
-    return Doors;
-}
-
 Doors::Doors( QString tableName, QString keySpace):
-    CassTable(tableName, colType.values(), "(door_id, site_id)", keySpace)
+    CassTable(tableName, colType, "(door_id, site_id)", keySpace)
 {
 
 }
 
-bool Doors::InserRowInDoors(QMap<Doors::Column_t , QVariant> &row)
-{
-    QMap<QString, QString> row_str;
-    auto col = row.constBegin();
-    while (col != row.constEnd()) {
-        QString str;
-        MapQVarCass::convertQVariantToStrout(col.value(), colType.value(col.key()).second, str);
-        row_str.insert(colType.value(col.key()).first, str);
-        col++;
-    }
-    return InsertRow(row_str);
-}
 
 bool Doors::PrepareDoorsTable() {
 
-    const QList<QMap<Doors::Column_t , QVariant>> dataList =  {
+    const QList<QMap<QString , QVariant>> dataList =  {
         {
-            { Doors::DOOR_ID       , 1},
-            { Doors::SITE_ID  , 1},
-            { Doors::NAME     , "Музей 1. Предна Вратня"},
+            { "door_id"  , 1},
+            { "site_id"  , 1},
+            { "name"     , "Музей 1. Предна Вратня"},
         },
         {
-            { Doors::DOOR_ID       , 2},
-            { Doors::SITE_ID  , 1},
-            { Doors::NAME     , "Музей 1. Задна Вратня"},
+            { "door_id"  , 2},
+            { "site_id"  , 1},
+            { "name"     , "Музей 1. Задна Вратня"},
         },
         {
-            { Doors::DOOR_ID       , 3},
-            { Doors::SITE_ID  , 2},
-            { Doors::NAME     , "Музей 2. Единствена Вратня"},
+            { "door_id"  , 3},
+            { "site_id"  , 2},
+            { "name"     , "Музей 2. Единствена Вратня"},
         }
     };
 
-    foreach (auto data, dataList) {
-        ASSERT_ERROR("Insert row: ",InserRowInDoors(data));
-    }
+    ASSERT_ERROR("Insert row: ", InsertRowsInTable(dataList));
     return true;
 }

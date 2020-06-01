@@ -1,10 +1,5 @@
 #include "QRServer.h"
-#include "db/AJRSale.h"
-#include "db/CodeAccessInfo.h"
-#include "db/DeadTickets.h"
-#include "db/FiscUnit.h"
-#include "db/SiteDescriptor.h"
-#include "db/SoldAccess.h"
+#include "db/DBClient.h"
 #include "MqttManager.h"
 #include <QJsonDocument>
 #include <qjsonobject.h>
@@ -44,15 +39,15 @@ void QRServer ::Receive()
             return;
         }
 
-            /*Check that QR site_id is the same as in configuration file */
+        /* TBD ??? Check that QR site_id is the same as in configuration file
         if (qr_site_id != Configurator::Instance().site_id()) {
             qDebug() << "qr_site_id is not the same as site_id";
             //TBD: MQTT Wrong code event generation.
             return;
-        }
+        }*/
 
         qr.remove(0, split_site_door[0].length() + 1);
-            /*Get door ID*/
+        /*Get door ID*/
         door_id = split_site_door[1].toInt(&ok);
         if (!ok) {
             qDebug() << "Can't get qr_site_id";
@@ -67,18 +62,14 @@ void QRServer ::Receive()
         //TBD: MQTT Wrong code event generation.
         return;
     }
-
     QStringList list = qr.split("*");
-    qDebug() << qr << list;
 
     if(list.count() > 0) {
 
         if (list.count() > 1) {
             //QR = 50179218*181*2020-02-28*20:07:00*25
             QList<QMap<QString, QVariant>> fisc_unit;
-            FiscUnit::Instance().SelectFromTable(fisc_unit, "fiscal_mem",
-                                                 QString("fiscal_mem='%1'").
-                                                 arg(list[0]));
+            DBClient::Instance().GetFiscalMem(fisc_unit, "fiscal_mem", QString("fiscal_mem='%1'  ALLOW FILTERING").arg(list[0]));
             //Check fiscal units
             if (fisc_unit.count() > 0) {
                 qDebug() << "Продадено от фискален апарат" << fisc_unit[0].value("fiscal_mem");
@@ -92,21 +83,32 @@ void QRServer ::Receive()
     }
 
     QList<QMap<QString, QVariant>> ajr_sale;
-    AJRSale::Instance().SelectFromTable(ajr_sale, "*",
-                                        QString("qr='%1' ALLOW FILTERING").arg(qr));
+
+    DBClient::Instance().GetAjrSales(ajr_sale, "*",
+                                     QString("qr='%1' ALLOW FILTERING").
+                                     arg(qr));
     if (ajr_sale.count() <= 0) {
         qDebug() << "Can't find this QR code";
         //TBD: MQTT Wrong code event generation.
         return;
     }
 
+    if (!ajr_sale[0].value("transfered").toBool()) {
+        qDebug() << "Ajure sale isn't transfered. Try to transfer";
+        if(!DBClient::Instance().TransferSoldAccess(ajr_sale)) {
+            qDebug() << "Failure: Can't transfered Ajure sale.";
+            return;
+        }
+        qDebug() << "Transfered";
+    }
+
     QString code = ajr_sale[0].value("code").toString();
     qDebug() << "Ajure sale: " << ajr_sale[0];
 
     QList<QMap<QString, QVariant>> code_access;
-    CodeAccessInfo::Instance().SelectFromTable(code_access, "*",
-                                               QString("code = '%1'").
-                                               arg(code));
+    DBClient::Instance().GetCodeAccessInfo(code_access, "*",
+                                           QString("code = '%1'").
+                                           arg(code));
     if (code_access.count() <= 0) {
         qDebug() << "Can't find get code access";
         //TBD: Wrong code event generation.
@@ -139,11 +141,11 @@ void QRServer ::Receive()
     }
 
     QList<QMap<QString, QVariant>> sold_access;
-    SoldAccess::Instance().SelectFromTable(sold_access, "*",
-                                           QString("sale_id = %1 and aj_site_id = %2"
-                                                   " ALLOW FILTERING").
-                                           arg(sale_id).
-                                           arg(aj_site_id));
+    DBClient::Instance().GetSoldAccess(sold_access, "*",
+                                       QString("sale_id = %1 and aj_site_id = %2"
+                                               " ALLOW FILTERING").
+                                       arg(sale_id).
+                                       arg(aj_site_id));
 
     if (access_type == SINGLE) {
         foreach (auto sold, sold_access) {
@@ -187,13 +189,12 @@ void QRServer ::Receive()
         if (!already_used && !enable_access) {
 
             QList<QMap<QString, QVariant>> dead_tickets;
-            DeadTickets::Instance().SelectFromTable(dead_tickets, "*",
-                                                    QString("sale_id = %1 and aj_site_id = %2"
-                                                            " ALLOW FILTERING").arg(sale_id).
-                                                    arg(aj_site_id)
-                                                    );
-
+            DBClient::Instance().GetDeadTickets(dead_tickets, "*",
+                                               QString("sale_id = %1 and aj_site_id = %2"
+                                                       " ALLOW FILTERING").arg(sale_id).
+                                               arg(aj_site_id));
             int live_ctr = 0;
+
             if (dead_tickets.count() > 0) {
                 live_ctr = dead_tickets[0].value("live_ctr").toInt(&ok);
                 if (!ok) {
@@ -206,16 +207,17 @@ void QRServer ::Receive()
             if (live_ctr > 0) {
                 enable_access = true;
                 live_ctr--;
-                QMap<DeadTickets::Column_t , QVariant> dead_tickets_update(
-                {
-                                {DeadTickets::AJ_SITE_ID, aj_site_id},
-                                {DeadTickets::SALE_ID,    sale_id},
-                                {DeadTickets::LIVE_CTR,   live_ctr},
-                            });
+                const QList<QMap<QString, QVariant>> dead_tickets_update({
+                                {
+                                    {"aj_site_id", aj_site_id},
+                                    {"sale_id",    sale_id},
+                                    {"live_ctr",   live_ctr},
+                                }
+                                });
 
-                ok = DeadTickets::Instance().InserRowInDeadTickets(dead_tickets_update);
+                ok = DBClient::Instance().InserRowsInDeadTickets(dead_tickets_update);
                 if (!ok) {
-                    qDebug() << "Can't get insert row in SoldAccess";
+                    qDebug() << "Can't insert row in DeadTickets";
                     //TBD: Wrong code event generation.
                     return;
                 }
@@ -223,30 +225,39 @@ void QRServer ::Receive()
         }
     }
 
+    //TBD: Define in configuration
     QString topic_simple = QString("site%1door%2/msg").arg(qr_site_id).arg(door_id);
     QString topic = QString("site%1door%2/full_msg").arg(qr_site_id).arg(door_id);
     int qty = 0;
-
     if (enable_access) {
 
         QDateTime cur_timestamp;
 
         cur_timestamp.setMSecsSinceEpoch(1213342); //TBD Add real timestamp
-        //TBD add 1 full sold access
-        QMap<SoldAccess::Column_t , QVariant> soldData(
-        {
-                        {SoldAccess::AJ_SITE_ID,     aj_site_id},
-                        {SoldAccess::QR_SITE_ID,     qr_site_id},
-                        {SoldAccess::SALE_ID,        sale_id},
-                        {SoldAccess::DOOR_ID,        door_id},
-                        {SoldAccess::USED_CNT,       0},
-                        {SoldAccess::FAIL_OVER_FLAG, false},
-                        {SoldAccess::TIMESTAMP,      cur_timestamp},
+
+        //TBD add 1 full used_cnt
+        qty = ajr_sale[0].value("qty").toInt(&ok);
+        if (!ok) {
+            qDebug() << "Can't get qty";
+            //TBD: Wrong code event generation.
+            return;
+        }
+        const QList<QMap<QString , QVariant>> soldData({
+                      {
+                        {"aj_site_id",     aj_site_id},
+                        {"qr_site_id",     qr_site_id},
+                        {"sale_id",        sale_id},
+                        {"door_id",        door_id},
+                        {"qty",            qty},
+                        {"used_cnt",       0},
+                        {"fail_over_flag", false},
+                        {"timestamp",      cur_timestamp},
+                      }
                     });
 
-        ok = SoldAccess::Instance().InserRowInSoldAccessTable(soldData);
+        ok = DBClient::Instance().InsertRowsInSoldAccessTable(soldData);
         if (!ok) {
-            qDebug() << "Can't get insert row in SoldAccess";
+            qDebug() << "Can't insert row in SoldAccess";
             //TBD: Wrong code event generation.
             return;
         }

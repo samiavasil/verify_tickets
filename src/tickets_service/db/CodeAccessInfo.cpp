@@ -13,144 +13,124 @@
     while (0)
 
 
-static const QMap<CodeAccessInfo::Column_t, QPair<QString, QVariant::Type>> colType(
+static const QList<QPair<QString, QVariant::Type>> colType(
                                                     {
-                                                       {CodeAccessInfo::CODE,      {"code",      QVariant::String}  },
-                                                       {CodeAccessInfo::CODENAME,  {"codename",  QVariant::String}  },
-                                                       {CodeAccessInfo::INFO,      {"info",      QVariant::String}  },
-                                                       {CodeAccessInfo::DEADLEVEL, {"deadlevel", QVariant::Int}     },
-                                                       {CodeAccessInfo::ACCESS_TYPE, {"access_type", QVariant::Int}   },
-                                                       {CodeAccessInfo::SITE_IDS,  {"site_ids",  QVariant::List}    },
+                                                       {"code",      QVariant::String},
+                                                       {"codename",  QVariant::String},
+                                                       {"info",      QVariant::String},
+                                                       {"deadlevel", QVariant::Int}   ,
+                                                       {"access_type", QVariant::Int} ,
+                                                       {"site_ids",  QVariant::List}  ,
                                                    });
 
 CodeAccessInfo::CodeAccessInfo( QString tableName, QString keySpace):
-    CassTable( tableName, colType.values(), "code", keySpace)
+    CassTable( tableName, colType, "code", keySpace)
 {
 
-}
-
-CodeAccessInfo &CodeAccessInfo::Instance()
-{
-    static CodeAccessInfo codeAccessInfo;
-    return codeAccessInfo;
-}
-
-bool CodeAccessInfo::InserRowInCodeAccessTable(QMap<CodeAccessInfo::Column_t , QVariant> &row)
-{
-    QMap<QString, QString> row_str;
-    auto col = row.constBegin();
-    while (col != row.constEnd()) {
-        QString str;
-        MapQVarCass::convertQVariantToStrout(col.value(), colType.value(col.key()).second, str);
-        row_str.insert(colType.value(col.key()).first, str);
-        col++;
-    }
-    return InsertRow(row_str);
 }
 
 bool CodeAccessInfo::PrepareCodeAccessTable() {
 
-    const QList<QMap<CodeAccessInfo::Column_t , QVariant>> dataList =  {
+    const QList<QMap<QString, QVariant>> dataList =  {
         {
-            {CodeAccessInfo::CODE,      "1016"},
-            {CodeAccessInfo::CODENAME,  "Единичен Възр."},
-            {CodeAccessInfo::INFO,      "Цена 6лв"},
-            {CodeAccessInfo::DEADLEVEL, 0},
-            {CodeAccessInfo::ACCESS_TYPE, CodeAccessInfo::SINGLE},
-            {CodeAccessInfo::SITE_IDS,     QVariant::fromValue<QList<int>>({1,2,3,4,5,6,7,8})}
+            {"code",      "1016"},
+            {"codename",  "Единичен Възр."},
+            {"info",      "Цена 6лв"},
+            {"deadlevel", 0},
+            {"access_type", CodeAccessInfo::SINGLE},
+            {"site_ids",     QVariant::fromValue<QList<int>>({1,2,3,4,5,6,7,8})}
         },
         {
-            {CodeAccessInfo::CODE,      "1003"},
-            {CodeAccessInfo::CODENAME,  "Единичен Дете."},
-            {CodeAccessInfo::INFO,      "Цена 3лв"},
-            {CodeAccessInfo::DEADLEVEL, 0},
-            {CodeAccessInfo::ACCESS_TYPE, CodeAccessInfo::SINGLE},
-            {CodeAccessInfo::SITE_IDS,     QVariant::fromValue<QList<int>>({1,3,4,6,8})}
+            {"code",      "1003"},
+            {"codename",  "Единичен Дете."},
+            {"info",      "Цена 3лв"},
+            {"deadlevel", 0},
+            {"access_type", CodeAccessInfo::SINGLE},
+            {"site_ids",     QVariant::fromValue<QList<int>>({1,3,4,6,8})}
         },
         {
-            {CodeAccessInfo::CODE,     "1118"},
-            {CodeAccessInfo::CODENAME, "Арх. + Етн. Възр."},
-            {CodeAccessInfo::INFO,     "Цена 8лв"},
-            {CodeAccessInfo::DEADLEVEL,0},
-            {CodeAccessInfo::ACCESS_TYPE, CodeAccessInfo::MULTIPLE},
-            {CodeAccessInfo::SITE_IDS,    QVariant::fromValue<QList<int>>({1,2})}
+            {"code",     "1118"},
+            {"codename", "Арх. + Етн. Възр."},
+            {"info",     "Цена 8лв"},
+            {"deadlevel",0},
+            {"access_type", CodeAccessInfo::MULTIPLE},
+            {"site_ids",    QVariant::fromValue<QList<int>>({1,2})}
         },
         {
-            {CodeAccessInfo::CODE,     "1104"},
-            {CodeAccessInfo::CODENAME, "Арх. + Етн. Дете"},
-            {CodeAccessInfo::INFO,     "Цена 4лв"},
-            {CodeAccessInfo::DEADLEVEL,0},
-            {CodeAccessInfo::ACCESS_TYPE, CodeAccessInfo::MULTIPLE},
-            {CodeAccessInfo::SITE_IDS,    QVariant::fromValue<QList<int>>({1,2})}
+            {"code",     "1104"},
+            {"codename", "Арх. + Етн. Дете"},
+            {"info",     "Цена 4лв"},
+            {"deadlevel",0},
+            {"access_type", CodeAccessInfo::MULTIPLE},
+            {"site_ids",    QVariant::fromValue<QList<int>>({1,2})}
         },
         {
-            {CodeAccessInfo::CODE,     "11110"},
-            {CodeAccessInfo::CODENAME, "Арх. + Стефан Възр."},
-            {CodeAccessInfo::INFO,     "Цена 10лв"},
-            {CodeAccessInfo::DEADLEVEL,0},
-            {CodeAccessInfo::ACCESS_TYPE, CodeAccessInfo::MULTIPLE},
-            {CodeAccessInfo::SITE_IDS,    QVariant::fromValue<QList<int>>({1,3})}
+            {"code",     "11110"},
+            {"codename", "Арх. + Стефан Възр."},
+            {"info",     "Цена 10лв"},
+            {"deadlevel",0},
+            {"access_type", CodeAccessInfo::MULTIPLE},
+            {"site_ids",    QVariant::fromValue<QList<int>>({1,3})}
         },
         {
-            {CodeAccessInfo::CODE,     "11105"},
-            {CodeAccessInfo::CODENAME, "Арх. + Стефан Дете"},
-            {CodeAccessInfo::INFO,     "Цена 5лв"},
-            {CodeAccessInfo::DEADLEVEL,0},
-            {CodeAccessInfo::ACCESS_TYPE, CodeAccessInfo::MULTIPLE},
-            {CodeAccessInfo::SITE_IDS,    QVariant::fromValue<QList<int>>({1,3})}
+            {"code",     "11105"},
+            {"codename", "Арх. + Стефан Дете"},
+            {"info",     "Цена 5лв"},
+            {"deadlevel",0},
+            {"access_type", CodeAccessInfo::MULTIPLE},
+            {"site_ids",    QVariant::fromValue<QList<int>>({1,3})}
         },
         {
-            {CodeAccessInfo::CODE,     "11115"},
-            {CodeAccessInfo::CODENAME, "Арх. + Стефан + 2 Възр."},
-            {CodeAccessInfo::INFO,     "Цена 15лв"},
-            {CodeAccessInfo::DEADLEVEL,2},
-            {CodeAccessInfo::ACCESS_TYPE, CodeAccessInfo::MULTIPLE},
-            {CodeAccessInfo::SITE_IDS,    QVariant::fromValue<QList<int>>({1,3})}
+            {"code",     "11115"},
+            {"codename", "Арх. + Стефан + 2 Възр."},
+            {"info",     "Цена 15лв"},
+            {"deadlevel",2},
+            {"access_type", CodeAccessInfo::MULTIPLE},
+            {"site_ids",    QVariant::fromValue<QList<int>>({1,3})}
         },
         {
-            {CodeAccessInfo::CODE,     "11108"},
-            {CodeAccessInfo::CODENAME, "Арх. + Стефан + 2  Дете"},
-            {CodeAccessInfo::INFO,     "Цена 8лв"},
-            {CodeAccessInfo::DEADLEVEL,2},
-            {CodeAccessInfo::ACCESS_TYPE, CodeAccessInfo::MULTIPLE},
-            {CodeAccessInfo::SITE_IDS,    QVariant::fromValue<QList<int>>({1,3})}
+            {"code",     "11108"},
+            {"codename", "Арх. + Стефан + 2  Дете"},
+            {"info",     "Цена 8лв"},
+            {"deadlevel",2},
+            {"access_type", CodeAccessInfo::MULTIPLE},
+            {"site_ids",    QVariant::fromValue<QList<int>>({1,3})}
         },
         {
-            {CodeAccessInfo::CODE,     "111018"},
-            {CodeAccessInfo::CODENAME, "Всички 6 църкви  Възр."},
-            {CodeAccessInfo::INFO,     "Цена 18лв"},
-            {CodeAccessInfo::DEADLEVEL,0},
-            {CodeAccessInfo::ACCESS_TYPE, CodeAccessInfo::MULTIPLE},
-            {CodeAccessInfo::SITE_IDS,    QVariant::fromValue<QList<int>>({1,4,5,6,7,8})}
+            {"code",     "111018"},
+            {"codename", "Всички 6 църкви  Възр."},
+            {"info",     "Цена 18лв"},
+            {"deadlevel",0},
+            {"access_type", CodeAccessInfo::MULTIPLE},
+            {"site_ids",    QVariant::fromValue<QList<int>>({1,4,5,6,7,8})}
         },
         {
-            {CodeAccessInfo::CODE,     "11009"},
-            {CodeAccessInfo::CODENAME, "Всички 6 църкви  Дете"},
-            {CodeAccessInfo::INFO,     "Цена 9лв"},
-            {CodeAccessInfo::DEADLEVEL,0},
-            {CodeAccessInfo::ACCESS_TYPE, CodeAccessInfo::MULTIPLE},
-            {CodeAccessInfo::SITE_IDS,    QVariant::fromValue<QList<int>>({1,4,5,6,7,8})}
+            {"code",     "11009"},
+            {"codename", "Всички 6 църкви  Дете"},
+            {"info",     "Цена 9лв"},
+            {"deadlevel",0},
+            {"access_type", CodeAccessInfo::MULTIPLE},
+            {"site_ids",    QVariant::fromValue<QList<int>>({1,4,5,6,7,8})}
         },
         {
-            {CodeAccessInfo::CODE,     "11125"},
-            {CodeAccessInfo::CODENAME, "Всички 8 музея  Възр."},
-            {CodeAccessInfo::INFO,     "Цена 25лв"},
-            {CodeAccessInfo::DEADLEVEL,0},
-            {CodeAccessInfo::ACCESS_TYPE, CodeAccessInfo::MULTIPLE},
-            {CodeAccessInfo::SITE_IDS,    QVariant::fromValue<QList<int>>({1,2,3,4,5,6,7,8})}
+            {"code",     "11125"},
+            {"codename", "Всички 8 музея  Възр."},
+            {"info",     "Цена 25лв"},
+            {"deadlevel",0},
+            {"access_type", CodeAccessInfo::MULTIPLE},
+            {"site_ids",    QVariant::fromValue<QList<int>>({1,2,3,4,5,6,7,8})}
         },
         {
-            {CodeAccessInfo::CODE,     "11012"},
-            {CodeAccessInfo::CODENAME, "Всички 8 музея  Дете"},
-            {CodeAccessInfo::INFO,     "Цена 12лв"},
-            {CodeAccessInfo::DEADLEVEL,0},
-            {CodeAccessInfo::ACCESS_TYPE, CodeAccessInfo::MULTIPLE},
-            {CodeAccessInfo::SITE_IDS,    QVariant::fromValue<QList<int>>({1,2,3,4,5,6,7,8})}
+            {"code",     "11012"},
+            {"codename", "Всички 8 музея  Дете"},
+            {"info",     "Цена 12лв"},
+            {"deadlevel",0},
+            {"access_type", CodeAccessInfo::MULTIPLE},
+            {"site_ids",    QVariant::fromValue<QList<int>>({1,2,3,4,5,6,7,8})}
         },
     };
-        qDebug() << dataList[0].value(CodeAccessInfo::SITE_IDS).type();
-    foreach (auto data, dataList) {
-       ASSERT_ERROR("Insert row: ",InserRowInCodeAccessTable(data));
-    }
+
+    ASSERT_ERROR("Insert row: ",InsertRowsInTable(dataList));
+
     return true;
 }

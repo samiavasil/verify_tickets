@@ -11,15 +11,11 @@ public:
     AJRServer(QObject *parent = nullptr,   const ServerConfigurator &config = ServerConfigurator());
 protected:
     virtual void Receive();
-    inline bool ParseJsonInput(QByteArray &buff, QList<QMap<AJRSale::Column_t, QVariant> > &out);
-    bool TransferSoldAccess(QList<QMap<AJRSale::Column_t, QVariant> > &data);
-    bool ProcessAjurData(QList<QMap<AJRSale::Column_t , QVariant>> &data);
-    void DoConsistencyTransfer();
+    inline bool ParseJsonInput(QByteArray &buff, QList<QMap<QString, QVariant> > &out);
+    bool ProcessAjurData(QList<QMap<QString, QVariant> > &data);
 protected:
     int m_lastId;
 
-private:
-    void prepareTables();
 };
 
 #endif // AJRSERVER_H

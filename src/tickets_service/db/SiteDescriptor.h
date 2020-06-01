@@ -13,12 +13,9 @@ public:
         NODE_STATUS,
     } Column_t;
 
-    static SiteDescriptor& Instance();
-    bool PrepareSiteDescriptorTable();
-    bool InserRowInSiteDescriptorTable(QMap<SiteDescriptor::Column_t, QVariant> &row);
-
-protected:
     SiteDescriptor(QString tableName = "site_descriptor", QString keySpace = QString());
+    bool PrepareSiteDescriptorTable();
+
 };
 
 #endif // SITEDESCRIPTOR_H

@@ -12,11 +12,11 @@
     } \
     while (0)
 
-static const QMap<Topics::Column_t, QPair<QString, QVariant::Type>> colType(
+static const QList<QPair<QString, QVariant::Type>> colType(
 {
-            {Topics::ID,     {"id",     QVariant::Int} },
-            {Topics::ERROR, {"error", QVariant::String} },
-            {Topics::SWITCH_ON, {"switch_on", QVariant::Int} },
+            {"id",     QVariant::Int},
+            {"error", QVariant::String},
+            {"switch_on", QVariant::Int},
         });
 
 Topics &Topics::Instance()
@@ -26,46 +26,31 @@ Topics &Topics::Instance()
 }
 
 Topics::Topics(QString tableName, QString keySpace):
-    CassTable(tableName, colType.values(), "(fiscal_mem)", keySpace)
+    CassTable(tableName, colType, "(fiscal_mem)", keySpace)
 {
 
-}
-
-bool Topics::InserRowInTopics(QMap<Topics::Column_t , QVariant> &row)
-{
-    QMap<QString, QString> row_str;
-    auto col = row.constBegin();
-    while (col != row.constEnd()) {
-        QString str;
-        MapQVarCass::convertQVariantToStrout(col.value(), colType.value(col.key()).second, str);
-        row_str.insert(colType.value(col.key()).first, str);
-        col++;
-    }
-    return InsertRow(row_str);
 }
 
 bool Topics::PrepareTopicsTable() {
 
-    const QList<QMap<Topics::Column_t , QVariant>> dataList =  {
+    const QList<QMap<QString, QVariant>> dataList =  {
         {
-            { Topics::ID           , "50179218"},
-            { Topics::ERROR       , "Музей 1"},
-            { Topics::SWITCH_ON       , 1},
+            { "id"        , "50179218"},
+            { "error"     , "Музей 1"},
+            { "switch_on" , 1},
         },
         {
-            { Topics::ID           , "50179219"},
-            { Topics::ERROR       , "Музей 2"},
-            { Topics::SWITCH_ON       , 2},
+            { "id"        , "50179219"},
+            { "error"     , "Музей 2"},
+            { "switch_on" , 2},
         },
         {
-            { Topics::ID          , "50179220"},
-            { Topics::ERROR      , "Музей 3"},
-            { Topics::SWITCH_ON      , 3},
+            { "id"        , "50179220"},
+            { "error"     , "Музей 3"},
+            { "switch_on" , 3},
         }
     };
 
-    foreach (auto data, dataList) {
-        ASSERT_ERROR("Insert row: ",InserRowInTopics(data));
-    }
+    ASSERT_ERROR("Insert row: ",InsertRowsInTable(dataList));
     return true;
 }

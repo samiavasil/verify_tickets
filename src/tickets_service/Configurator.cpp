@@ -14,7 +14,7 @@
 #define CASSANDRA_DEFAULT_MQTT_USER "mqtt"
 #define CASSANDRA_DEFAULT_MQTT_PASS "778899123Abv!"
 #define CASSANDRA_DEFAULT_MQTT_FB_TOPIC "Museum/Feadback"
-#define CASSANDRA_DEFAULT_CONSISTENCY "Ako sakash da aktivirash proverka na DB consistenciata, set his value to: check"
+#define CASSANDRA_DEFAULT_CONSISTENCY "check_every_time"
 
 using namespace std;
 Configurator &Configurator::Instance()
@@ -147,11 +147,19 @@ bool Configurator::check_consistency()
     if (consitency.isNull()) {
        m_cfg.setValue("cassandra/consitency", CASSANDRA_DEFAULT_CONSISTENCY);
     } else {
-        if(!QString::compare(consitency.toString(), "check", Qt::CaseInsensitive)) {
+        if( (!QString::compare(consitency.toString(), "check", Qt::CaseInsensitive))||
+            (!QString::compare(consitency.toString(), "check_every_time", Qt::CaseInsensitive))
+          ) {
             check_consistency = true;
         }
     }
     return check_consistency;
+}
+
+bool Configurator::is_single_consistency_type()
+{
+    QVariant consitency = m_cfg.value("cassandra/consitency");
+    return !QString::compare(consitency.toString(), "check", Qt::CaseInsensitive);
 }
 
 void Configurator::set_consistency_checked()

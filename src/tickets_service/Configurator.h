@@ -25,6 +25,7 @@ public:
     bool check_consistency();
     void set_consistency_checked();
     const MqttCfg &Mqtt() const;
+     bool is_single_consistency_type();
 protected:
     Configurator();
 protected:
