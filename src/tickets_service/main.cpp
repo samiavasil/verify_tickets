@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
 
     qInstallMessageHandler(m.myMessageOutput);
 
-
     if(DBClient::Instance().connectSession()) {
         /*TBD: Should be fixed. When can't connect to db should try to reconect,
                and move this code on connect success*/
