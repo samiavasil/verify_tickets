@@ -152,13 +152,14 @@ void AJRServer ::Receive()
         m_lastId = data[0].value("aj_site_id", -1).toInt();
     }
 
+    ASSERT_ERROR("SoldAccess Transfer: ", DBClient::Instance().TransferSoldAccess(data));
+
     /*Reply to Ajur*/
     result = QString("[{\"mu_id\":%1,\"sale_id\":%2,\"status\":%3}]\n\r").
             arg(m_lastId).arg(data[0].
             value("sale_id", -1).toInt()).arg(status?1:0);
-    clientSocket->write(result.toUtf8().constData());
 
-    ASSERT_ERROR("SoldAccess Transfer: ", DBClient::Instance().TransferSoldAccess(data));
+    clientSocket->write(result.toUtf8().constData());
 
 RET_ERROR:
 

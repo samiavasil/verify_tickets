@@ -78,7 +78,7 @@ void MqttManager::updateLogStateChange()
 
     if(state == m_client->Connected) {
         auto subscription = m_client->subscribe(
-                    QMqttTopicFilter(Configurator::Instance().Mqtt().feadback), 0);
+                    QMqttTopicFilter(Configurator::Instance().Mqtt().feadback_topic), 0);
         if (!subscription) {
             qDebug() << "Error: Could not subscribe."
                         " Is there a valid connection?";

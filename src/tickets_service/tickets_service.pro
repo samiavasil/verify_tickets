@@ -24,6 +24,7 @@ SOURCES += \
         AJRServer.cpp \
         Configurator.cpp \
          Daemon.cpp \
+    Logger.cpp \
     MqttManager.cpp \
         QRServer.cpp \
         ServerConfigurator.cpp \
@@ -52,6 +53,7 @@ HEADERS += \
     AJRServer.h \
     Configurator.h \
     Daemon.h \
+    Logger.h \
     MqttManager.h \
     QRServer.h \
     ServerConfigurator.h \

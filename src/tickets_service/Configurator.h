@@ -4,17 +4,24 @@
 #include <QSettings>
 #include <QString>
 
-typedef struct {
-    QString host;
-    quint16 port;
-    QString user;
-    QString password;
-    QString feadback;
-} MqttCfg;
-
 class Configurator
 {
 public:
+    typedef struct {
+        QString host;
+        quint16 port;
+        QString user;
+        QString password;
+        QString feadback_topic;
+        QString log_topic;
+        bool enbl_logs;
+    } MqttCfg_t;
+
+    typedef enum {
+        NORMAL,
+        DEBUG
+    } LogLevel_t;
+
     static Configurator &Instance();
     int site_id() const;
     int protocol();
@@ -24,13 +31,17 @@ public:
     QString keyspace();
     bool check_consistency();
     void set_consistency_checked();
-    const MqttCfg &Mqtt() const;
-     bool is_single_consistency_type();
+    const MqttCfg_t &Mqtt() const;
+    bool is_single_consistency_type();
+    const LogLevel_t& LogsLevel() const;
+
 protected:
     Configurator();
 protected:
+
     QSettings m_cfg;
-    MqttCfg  m_Mqtt;
+    MqttCfg_t  m_Mqtt;
+    LogLevel_t m_LogsLevel;
 };
 
 #endif // CONFIGURATOR_H
