@@ -31,17 +31,19 @@ int main(int argc, char *argv[])
                 Configurator::Instance().set_consistency_checked();
             }
         } else {
-            qDebug() << "NO Consistency check";
+            qInfo() << "NO Consistency check";
         }
+    } else {
+        qFatal("Can't connect to Cassandra DB");
     }
 
     AJRServer ajr_server(nullptr, cfg);
 
     QRServer qr_server(nullptr, cfg1);
 
-    qDebug() << QCoreApplication::libraryPaths();
+    qInfo() << QCoreApplication::libraryPaths();
 
-    qDebug() << "Run " << a.applicationName();
+    qInfo() << "Run " << a.applicationName();
 
     return a.exec();
 }

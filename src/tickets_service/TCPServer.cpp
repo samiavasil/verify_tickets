@@ -13,8 +13,8 @@ TCPServer::TCPServer(QObject *parent, const ServerConfigurator& config)
 {
 
     if(m_config.is_encrypted()) {
-        qDebug()<<"SSL version use for build: "<<QSslSocket::sslLibraryBuildVersionString();
-        qDebug()<<"SSL version use for run-time: "<<QSslSocket::sslLibraryVersionNumber();
+        qInfo()<<"SSL version use for build: "<<QSslSocket::sslLibraryBuildVersionString();
+        qInfo()<<"SSL version use for run-time: "<<QSslSocket::sslLibraryVersionNumber();
         QFile keyFile(m_config.getKey());
         keyFile.open(QIODevice::ReadOnly);
         m_key = QSslKey(keyFile.readAll(), QSsl::Rsa);
@@ -115,7 +115,7 @@ void TCPServer::EncryptionReady()
 void TCPServer::sslErrors(const QList<QSslError> &errors)
 {
     foreach (const QSslError &error, errors)
-        qDebug() << error.errorString();
+        qCritical() << error.errorString();
 }
 
 /**
@@ -135,8 +135,9 @@ void TCPServer::linkConnection()
  */
 void TCPServer::Disconnected()
 {
-    qDebug("Client Disconnected");
     QTcpSocket* clientSocket = qobject_cast<QTcpSocket*>(sender());
+    qInfo() << "Client Disconnected: IP " << clientSocket->peerAddress() <<
+               ", Port "  << clientSocket->peerPort();
     clientSocket->deleteLater();
 }
 

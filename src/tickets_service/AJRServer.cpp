@@ -17,7 +17,7 @@
 
 #define GET_VAR_AND_CHECK(jObj, key_id, qvar, type) do { \
     if (!getVal(jObj, key_id, qvar, type)) { \
-    qDebug() << "AJR Parser error: Line" << __LINE__; \
+    qCritical() << "AJR Parser error: Line" << __LINE__; \
     goto RET_ERROR; \
     } \
     }while(0)
@@ -25,7 +25,7 @@
 #define ASSERT_ERROR(text, check)  do { \
     bool ok = (check); \
     if(!ok) { \
-    qDebug() << "Error:" << (text) << __func__ << " Line" << __LINE__; \
+    qCritical() << "Error:" << (text) << __func__ << " Line" << __LINE__; \
     goto RET_ERROR; \
     } \
     } \
@@ -67,9 +67,9 @@ bool AJRServer::ParseJsonInput(QByteArray& buff, QList<QMap<QString , QVariant>>
 
     bool ok;
     if (doc.isNull()) {
-        qDebug() << "Json error:" << error.errorString();
+        qWarning() << "Json error:" << error.errorString();
     } else if(!doc.isArray()) {
-        qDebug() << tr("Wrong json format: Expected to be arrea type");
+        qWarning() << tr("Wrong json format: Expected to be arrea type %1");
     } else {
         out.clear();
         QJsonArray array = doc.array();
@@ -83,7 +83,7 @@ bool AJRServer::ParseJsonInput(QByteArray& buff, QList<QMap<QString , QVariant>>
             GET_VAR_AND_CHECK(jsObj, MUSEUM_ID_STR,val, QVariant::Int);
             val.toInt(&ok);
             if(!ok) {
-                qDebug() << __func__ << " : Can't get mu_id";
+                qWarning() << __func__ << " : Can't get mu_id";
                 goto RET_ERROR;
             }
             ajr_data.insert("aj_site_id" ,val);
@@ -91,7 +91,7 @@ bool AJRServer::ParseJsonInput(QByteArray& buff, QList<QMap<QString , QVariant>>
             GET_VAR_AND_CHECK(jsObj, MSALE_ID_STR, val, QVariant::Int);
             val.toInt(&ok);
             if(!ok) {
-                qDebug() << __func__ << " : Can't get sale_id";
+                qWarning() << __func__ << " : Can't get sale_id";
                 goto RET_ERROR;
             }
             ajr_data.insert("sale_id" ,val);
@@ -108,7 +108,7 @@ bool AJRServer::ParseJsonInput(QByteArray& buff, QList<QMap<QString , QVariant>>
             GET_VAR_AND_CHECK(jsObj, QTY_STR, val, QVariant::Int);
             val.toInt(&ok);
             if(!ok) {
-                qDebug() << __func__ << " : Can't get qty";
+                qWarning() << __func__ << " : Can't get qty";
                 goto RET_ERROR;
             }
             ajr_data.insert("qty", val);
@@ -146,22 +146,21 @@ void AJRServer ::Receive()
     QByteArray buf = clientSocket->readAll();
 
     ASSERT_ERROR("Parse Ajure Json input: ", ParseJsonInput(buf, data));
+    ASSERT_ERROR("Process Ajur Data: ", ProcessAjurData(data));
 
-    if(ProcessAjurData(data)) {
+    if(DBClient::Instance().TransferSoldAccess(data))
+    {
         status = true;
         m_lastId = data[0].value("aj_site_id", -1).toInt();
+        qInfo() << "New ajure sale: " << data;
     }
 
-    ASSERT_ERROR("SoldAccess Transfer: ", DBClient::Instance().TransferSoldAccess(data));
-
+RET_ERROR:
     /*Reply to Ajur*/
     result = QString("[{\"mu_id\":%1,\"sale_id\":%2,\"status\":%3}]\n\r").
             arg(m_lastId).arg(data[0].
             value("sale_id", -1).toInt()).arg(status?1:0);
 
     clientSocket->write(result.toUtf8().constData());
-
-RET_ERROR:
-
     clientSocket->readAll();
 }

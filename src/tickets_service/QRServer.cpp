@@ -5,6 +5,12 @@
 #include <qjsonobject.h>
 #include "Configurator.h"
 
+#define GOTO_EXIT(STR) do {\
+  codename = (STR);\
+  qInfo() << "Door access denied.";\
+  goto EXIT;\
+} while(0)\
+
 QRServer::QRServer(QObject *parent, const ServerConfigurator& config):
     TCPServer(parent, config)
 {
@@ -25,94 +31,102 @@ void QRServer ::Receive()
     bool already_used = false;
     int qr_site_id = -1;
     int door_id = -1;
-
+    QString code;
+    QStringList qr_list;
+    QList<QMap<QString, QVariant>> code_access;
+    QStringList split_site_door;
+    QList<QMap<QString, QVariant>> fisc_unit;
+    QList<QMap<QString, QVariant>> ajr_sale;
+    QList<QMap<QString, QVariant>> sold_access;
+    QString codename;
+    int aj_site_id;
+    int sale_id;
+    int qty = 0;
+    int access_type;
     //TBD
     int LIFETIME = 10;
 
+
     qDebug() << "QR: " << qr;
-    QStringList split_site_door = qr.split(":");
+    split_site_door = qr.split(":");
+
     if (split_site_door.count() >= 3 ) {
         qr_site_id = split_site_door[0].toInt(&ok);
         if (!ok) {
-            qDebug() << "Can't get qr_site_id";
+            qCritical() << "Can't get qr_site_id";
             //TBD: MQTT Wrong code event generation.
-            return;
+            GOTO_EXIT("QR Code bad format");
         }
 
         /* TBD ??? Check that QR site_id is the same as in configuration file
         if (qr_site_id != Configurator::Instance().site_id()) {
             qDebug() << "qr_site_id is not the same as site_id";
             //TBD: MQTT Wrong code event generation.
-            return;
+            GOTO_EXIT(STR);
         }*/
 
         qr.remove(0, split_site_door[0].length() + 1);
         /*Get door ID*/
         door_id = split_site_door[1].toInt(&ok);
         if (!ok) {
-            qDebug() << "Can't get qr_site_id";
+            qCritical() << "Can't get qr_site_id";
             //TBD: MQTT Wrong code event generation.
-            return;
+            GOTO_EXIT("QR Code bad format");
         }
         qr.remove(0, split_site_door[1].count() + 1);
 
     } else {
-        qDebug() << "Not correct QR format (qr_site_id) should be:";
-        qDebug() << "  qr_site_id:door_id:QR";
+        qCritical() << "Not correct QR format (qr_site_id) should be:";
+        qCritical() << "  qr_site_id:door_id:QR";
         //TBD: MQTT Wrong code event generation.
-        return;
+        GOTO_EXIT("QR Code bad format");
     }
-    QStringList list = qr.split("*");
 
-    if(list.count() > 0) {
-
-        if (list.count() > 1) {
-            //QR = 50179218*181*2020-02-28*20:07:00*25
-            QList<QMap<QString, QVariant>> fisc_unit;
-            DBClient::Instance().GetFiscalMem(fisc_unit, "fiscal_mem", QString("fiscal_mem='%1'  ALLOW FILTERING").arg(list[0]));
+    qr_list = qr.split("*");
+    if(qr_list.count() > 0) {
+        if (qr_list.count() > 1) {
+            DBClient::Instance().GetFiscalMem(fisc_unit, "fiscal_mem",
+                                              QString("fiscal_mem='%1'  ALLOW FILTERING").
+                                              arg(qr_list[0]));
             //Check fiscal units
             if (fisc_unit.count() > 0) {
                 qDebug() << "Продадено от фискален апарат" << fisc_unit[0].value("fiscal_mem");
             }
         }
     } else {
-        qDebug() << "Not correct QR format (door_id) should be:";
-        qDebug() << "  qr_site_id:door_id*QR";
+        qCritical() << "Not correct QR format (door_id) should be:";
+        qCritical() << "  qr_site_id:door_id*QR";
         //TBD: MQTT Wrong code event generation.
-        return;
+        GOTO_EXIT("QR Code bad format");
     }
-
-    QList<QMap<QString, QVariant>> ajr_sale;
 
     DBClient::Instance().GetAjrSales(ajr_sale, "*",
                                      QString("qr='%1' ALLOW FILTERING").
                                      arg(qr));
     if (ajr_sale.count() <= 0) {
-        qDebug() << "Can't find this QR code";
+        qCritical() << "Can't find this QR code";
         //TBD: MQTT Wrong code event generation.
-        return;
+        GOTO_EXIT("Not valid QR code");
     }
 
     if (!ajr_sale[0].value("transfered").toBool()) {
-        qDebug() << "Ajure sale isn't transfered. Try to transfer";
+        qCritical() << "Ajure sale isn't transfered. Try to transfer";
         if(!DBClient::Instance().TransferSoldAccess(ajr_sale)) {
-            qDebug() << "Failure: Can't transfered Ajure sale.";
-            return;
+            qCritical() << "Failure: Can't transfered Ajure sale.";
+            GOTO_EXIT("Not valid QR code. Please try again.");
         }
         qDebug() << "Transfered";
     }
 
-    QString code = ajr_sale[0].value("code").toString();
+    code = ajr_sale[0].value("code").toString();
     qDebug() << "Ajure sale: " << ajr_sale[0];
-
-    QList<QMap<QString, QVariant>> code_access;
     DBClient::Instance().GetCodeAccessInfo(code_access, "*",
                                            QString("code = '%1'").
                                            arg(code));
     if (code_access.count() <= 0) {
-        qDebug() << "Can't find get code access";
+        qCritical() << "Can't find get code access";
         //TBD: Wrong code event generation.
-        return;
+        GOTO_EXIT("Acces denied: code acces error");
     }
 
     qDebug() << "Code: " << code_access;
@@ -122,25 +136,23 @@ void QRServer ::Receive()
         If is 0 - access to one of sites deined in site_ids.
         If is 1 - access to all sites defined in site_ids.
     */
-    int access_type  = code_access[0].value("access_type", -1).toInt();
-    QString codename = code_access[0].value("codename", "").toString();
-    auto site_ids = code_access[0].value("site_ids").toList();
-
-    int aj_site_id = ajr_sale[0].value("aj_site_id").toInt(&ok);
+    access_type  = code_access[0].value("access_type", -1).toInt();
+    codename = code_access[0].value("codename", "Wrong Code Name").toString();
+    aj_site_id = ajr_sale[0].value("aj_site_id").toInt(&ok);
     if (!ok) {
-        qDebug() << "Can't get site_id";
+        qCritical() << "Can't get site_id";
         //TBD: Wrong code event generation.
-        return;
+        GOTO_EXIT("Acces denied: ajur sale error");
     }
 
-    int sale_id = ajr_sale[0].value("sale_id").toInt(&ok);
+    sale_id = ajr_sale[0].value("sale_id").toInt(&ok);
     if (!ok) {
-        qDebug() << "Can't find get sale_id";
+        qCritical() << "Can't find get sale_id";
         //TBD: Wrong code event generation.
-        return;
+        GOTO_EXIT("Acces denied: ajur sale error");
     }
 
-    QList<QMap<QString, QVariant>> sold_access;
+
     DBClient::Instance().GetSoldAccess(sold_access, "*",
                                        QString("sale_id = %1 and aj_site_id = %2"
                                                " ALLOW FILTERING").
@@ -152,12 +164,13 @@ void QRServer ::Receive()
             QDateTime timestamp = sold.value("timestamp").toDateTime();
             if (!timestamp.isNull()) {
                 already_used = true;
-                qDebug() << "This ticket was used on: " << timestamp;
+                qDebug() << "The ticket was used on: " << timestamp;
+                GOTO_EXIT(QString("Acces denied: This ticket was used on - %1").arg(timestamp.toString()));
             }
         }
 
         if (!already_used) {
-            foreach (auto site_id, site_ids) {
+            foreach (auto site_id, code_access[0].value("site_ids").toList()) {
                 if (site_id.toInt() == qr_site_id) {
                     enable_access = true;
                     break;
@@ -169,9 +182,9 @@ void QRServer ::Receive()
         foreach (auto sold, sold_access) {
             int f_qr_site_id = sold.value("qr_site_id").toInt(&ok);
             if (!ok) {
-                qDebug() << "Can't get qr_site_id";
+                qCritical() << "Can't get qr_site_id";
                 //TBD: Wrong code event generation.
-                return;
+                GOTO_EXIT("Acces denied: sold access error");;
             }
             if (qr_site_id == f_qr_site_id) {
                 QDateTime timestamp = sold.value("timestamp").toDateTime();
@@ -179,8 +192,9 @@ void QRServer ::Receive()
                     enable_access = true;
                 } else {
                     //Found but already used
-                    qDebug() << "This ticket was used on: " << timestamp;
+                    qDebug() << "The ticket was used on: " << timestamp;
                     already_used = true;
+                    GOTO_EXIT(QString("Acces denied: The ticket was used on - %1").arg(timestamp.toString()));
                 }
                 break;
             }
@@ -198,9 +212,9 @@ void QRServer ::Receive()
             if (dead_tickets.count() > 0) {
                 live_ctr = dead_tickets[0].value("live_ctr").toInt(&ok);
                 if (!ok) {
-                    qDebug() << "Can't get live_ctr";
+                    qCritical() << "Can't get live_ctr";
                     //TBD: Wrong code event generation.
-                    return;
+                    GOTO_EXIT("Acces denied: dead tickets error");
                 }
             }
 
@@ -217,30 +231,24 @@ void QRServer ::Receive()
 
                 ok = DBClient::Instance().InserRowsInDeadTickets(dead_tickets_update);
                 if (!ok) {
-                    qDebug() << "Can't insert row in DeadTickets";
+                    qCritical() << "Can't insert row in DeadTickets";
                     //TBD: Wrong code event generation.
-                    return;
+                    GOTO_EXIT("Acces denied: can't update dead tickets");
                 }
             }
         }
     }
 
-    //TBD: Define in configuration
-    QString topic_simple = QString("site%1door%2/msg").arg(qr_site_id).arg(door_id);
-    QString topic = QString("site%1door%2/full_msg").arg(qr_site_id).arg(door_id);
-    int qty = 0;
     if (enable_access) {
 
-        QDateTime cur_timestamp;
-
-        cur_timestamp.setMSecsSinceEpoch(1213342); //TBD Add real timestamp
+        QDateTime cur_timestamp(QDateTime::currentDateTimeUtc()); //TBD Add real timestamp
 
         //TBD add 1 full used_cnt
         qty = ajr_sale[0].value("qty").toInt(&ok);
         if (!ok) {
-            qDebug() << "Can't get qty";
+            qCritical() << "Can't get qty";
             //TBD: Wrong code event generation.
-            return;
+            GOTO_EXIT("Acces denied: ajur sale error");
         }
         const QList<QMap<QString , QVariant>> soldData({
                       {
@@ -257,16 +265,16 @@ void QRServer ::Receive()
 
         ok = DBClient::Instance().InsertRowsInSoldAccessTable(soldData);
         if (!ok) {
-            qDebug() << "Can't insert row in SoldAccess";
+            qCritical() << "Can't insert row in SoldAccess";
             //TBD: Wrong code event generation.
-            return;
+            GOTO_EXIT("Acces denied: update sold access");
         }
         //Notify to open
         qty = ajr_sale[0].value("qty").toInt();
-        qDebug() << "Open the door";
+        qInfo() << "Open the door";
 
     }
-
+EXIT:
     QJsonObject object =  {
         {"door_id",  door_id},
         {"site_id",  qr_site_id},
@@ -275,18 +283,22 @@ void QRServer ::Receive()
         {"codename", codename},
     };
 
-    QJsonDocument json(object);
+    //TBD: Define in configuration
+    QString topic_simple = QString("site%1door%2/msg").arg(qr_site_id).arg(door_id);
+    QString topic = QString("site%1door%2/full_msg").arg(qr_site_id).arg(door_id);
+
+    QJsonDocument full_topic_json(object);
 
     MqttManager::Instance().publish(topic_simple, enable_access ? "true" : "false", 1, false);
 
-    MqttManager::Instance().publish(topic, json.toJson(), 1, false);
+    MqttManager::Instance().publish(topic, full_topic_json.toJson(), 1, false);
 
     qDebug() << "topic: "  << topic
              << ", Site: " << qr_site_id
              << ", Open the door: " << door_id
              << ", qty: " << qty;
 
-    qDebug() << "Json: " << json.toJson();
+    qDebug() << "Json: " << full_topic_json.toJson();
 
 
     //clientSocket->write("Server says Hello");

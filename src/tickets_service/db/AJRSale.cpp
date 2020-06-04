@@ -25,7 +25,7 @@ static const  QList<QPair<QString, QVariant::Type>> colType(
 
 
 AJRSale::AJRSale(QString tableName, QString keySpace):
-    CassTable( tableName, colType, "aj_site_id, sale_id", keySpace)
+    CassTable( tableName, colType, "aj_site_id, sale_id, code", keySpace)
 {
 
 }

@@ -139,7 +139,7 @@ int Configurator::protocol() {
     }
     protocol = proto.toInt(&ok);
     if (!ok) {
-        qDebug() << "Can't read cassandra protocol version";
+        qCritical() << "Can't read cassandra protocol version";
     }
     return protocol;
 }

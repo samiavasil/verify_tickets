@@ -80,7 +80,7 @@ void MqttManager::updateLogStateChange()
         auto subscription = m_client->subscribe(
                     QMqttTopicFilter(Configurator::Instance().Mqtt().feadback_topic), 0);
         if (!subscription) {
-            qDebug() << "Error: Could not subscribe."
+            qCritical() << "Error: Could not subscribe."
                         " Is there a valid connection?";
             return;
         }
@@ -104,10 +104,10 @@ void MqttManager::updateLogStateChange()
                 qDebug() <<"Subscribed";
                 break;
             case QMqttSubscription::Error:
-                qDebug() <<"Error";
+                qCritical() <<"Error";
                 break;
             default:
-                qDebug() <<"--Unknown--";
+                qCritical() <<"--Unknown--";
                 break;
             }
         });

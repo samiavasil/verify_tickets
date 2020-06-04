@@ -18,6 +18,10 @@ public:
             }
             break;
         }
+        case QtInfoMsg:
+            out_dbg = QString("Info: %1").arg(msg);
+            log = true;
+            break;
         case QtWarningMsg:
             out_dbg = QString("Warning: %1").arg(msg);
             log = true;
