@@ -10,7 +10,7 @@ public:
     static Topics &Instance();
 
 public slots:
-    bool PrepareTopicsTable();
+    bool PrepareTopicsTable(CassSession *session);
 protected:
     Topics(QString tableName = "Topics", QString keySpace = QString());
 

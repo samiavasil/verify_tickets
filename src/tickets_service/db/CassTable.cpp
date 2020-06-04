@@ -1,7 +1,7 @@
 ﻿#include "CassTable.h"
 #include "BuildQuery.h"
 #include "MapQVarCass.h"
-#include "DBClient.h"
+
 #include "Configurator.h"
 #include<QDebug>
 
@@ -78,10 +78,9 @@ CassError execute_query(CassSession* session, const char* query) {
     return rc;
 }
 
-bool CassTable::CreateTable()
+bool CassTable::CreateTable(CassSession *session)
 {
     BuildQuery query;
-    CassSession *session = DBClient::Instance().session();
 
     CHECK_SESSION(session);
     query.createTable(QString("%1.%2").arg(m_keySpace).arg(m_tableName)).
@@ -107,11 +106,9 @@ bool CassTable::CreateTable()
 
 }
 
-bool CassTable::DropTable()
+bool CassTable::DropTable(CassSession *session)
 {
     BuildQuery query;
-    CassSession *session = DBClient::Instance().session();
-
     CHECK_SESSION(session);
     query.dropTable(QString("%1.%2").arg(m_keySpace).arg(m_tableName));
 
@@ -122,10 +119,9 @@ bool CassTable::DropTable()
 
     /* TBD: Should be deprecated - Creating keyspaces and network topology should be
        defined externaly not in aspplication. App will know only the name of keyspace.*/
-bool CassTable::CreateKeySpace()
+bool CassTable::CreateKeySpace(CassSession *session)
 {
     BuildQuery query;
-    CassSession *session = DBClient::Instance().session();
 
     CHECK_SESSION(session);
     query.createKeySpace(m_keySpace).replication(BuildQuery::NetworkTopologyStrategy, 1);
@@ -136,10 +132,9 @@ bool CassTable::CreateKeySpace()
     return (CASS_OK == execute_query(session, query.query().toUtf8().constData()));
 }
 
-bool CassTable::DropKeySpace()
+bool CassTable::DropKeySpace(CassSession *session)
 {
     BuildQuery query;
-    CassSession *session = DBClient::Instance().session();
 
     CHECK_SESSION(session);
     query.dropKeySpace(m_keySpace);
@@ -149,7 +144,7 @@ bool CassTable::DropKeySpace()
     return (CASS_OK == execute_query(session, query.query().toUtf8().constData()));
 }
 
-bool CassTable::InsertRowsInTable(const QList<QMap<QString, QVariant>> &rows)
+bool CassTable::InsertRowsInTable(CassSession *session, const QList<QMap<QString, QVariant>> &rows)
 {
     foreach (auto row, rows) {
         QMap<QString, QString> row_str;
@@ -160,15 +155,14 @@ bool CassTable::InsertRowsInTable(const QList<QMap<QString, QVariant>> &rows)
             row_str.insert(col.key(), str);
             col++;
         }
-        InsertRow(row_str);
+        InsertRow(session, row_str);
     }
     return true;
 }
 
-bool CassTable::InsertRow(const QMap<QString, QString> &data)
+bool CassTable::InsertRow(CassSession *session, const QMap<QString, QString> &data)
 {
     BuildQuery query;
-    CassSession *session = DBClient::Instance().session();
 
     CHECK_SESSION(session);
     query.insertInto(QString("%1.%2").arg(m_keySpace).arg(m_tableName)).lbrace();
@@ -212,16 +206,16 @@ bool CassTable::UpdateRow()
     return ret;
 }
 
-bool  CassTable::SelectFromTable( QList<QMap<QString, QVariant>> &result,
+bool  CassTable::SelectFromTable( CassSession *session, QList<QMap<QString, QVariant>> &result,
                                   const QString &filter, const QString &where) {
 
     CassError rc = CASS_OK;
     CassStatement* statement = nullptr;
     CassFuture* future = nullptr;
     BuildQuery query;
-    CassSession *session = DBClient::Instance().session();
     const CassResult* cas_res = nullptr;
     bool ret = false;
+
     CHECK_SESSION(session);
 
     result.clear();

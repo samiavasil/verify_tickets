@@ -15,6 +15,6 @@ public:
     } Column_t;
 
     Doors(QString tableName = "Doors", QString keySpace = QString());
-    bool PrepareDoorsTable();
+    bool PrepareDoorsTable(CassSession *session);
 };
 #endif // DOORS_H

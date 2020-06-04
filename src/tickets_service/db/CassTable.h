@@ -23,15 +23,15 @@ public:
     QString tableName() const;
     void setTableName(const QString &tableName);
 
-    virtual bool CreateTable();
-    virtual bool DropTable();
-    virtual bool CreateKeySpace();
-    virtual bool DropKeySpace();
-    virtual bool InsertRow(const QMap<QString, QString> &data);
+    virtual bool CreateTable(CassSession *session);
+    virtual bool DropTable(CassSession *session);
+    virtual bool CreateKeySpace(CassSession *session);
+    virtual bool DropKeySpace(CassSession *session);
+    virtual bool InsertRow(CassSession *session, const QMap<QString, QString> &data);
     virtual bool UpdateRow();
-    virtual bool SelectFromTable(QList<QMap<QString, QVariant>> &result,
+    virtual bool SelectFromTable(CassSession *session, QList<QMap<QString, QVariant>> &result,
                                  const QString &filter="*", const QString &where=QString());
-    virtual bool InsertRowsInTable(const QList<QMap<QString, QVariant> > &rows);
+    virtual bool InsertRowsInTable(CassSession *session, const QList<QMap<QString, QVariant> > &rows);
 
 protected:
     QMap<QString, QVariant::Type> m_columns;

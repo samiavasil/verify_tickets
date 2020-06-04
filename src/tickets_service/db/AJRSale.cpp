@@ -1,5 +1,4 @@
 #include "AJRSale.h"
-#include <QDebug>
 #include "db/MapQVarCass.h"
 
 

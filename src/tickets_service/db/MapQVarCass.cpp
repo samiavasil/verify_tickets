@@ -103,7 +103,7 @@ bool MapQVarCass::convertCassToQVariant(const CassValue *in, QVariant::Type type
                     break;
                 }
                 default:
-                    qDebug() <<__func__ << ":" << __LINE__
+                    qCritical() <<__func__ << ":" << __LINE__
                             << " Undefined type: " << cass_value_type(val);
                     break;
                 }
@@ -186,7 +186,7 @@ bool MapQVarCass::convertQVariantToStrout(const QVariant &in, QVariant::Type typ
                     res.append(QString("'%1'").arg((*it).toString()));
                     break;
                 default:
-                    qDebug() << __func__<< ":" << __LINE__<< "Error: Not defined for type " << (*it).type();
+                    qCritical() << __func__<< ":" << __LINE__<< "Error: Not defined for type " << (*it).type();
                     ret = false;
                     break;
                 }
@@ -198,7 +198,7 @@ bool MapQVarCass::convertQVariantToStrout(const QVariant &in, QVariant::Type typ
             }
             res.append("}");
         } else {
-            qDebug() << __func__ << "Error in Line " <<__LINE__ << "Can't get variant list";
+            qCritical() << __func__ << "Error in Line " <<__LINE__ << "Can't get variant list";
         }
 
         break;

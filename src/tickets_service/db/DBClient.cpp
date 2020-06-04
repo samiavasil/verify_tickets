@@ -9,7 +9,7 @@
 #define ASSERT_ERROR(text, check)  do { \
     bool ok = (check); \
     if(!ok) { \
-    qDebug() << "Error:" << (text) << __func__ << " Line" << __LINE__; \
+    qCritical() << "Error:" << (text) << __func__ << " Line" << __LINE__; \
     goto RET_ERROR; \
     } \
     } \
@@ -185,7 +185,7 @@ void DBClient::DoConsistencyTransfer() {
     QList<QMap<QString, QVariant>> sales;
 
     //TBD: Here is good idea to have a querry paging
-    m_AJRSale.SelectFromTable(sales, "*", "transfered=false ALLOW FILTERING");
+    m_AJRSale.SelectFromTable(m_session, sales, "*", "transfered=false ALLOW FILTERING");
     qDebug() << "DO Consistency check";
     foreach (auto sale, sales) {
         QList<QMap<QString, QVariant>> data ({{
@@ -209,33 +209,33 @@ void DBClient::PrepareTables() {
     /* qDebug() << "Create KeySpace: " << m_AJRSale.CreateKeySpace();*/
 
     //   qDebug() << "Drop Table m_AJRSale: " << m_AJRSale.DropTable();
-    qDebug() << "Create Table ajrSale: " << m_AJRSale.CreateTable();
+    qDebug() << "Create Table ajrSale: " << m_AJRSale.CreateTable(m_session);
 
     QList<QMap<QString, QVariant>> result;
-    qDebug() << "Dump Table " << m_AJRSale.SelectFromTable(result);
+    qDebug() << "Dump Table " << m_AJRSale.SelectFromTable(m_session, result);
 
     /*qDebug() << "Drop Table codeAccessInfo: " << m_CodeAccessInfo.DropTable();*/
-    qDebug() << "Create Table code_Access_info: " << m_CodeAccessInfo.CreateTable();
+    qDebug() << "Create Table code_Access_info: " << m_CodeAccessInfo.CreateTable(m_session);
     /*qDebug() << "Prepare Table code_Access_info: " << m_CodeAccessInfo.PrepareCodeAccessTable();*/
 
-    qDebug() << "Dump Table CodeAccessInfo" << m_CodeAccessInfo.SelectFromTable(result);
+    qDebug() << "Dump Table CodeAccessInfo" << m_CodeAccessInfo.SelectFromTable(m_session, result);
 
     /* qDebug() << "Drop Table deadTickets: " <<m_DeadTickets.DropTable();*/
-    qDebug() << "Create Table deadTickets: " <<m_DeadTickets.CreateTable();
+    qDebug() << "Create Table deadTickets: " <<m_DeadTickets.CreateTable(m_session);
 
     /* qDebug() << "Drop Table Doors: " << m_Doors.DropTable();*/
-    qDebug() << "Create Table Doors: " << m_Doors.CreateTable();
+    qDebug() << "Create Table Doors: " << m_Doors.CreateTable(m_session);
 
     /* qDebug() << "Drop Table fiscUnit: " << m_FiscUnit.DropTable(); */
-    qDebug() << "Create Table fiscUnit: " << m_FiscUnit.CreateTable();
+    qDebug() << "Create Table fiscUnit: " << m_FiscUnit.CreateTable(m_session);
     /* qDebug() << "PrepareFiscUnitTable: " << m_FiscUnit.PrepareFiscUnitTable();*/
 
     /* qDebug() << "Drop Table siteDescriptor: " << m_SiteDescriptor.DropTable();*/
-    qDebug() << "Create Table SiteDescriptor: " << m_SiteDescriptor.CreateTable();
+    qDebug() << "Create Table SiteDescriptor: " << m_SiteDescriptor.CreateTable(m_session);
     /*qDebug() << "PrepareSiteDescriptorTable: " << m_SiteDescriptor.PrepareSiteDescriptorTable();*/
 
     /* qDebug() << "Drop Table soldAccess: " << m_SoldAccess.DropTable(); */
-    qDebug() << "Create Table soldAccess: " << m_SoldAccess.CreateTable();
+    qDebug() << "Create Table soldAccess: " << m_SoldAccess.CreateTable(m_session);
 }
 
 bool DBClient::TransferSoldAccess(QList<QMap<QString, QVariant> > &data) {
@@ -251,7 +251,7 @@ bool DBClient::TransferSoldAccess(QList<QMap<QString, QVariant> > &data) {
                 }});
 
         ASSERT_ERROR("SelectFromTable: ",m_CodeAccessInfo.
-                     SelectFromTable(code_access, "*", QString("code = '%1'").
+                     SelectFromTable(m_session, code_access, "*", QString("code = '%1'").
                                      arg(data[i].value("code").toString())));
 
         ASSERT_ERROR("Code acces isn't defined correctly in code_access table", code_access.count() == 1);
@@ -273,14 +273,14 @@ bool DBClient::TransferSoldAccess(QList<QMap<QString, QVariant> > &data) {
                           {"live_ctr", dead_level},
                           }});
                 ASSERT_ERROR("SoldAccess Insert row: ",
-                            m_DeadTickets.InsertRowsInTable(deadTicket));
+                            m_DeadTickets.InsertRowsInTable(m_session, deadTicket));
             }
 
             foreach (auto site_id, code_access[0].value("site_ids").toList()) {
                 soldData[0]["qr_site_id"] = site_id.toInt(&is_ok);
                 ASSERT_ERROR("Get SIDE_ID", is_ok);
                 ASSERT_ERROR("SoldAccess Insert row: ",
-                             m_SoldAccess.InsertRowsInTable(soldData));
+                             m_SoldAccess.InsertRowsInTable(m_session, soldData));
             }
 
         }
@@ -298,38 +298,38 @@ RET_ERROR:
 
 bool DBClient::GetFiscalMem(QList<QMap<QString, QVariant>>& fisc_unit,
                             const QString &filter, const QString &where ) {
-     return m_FiscUnit.SelectFromTable(fisc_unit, filter, where);
+     return m_FiscUnit.SelectFromTable(m_session, fisc_unit, filter, where);
 }
 
 bool DBClient::GetAjrSales(QList<QMap<QString, QVariant>> &ajr_sale,
                            const QString &filter, const QString &where ) {
-    return m_AJRSale.SelectFromTable(ajr_sale, filter, where);
+    return m_AJRSale.SelectFromTable(m_session, ajr_sale, filter, where);
 }
 
 bool DBClient::GetCodeAccessInfo(QList<QMap<QString, QVariant>> &code_access,
                                  const QString &filter, const QString &where ) {
-    return m_CodeAccessInfo.SelectFromTable(code_access, filter, where);
+    return m_CodeAccessInfo.SelectFromTable(m_session, code_access, filter, where);
 
 }
 
 bool DBClient::GetSoldAccess(QList<QMap<QString, QVariant>> &sold_access,
                                  const QString &filter, const QString &where ) {
-    return m_SoldAccess.SelectFromTable(sold_access, filter, where);
+    return m_SoldAccess.SelectFromTable(m_session, sold_access, filter, where);
 }
 
 bool DBClient::GetDeadTickets(QList<QMap<QString, QVariant>> &dead_tickets,
                                  const QString &filter, const QString &where ) {
-    return m_DeadTickets.SelectFromTable(dead_tickets, filter, where);
+    return m_DeadTickets.SelectFromTable(m_session, dead_tickets, filter, where);
 }
 
 bool DBClient::InserRowsInDeadTickets(const QList<QMap<QString, QVariant> > &dead_tickets_rows) {
-    return m_DeadTickets.InsertRowsInTable(dead_tickets_rows);
+    return m_DeadTickets.InsertRowsInTable(m_session, dead_tickets_rows);
 }
 
 bool DBClient::InsertRowsInSoldAccessTable(const QList<QMap<QString , QVariant>> &sold_data_rows) {
-    return m_SoldAccess.InsertRowsInTable(sold_data_rows);
+    return m_SoldAccess.InsertRowsInTable(m_session, sold_data_rows);
 }
 
 bool DBClient::InsertRowsInAjrSale(const QList<QMap<QString , QVariant>> &sold_data_rows) {
-    return m_AJRSale.InsertRowsInTable(sold_data_rows);
+    return m_AJRSale.InsertRowsInTable(m_session, sold_data_rows);
 }

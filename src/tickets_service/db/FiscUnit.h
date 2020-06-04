@@ -6,7 +6,7 @@ class FiscUnit: public CassTable
 {
 public:
    FiscUnit(QString tableName = "fiscUnit", QString keySpace = QString());
-   bool PrepareFiscUnitTable();
+   bool PrepareFiscUnitTable(CassSession *session);
 };
 
 #endif // FISCUNIT_H

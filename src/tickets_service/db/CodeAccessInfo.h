@@ -11,7 +11,7 @@ public:
     } AccessType_t;
 
     CodeAccessInfo(QString tableName = "code_Access_info", QString keySpace = QString());
-    bool PrepareCodeAccessTable();
+    bool PrepareCodeAccessTable(CassSession *session);
 };
 
 #endif // CODEACCESSINFO_H

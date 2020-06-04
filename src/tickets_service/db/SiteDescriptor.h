@@ -14,7 +14,7 @@ public:
     } Column_t;
 
     SiteDescriptor(QString tableName = "site_descriptor", QString keySpace = QString());
-    bool PrepareSiteDescriptorTable();
+    bool PrepareSiteDescriptorTable(CassSession *session);
 
 };
 

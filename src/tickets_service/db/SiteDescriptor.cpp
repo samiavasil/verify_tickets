@@ -2,16 +2,6 @@
 #include "SiteDescriptor.h"
 #include <QDebug>
 
-#define ASSERT_ERROR(text, check)  do { \
-    bool ok = (check); \
-    if(!ok) { \
-    qDebug() << "Assert error:" << (text) << __func__ << " Line" << __LINE__; \
-    return false; \
-    } \
-    qDebug() << (text)<< (ok); \
-    } \
-    while (0)
-
 static const QList<QPair<QString, QVariant::Type>> colType({
             {"site_id",     QVariant::Int},
             {"name",        QVariant::String},
@@ -26,7 +16,7 @@ SiteDescriptor::SiteDescriptor(QString tableName, QString keySpace):
 
 }
 
-bool SiteDescriptor::PrepareSiteDescriptorTable() {
+bool SiteDescriptor::PrepareSiteDescriptorTable(CassSession *session) {
 
     const QList<QMap<QString , QVariant>> dataList =  {
         {
@@ -53,6 +43,6 @@ bool SiteDescriptor::PrepareSiteDescriptorTable() {
     };
 
     qDebug() << dataList[0].value("doors").type();
-    ASSERT_ERROR("Insert row: ",InsertRowsInTable(dataList));
+    ASSERT_ERROR("Insert row: ",InsertRowsInTable(session, dataList));
     return true;
 }
