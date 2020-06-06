@@ -112,7 +112,7 @@ bool AJRServer::ParseJsonInput(QByteArray& buff, QList<QMap<QString , QVariant>>
                 goto RET_ERROR;
             }
             ajr_data.insert("qty", val);
-            ajr_data.insert("timestamp_in", QDateTime::currentSecsSinceEpoch());
+            ajr_data.insert("timestamp_in", QDateTime::currentDateTimeUtc());
             ajr_data.insert("transfered", false);
             out.append(ajr_data);
         }

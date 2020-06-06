@@ -261,7 +261,7 @@ bool  CassTable::SelectFromTable( CassSession *session, QList<QMap<QString, QVar
                 col_val = cass_row_get_column_by_name(row, col.key().toUtf8().
                                                       constData());
                 MapQVarCass::convertCassToQVariant(col_val, col.value(), colVar);
-                qDebug() << col.key() << ": " << colVar.toString();
+                qDebug() << col.key() << ": " << colVar;
                 rowMap.insert(col.key(), colVar);
                 ++col;
             }

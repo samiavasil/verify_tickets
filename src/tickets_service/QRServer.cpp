@@ -133,8 +133,8 @@ void QRServer ::Receive()
 
     /** access_type
         Single or Multiple museum access.
-        If is 0 - access to one of sites deined in site_ids.
-        If is 1 - access to all sites defined in site_ids.
+        If is 1 - access to one of sites deined in site_ids.
+        If is 2 - access to all sites defined in site_ids.
     */
     access_type  = code_access[0].value("access_type", -1).toInt();
     codename = code_access[0].value("codename", "Wrong Code Name").toString();
