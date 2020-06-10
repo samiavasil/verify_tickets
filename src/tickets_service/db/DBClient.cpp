@@ -248,6 +248,7 @@ bool DBClient::TransferSoldAccess(QList<QMap<QString, QVariant> > &data) {
         QList<QMap<QString , QVariant>> soldData({{
                 {"aj_site_id", data[i].value("aj_site_id", -1)},
                 {"sale_id", data[i].value("sale_id", -1)},
+                {"code", data[i].value("code", "")},
                 }});
 
         ASSERT_ERROR("SelectFromTable: ",m_CodeAccessInfo.
@@ -270,6 +271,7 @@ bool DBClient::TransferSoldAccess(QList<QMap<QString, QVariant> > &data) {
                 QList<QMap<QString , QVariant>> deadTicket({{
                           {"aj_site_id", data[0].value("aj_site_id", -1)},
                           {"sale_id", data[0].value("sale_id", -1)},
+                          {"code", data[0].value("code", "")},
                           {"live_ctr", dead_level},
                           }});
                 ASSERT_ERROR("SoldAccess Insert row: ",

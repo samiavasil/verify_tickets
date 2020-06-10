@@ -9,11 +9,12 @@ static const QList<QPair<QString, QVariant::Type>> colType(
         {
             {"aj_site_id", QVariant::Int},
             {"sale_id",    QVariant::Int},
+            {"code",       QVariant::String},
             {"live_ctr",   QVariant::Int},
         });
 
 DeadTickets::DeadTickets(QString tableName, QString keySpace):
-    CassTable( tableName, colType, "(aj_site_id, sale_id)", keySpace)
+    CassTable( tableName, colType, "(aj_site_id, sale_id, code)", keySpace)
 {
 
 }

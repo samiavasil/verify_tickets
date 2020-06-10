@@ -17,6 +17,15 @@ protected:
         MULTIPLE = 2
     } access_t;
     virtual void Receive();
+protected:
+    bool ParseQrCode(QString &qr, int &qr_site_id, int &door_id, QString &error_codename);
+    bool CheckFiscalUnits(QString &qr, QString &codename);
+    bool GetAjrSales(QList<QMap<QString, QVariant> > &ajr_sales, QString &qr, QString &codename);
+    bool GetSoldAccesForSale(QList<QMap<QString, QVariant> > &sold_access, int &sale_id, int &aj_site_id, QString &code);
+    bool IsSingleAccessTypeEnabled(const QList<QMap<QString, QVariant> > &sold_access, const QVariantList &code_access, const int &qr_site_id);
+    bool IsMultipleAccessTypeEnabled(const QList<QMap<QString, QVariant> > &sold_access, int &sale_id, int &aj_site_id, QString &code, const int &qr_site_id);
+    void SendVerificationResultViaMqtt(const QJsonObject &object, int &sale_id, int &door_id, bool enable_access);
+    bool UpdateSoldAccesses(const QList<QMap<QString, QVariant> > &soldData);
 };
 
 #endif // QRSERVER_H

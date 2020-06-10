@@ -94,17 +94,18 @@ void MqttManager::updateLogStateChange()
                 this, [subscription](QMqttSubscription::SubscriptionState state){
             switch (state) {
             case QMqttSubscription::Unsubscribed:
-                qDebug() << "Unsubscribed";
+                qDebug() << "Unsubscribed: topic - " << subscription->topic();
                 subscription->deleteLater();
                 break;
             case QMqttSubscription::SubscriptionPending:
-                qDebug() <<"Pending";
+                qDebug() <<"Pending: topic - ";
                 break;
             case QMqttSubscription::Subscribed:
-                qDebug() <<"Subscribed";
+                qDebug() <<"Subscribed: topic - ";
                 break;
             case QMqttSubscription::Error:
-                qCritical() <<"Error";
+                qCritical() << "Error: topic - "  << subscription->topic()
+                            << ", Reason: " << subscription->reason();
                 break;
             default:
                 qCritical() <<"--Unknown--";
@@ -116,7 +117,10 @@ void MqttManager::updateLogStateChange()
 
 void MqttManager::brokerDisconnected()
 {
-    qDebug() << "Disconnected";
+    QMqttClient* client = qobject_cast<QMqttClient*>(sender());
+
+    qDebug() << "Disconnected: Host "  << client->hostname()
+             << ", Port " << client->port();
 }
 
 

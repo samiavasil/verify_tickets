@@ -5,6 +5,7 @@ static const QList<QPair<QString, QVariant::Type>> colType({
             {"sale_id", QVariant::Int},
             {"aj_site_id", QVariant::Int},
             {"qr_site_id", QVariant::Int},
+            {"code",       QVariant::String},
             {"door_id", QVariant::Int},
             {"fail_over_flag", QVariant::Bool},
             {"qty", QVariant::Int},
@@ -13,7 +14,7 @@ static const QList<QPair<QString, QVariant::Type>> colType({
         });
 
 SoldAccess::SoldAccess(QString tableName, QString keySpace):
-    CassTable(tableName, colType, "(aj_site_id, sale_id, qr_site_id)", keySpace)
+    CassTable(tableName, colType, "(aj_site_id, sale_id, code, qr_site_id)", keySpace)
 {
 
 }
