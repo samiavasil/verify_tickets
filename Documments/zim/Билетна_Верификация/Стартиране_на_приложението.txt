@@ -1,0 +1,37 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2020-05-03T00:33:59+03:00
+
+====== Стартиране на приложението ======
+Created неделя 03 май 2020
+
+Компресиран пакет от файлове **tickets_service.tar.gz**
+
+Пакета съдържа:
+{{{code: lang="sh" linenumbers="True"
+root@muserver-2:~/bin# ll tickets_service/                                                                                  
+total 24632                                                                                                                  
+drwxr-xr-x 2 root root    4096 May  2 20:36 ./                                                                               
+drwxr-xr-x 3 root root    4096 May  2 20:37 ../                                                                              
+-rw-r--r-- 1 root root 6027968 May  2 15:02 libQt5Core.so.5                                                                  
+-rwxr-xr-x 1 root root 5220664 May  2 15:02 libQt5Mqtt.so.5*                                                                 
+-rw-r--r-- 1 root root 1736904 May  2 15:02 libQt5Network.so.5                                                               
+-rw-r--r-- 1 root root 2917216 May  2 15:02 libcrypto.so.1.1                                                                 
+-rw-r--r-- 1 root root  577312 May  2 15:02 libssl.so.1.1                                                                    
+-rw-r--r-- 1 root root  155024 May  2 15:02 libuv.so.1                                                                       
+-rw-r--r-- 1 root root  116960 May  2 15:02 libz.so.1                                                                        
+-rwxr-xr-x 1 root root 8443344 May  2 15:03 tickets_service*
+-rwxr-xr-x 1 root root     118 May  2 20:35 tickets_service.sh*
+
+}}}
+
+
+Стартов скрипт **tickets_service.sh. **
+{{{code: lang="sh" linenumbers="True"
+root@muserver-2:~/bin# cat  tickets_service/tickets_service.sh 
+#!/bin/sh
+script="$0"
+basename="$(dirname $script)"
+cd $basename
+LD_LIBRARY_PATH=$basename  $basename/tickets_service
+}}}
