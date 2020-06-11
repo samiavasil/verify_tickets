@@ -234,7 +234,7 @@ bool  CassTable::SelectFromTable( CassSession *session, QList<QMap<QString, QVar
 
     rc = cass_future_error_code(future);
     if (rc != CASS_OK) {
-        print_error(future);
+        print_error(future);// CASS_ERROR_LIB_NO_HOSTS_AVAILABLE
     } else {
         cas_res = cass_future_get_result(future);
     }

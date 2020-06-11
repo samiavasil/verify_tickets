@@ -290,70 +290,79 @@ void QRServer::Receive()
         GOTO_EXIT(codename);
     }
 
-    code = ajr_sales[0].value("code").toString();
-    qDebug() << "Ajure sale: " << ajr_sales[0];
+    foreach (auto ajr_sale, ajr_sales) {
 
-    aj_site_id = ajr_sales[0].value("aj_site_id").toInt(&ok);
-    if (!ok) {
-        qCritical() << "Can't get site_id";
-        //TBD: Wrong code event generation.
-        GOTO_EXIT(" ajur sale error");
-    }
-    sale_id = ajr_sales[0].value("sale_id").toInt(&ok);
-    if (!ok) {
-        qCritical() << "Can't find get sale_id";
-        //TBD: Wrong code event generation.
-        GOTO_EXIT(" ajur sale error");
-    }
+        code = ajr_sale.value("code").toString();
+        qDebug() << "Ajure sale: " << ajr_sale;
 
-    if (!GetSoldAccesForSale(sold_access, sale_id, aj_site_id, code)) {
-        GOTO_EXIT(" Can't get Sold Access");
-    }
+        aj_site_id = ajr_sale.value("aj_site_id").toInt(&ok);
+        if (!ok) {
+            qCritical() << "Can't get site_id";
+            //TBD: Wrong code event generation.
+            GOTO_EXIT(" ajur sale error");
+        }
+        sale_id = ajr_sale.value("sale_id").toInt(&ok);
+        if (!ok) {
+            qCritical() << "Can't find get sale_id";
+            //TBD: Wrong code event generation.
+            GOTO_EXIT(" ajur sale error");
+        }
 
-    DBClient::Instance().GetCodeAccessInfo(code_access, "*",
-                                           QString("code = '%1'").
-                                           arg(code));
-    if (code_access.count() <= 0) {
-        qCritical() << "Can't find get code access";
-        //TBD: Wrong code event generation.
-        GOTO_EXIT(" code acces error");
-    }
+        if (!GetSoldAccesForSale(sold_access, sale_id, aj_site_id, code)) {
+            GOTO_EXIT(" Can't get Sold Access");
+        }
 
-    qDebug() << "Code: " << code_access;
+        DBClient::Instance().GetCodeAccessInfo(code_access, "*",
+                                               QString("code = '%1'").
+                                               arg(code));
+        if (code_access.count() <= 0) {
+            qCritical() << "Can't find get code access";
+            //TBD: Wrong code event generation.
+            GOTO_EXIT(" code acces error");
+        }
 
-    /** access_type
+        qDebug() << "Code: " << code_access;
+
+        /** access_type
         Single or Multiple museum access.
         If is 1 - access to one of sites deined in site_ids.
         If is 2 - access to all sites defined in site_ids.
     */
-    access_type  = code_access[0].value("access_type").toInt(&ok);
-    if (!ok) {
-        qCritical() << "Can't get access_type";
-        //TBD: Wrong code event generation.
-        GOTO_EXIT(" ajur sale error");
-    }
-    codename = code_access[0].value("codename", "Wrong Code Name").toString();
+        access_type  = code_access[0].value("access_type").toInt(&ok);
+        if (!ok) {
+            qCritical() << "Can't get access_type";
+            //TBD: Wrong code event generation.
+            GOTO_EXIT(" ajur sale error");
+        }
+        codename = code_access[0].value("codename", "Wrong Code Name").toString();
 
-    if (access_type == SINGLE) {
-        enable_access = IsSingleAccessTypeEnabled(sold_access,
-                                                  code_access[0].value("site_ids").toList(),
-                qr_site_id);
+        if (access_type == SINGLE) {
+            enable_access = IsSingleAccessTypeEnabled(sold_access,
+                                                      code_access[0].value("site_ids").toList(),
+                    qr_site_id);
 
-    } else if (access_type == MULTIPLE) {
-        enable_access = IsMultipleAccessTypeEnabled(sold_access, sale_id, aj_site_id, code, qr_site_id);
+        } else if (access_type == MULTIPLE) {
+            enable_access = IsMultipleAccessTypeEnabled(sold_access, sale_id,
+                                                        aj_site_id, code,
+                                                        qr_site_id);
+        }
+
+        if (enable_access) {
+            qty = ajr_sale.value("qty").toInt(&ok);
+            if (!ok) {
+                qCritical() << "Can't get qty";
+                //TBD: Wrong code event generation.
+                GOTO_EXIT(" ajur sale can't get qty");
+            }
+            break;
+        }
     }
 
     if (enable_access) {
 
         QDateTime cur_timestamp(QDateTime::currentDateTimeUtc());
 
-        //TBD add 1 full used_cnt
-        qty = ajr_sales[0].value("qty").toInt(&ok);
-        if (!ok) {
-            qCritical() << "Can't get qty";
-            //TBD: Wrong code event generation.
-            GOTO_EXIT(" ajur sale error");
-        }
+
         QList<QMap<QString , QVariant>> soldData({
                                                      {
                                                          {"aj_site_id",     aj_site_id},
