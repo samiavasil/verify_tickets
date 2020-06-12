@@ -34,7 +34,9 @@ int main(int argc, char *argv[])
             qInfo() << "NO Consistency check";
         }
     } else {
-        qFatal("Can't connect to Cassandra DB");
+        if(!DBClient::Instance().InstallSessionConnector()) {
+            qFatal("Can't initialize Cassandra DB connect feature");
+        }
     }
 
     AJRServer ajr_server(nullptr, cfg);

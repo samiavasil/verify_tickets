@@ -1,11 +1,14 @@
-﻿#include "DBClient.h"
+﻿#include <cassandra.h>
+#include "DBClient.h"
 #include <QDebug>
+#include <QTimer>
 #include "Configurator.h"
+
 
 /**
   TODO: Create connection.reconection staregy !!!!
 */
-
+#define CONNECT_TIMEOUT 1000
 #define ASSERT_ERROR(text, check)  do { \
     bool ok = (check); \
     if(!ok) { \
@@ -15,7 +18,7 @@
     } \
     while (0)
 
- void on_auth_initial(CassAuthenticator* auth, void* data) {
+void on_auth_initial(CassAuthenticator* auth, void* data) {
     /*
    * This callback is used to initiate a request to begin an authentication
    * exchange. Required resources can be acquired and initialized here.
@@ -89,7 +92,7 @@ void on_host_listener(CassHostListenerEvent event, CassInet inet, void* data) {
     /* Get the string representation of the inet address */
     char address[CASS_INET_STRING_LENGTH];
     cass_inet_string(inet, address);
-    const DBClient *client = static_cast<const DBClient*>(data);
+    DBClient *client = static_cast<DBClient*>(data);
     Q_ASSERT(client != nullptr);
 
     /* Perform application logic for host listener event */
@@ -102,13 +105,27 @@ void on_host_listener(CassHostListenerEvent event, CassInet inet, void* data) {
     } else if (event == CASS_HOST_LISTENER_EVENT_DOWN) {
         qDebug() << "Host " << address << " is DOWN";
     }
+
+    /* Check connection to db with try to read access */
+    qDebug() << "Check Db connectoion state";
+
+    if(!client->LoadFiscalMems()) {
+
+        if (client->connState() == client->CONNECTED) {
+            client->setConnState(client->DISCONNECTED);
+        }
+    } else {
+        if (client->connState() != client->CONNECTED) {
+            client->setConnState(client->CONNECTED);
+        }
+    }
 }
 
 DBClient::DBClient():
     m_cluster(nullptr),
-    m_session(nullptr),
-    m_connState(NOT_CONNECTED)
+    m_session(nullptr)
 {
+    setConnState(NOT_CONNECTED);
 }
 
 DBClient &DBClient::Instance()
@@ -123,6 +140,16 @@ DBClient::~DBClient(){
         cass_cluster_free(m_cluster);
     if(m_session)
         cass_session_free(m_session);
+}
+
+bool DBClient::LoadFiscalMems() {
+    return GetFiscalMem(m_fisc_unit, "fiscal_mem", QString());
+}
+
+bool DBClient::IsNodeIsAcive(const QString &fisc_mem)
+{
+    /*TBD*/
+    return true;
 }
 
 bool DBClient::connectSession()
@@ -164,10 +191,28 @@ bool DBClient::connectSession()
     cass_future_free(connect_future);
 
     if(ret) {
+        setConnState(CONNECTED);
         PrepareTables();
-        m_connState = CONNECTED;
+        LoadFiscalMems();
     }
 
+    return ret;
+}
+
+
+
+void DBClient::timerDbConect()
+{
+    qInfo() << "Try to connect to DB";
+    if (!DBClient::connectSession()) {
+        QTimer::singleShot(CONNECT_TIMEOUT, this, SLOT(timerDbConect()));
+    }
+}
+
+
+bool DBClient::InstallSessionConnector() {
+    bool ret = true;
+    QTimer::singleShot(CONNECT_TIMEOUT, this, SLOT(timerDbConect()));
     return ret;
 }
 
@@ -189,11 +234,11 @@ void DBClient::DoConsistencyTransfer() {
     qDebug() << "DO Consistency check";
     foreach (auto sale, sales) {
         QList<QMap<QString, QVariant>> data ({{
-                                                             {"aj_site_id", sale.value("aj_site_id", -1)},
-                                                             {"sale_id", sale.value("sale_id", -1)},
-                                                             {"code", sale.value("code", -1)},
-                                                             {"transfered", sale.value("transfered", -1)}
-                                                         }});
+                                                  {"aj_site_id", sale.value("aj_site_id", -1)},
+                                                  {"sale_id", sale.value("sale_id", -1)},
+                                                  {"code", sale.value("code", -1)},
+                                                  {"transfered", sale.value("transfered", -1)}
+                                              }});
 
         DBClient::Instance().TransferSoldAccess(data);
     }
@@ -238,6 +283,13 @@ void DBClient::PrepareTables() {
     qDebug() << "Create Table soldAccess: " << m_SoldAccess.CreateTable(m_session);
 }
 
+
+void DBClient::setConnState(const connectionState &connState)
+{
+    qInfo() << "Set DB connection state to: " << connState;
+    m_connState = connState;
+}
+
 bool DBClient::TransferSoldAccess(QList<QMap<QString, QVariant> > &data) {
     int i;
     bool status = false;
@@ -246,10 +298,10 @@ bool DBClient::TransferSoldAccess(QList<QMap<QString, QVariant> > &data) {
 
     for (i = 0; i < data.count(); i++) {
         QList<QMap<QString , QVariant>> soldData({{
-                {"aj_site_id", data[i].value("aj_site_id", -1)},
-                {"sale_id", data[i].value("sale_id", -1)},
-                {"code", data[i].value("code", "")},
-                }});
+                                                      {"aj_site_id", data[i].value("aj_site_id", -1)},
+                                                      {"sale_id", data[i].value("sale_id", -1)},
+                                                      {"code", data[i].value("code", "")},
+                                                  }});
 
         ASSERT_ERROR("SelectFromTable: ",m_CodeAccessInfo.
                      SelectFromTable(m_session, code_access, "*", QString("code = '%1'").
@@ -269,13 +321,13 @@ bool DBClient::TransferSoldAccess(QList<QMap<QString, QVariant> > &data) {
             ASSERT_ERROR("Get SIDE_ID", is_ok);
             if (dead_level > 0) {
                 QList<QMap<QString , QVariant>> deadTicket({{
-                          {"aj_site_id", data[i].value("aj_site_id", -1)},
-                          {"sale_id", data[i].value("sale_id", -1)},
-                          {"code", data[i].value("code", "")},
-                          {"live_ctr", dead_level},
-                          }});
+                                                                {"aj_site_id", data[i].value("aj_site_id", -1)},
+                                                                {"sale_id", data[i].value("sale_id", -1)},
+                                                                {"code", data[i].value("code", "")},
+                                                                {"live_ctr", dead_level},
+                                                            }});
                 ASSERT_ERROR("SoldAccess Insert row: ",
-                            m_DeadTickets.InsertRowsInTable(m_session, deadTicket));
+                             m_DeadTickets.InsertRowsInTable(m_session, deadTicket));
             }
 
             foreach (auto site_id, code_access[0].value("site_ids").toList()) {
@@ -300,7 +352,7 @@ RET_ERROR:
 
 bool DBClient::GetFiscalMem(QList<QMap<QString, QVariant>>& fisc_unit,
                             const QString &filter, const QString &where ) {
-     return m_FiscUnit.SelectFromTable(m_session, fisc_unit, filter, where);
+    return m_FiscUnit.SelectFromTable(m_session, fisc_unit, filter, where);
 }
 
 bool DBClient::GetAjrSales(QList<QMap<QString, QVariant>> &ajr_sale,
@@ -315,12 +367,12 @@ bool DBClient::GetCodeAccessInfo(QList<QMap<QString, QVariant>> &code_access,
 }
 
 bool DBClient::GetSoldAccess(QList<QMap<QString, QVariant>> &sold_access,
-                                 const QString &filter, const QString &where ) {
+                             const QString &filter, const QString &where ) {
     return m_SoldAccess.SelectFromTable(m_session, sold_access, filter, where);
 }
 
 bool DBClient::GetDeadTickets(QList<QMap<QString, QVariant>> &dead_tickets,
-                                 const QString &filter, const QString &where ) {
+                              const QString &filter, const QString &where ) {
     return m_DeadTickets.SelectFromTable(m_session, dead_tickets, filter, where);
 }
 
@@ -334,4 +386,13 @@ bool DBClient::InsertRowsInSoldAccessTable(const QList<QMap<QString , QVariant>>
 
 bool DBClient::InsertRowsInAjrSale(const QList<QMap<QString , QVariant>> &sold_data_rows) {
     return m_AJRSale.InsertRowsInTable(m_session, sold_data_rows);
+}
+
+bool DBClient::FindFiscalMem(QList<QMap<QString, QVariant> > &fisc_unit, QString &qr)
+{
+    bool ret = false;
+    fisc_unit.clear();
+    ret = DBClient::Instance().GetFiscalMem(fisc_unit, "*",
+                                             QString("fiscal_mem='%1'  ALLOW FILTERING").arg(qr));
+    return ret && (fisc_unit.count() > 0);
 }

@@ -1,8 +1,8 @@
 ﻿#include "CassTable.h"
 #include "BuildQuery.h"
 #include "MapQVarCass.h"
-
 #include "Configurator.h"
+#include <cassandra.h>
 #include<QDebug>
 
 #define CHECK_SESSION(x) do { \

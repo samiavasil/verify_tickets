@@ -5,7 +5,9 @@
 #include<QPair>
 #include<QVariant>
 #include<QString>
-#include <cassandra.h>
+
+typedef struct CassSession_ CassSession;
+typedef struct CassCluster_ CassCluster;
 
 class CassTable
 {

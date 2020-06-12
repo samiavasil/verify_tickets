@@ -142,24 +142,38 @@ void AJRServer ::Receive()
     QString result;
     QList<QMap<QString , QVariant>> data;
     QTcpSocket* clientSocket = qobject_cast<QTcpSocket*>(sender());
+    int error_code = 0;
     //Fix me
     QByteArray buf = clientSocket->readAll();
 
     ASSERT_ERROR("Parse Ajure Json input: ", ParseJsonInput(buf, data));
     ASSERT_ERROR("Process Ajur Data: ", ProcessAjurData(data));
 
-    if(DBClient::Instance().TransferSoldAccess(data))
-    {
-        status = true;
-        m_lastId = data[0].value("aj_site_id", -1).toInt();
-        qInfo() << "New ajure sale: " << data;
+    if (DBClient::Instance().connState() == DBClient::CONNECTED) {
+        if (DBClient::Instance().TransferSoldAccess(data))
+        {
+            status = true;
+            m_lastId = data[0].value("aj_site_id", -1).toInt();
+            qInfo() << "New ajure sale: " << data;
+        } else {
+            error_code = 1;
+            qInfo() << "Ajure sale error: Can't write to Cassandra DB " << error_code;
+        }
+
+    } else {
+        //Failover Logic here
+        //Add reason for fail
+        error_code = 2;
+        qInfo() << "AjrSrv: Failover state: " <<  error_code;
     }
 
 RET_ERROR:
     /*Reply to Ajur*/
-    result = QString("[{\"mu_id\":%1,\"sale_id\":%2,\"status\":%3}]\n\r").
-            arg(m_lastId).arg(data[0].
-            value("sale_id", -1).toInt()).arg(status?1:0);
+    result = QString("[{\"mu_id\":%1,\"sale_id\":%2,\"status\":%3,\"error_code\":%4}]\n\r").
+            arg(m_lastId).
+            arg(data[0].value("sale_id", -1).toInt()).
+            arg(status?1:0).
+            arg(error_code);
 
     clientSocket->write(result.toUtf8().constData());
     clientSocket->readAll();
