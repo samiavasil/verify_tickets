@@ -449,6 +449,7 @@ EXIT:
         {"code",       code},
         {"door_id",    door_id},
         {"qty",        qty},
+        {"fail_over_flag", fail_over_flag},
         {"set_door",   enable_access ? "true" : "false"},
         {"codename",   codename},
     };
