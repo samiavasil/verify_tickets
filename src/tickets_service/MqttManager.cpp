@@ -80,15 +80,20 @@ void MqttManager::subscribe_int(const McttClientHndl_t hndl, MqttSubscribe_info_
     }
 
     if (!m_ClientMap[client].contains(info)) {
-         qDebug() << "Mqtt client: " << client << " - added subscription to topic: '" << info.topic << "'" ;
-         m_ClientMap[client].append(info);
+        qInfo() << "Mqtt client: " << client->hostname() << " - added subscription to topic: '" << info.topic << "'" ;
+        m_ClientMap[client].append(info);
+    }
+
+    if (client->state() != client->Connected) {
+        return;
     }
 
     auto subscription = client->subscribe(QMqttTopicFilter(info.topic), info.qos);
     if (!subscription) {
 
-        qCritical() << "Error: Could not subscribe."
-                       " Is there a valid connection?";
+        qInfo() << "Error: Client host '" << client->hostname()
+                    << "', Could not subscribe to topic '" << info.topic <<
+                       "', Is there have a valid connection?";
         return;
     }
 
@@ -111,14 +116,14 @@ void MqttManager::subscribe_int(const McttClientHndl_t hndl, MqttSubscribe_info_
             this, [subscription](QMqttSubscription::SubscriptionState state){
         switch (state) {
         case QMqttSubscription::Unsubscribed:
-            qDebug() << "Unsubscribed: topic - '" << subscription->topic() << "'";
+            qInfo() <<  "Unsubscribed: topic - '" << subscription->topic() << "'";
             subscription->deleteLater();
             break;
         case QMqttSubscription::SubscriptionPending:
-            qDebug() <<"Pending: topic '" << subscription->topic() << "'";
+            qInfo() <<"Pending: topic '" << subscription->topic() << "'";
             break;
         case QMqttSubscription::Subscribed:
-            qDebug() <<"Subscribed:  topic '" << subscription->topic() << "'";
+            qInfo() <<"Subscribed:  topic '" << subscription->topic() << "'";
             break;
         case QMqttSubscription::Error:
             qCritical() << "Error: topic - '"  << subscription->topic()
@@ -136,7 +141,7 @@ void MqttManager::updateLogStateChange()
     QMqttClient* client = qobject_cast<QMqttClient*>(sender());
     auto state = client->state();
     const QString content = QDateTime::currentDateTime().toString()
-            + QLatin1String(": State Change")
+            + QLatin1String(": State Change ")
             + QString::number(state)
             + QLatin1Char('\n');
 

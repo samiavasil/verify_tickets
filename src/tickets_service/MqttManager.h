@@ -19,7 +19,8 @@ public:
         quint8 qos;
         recHndl r_hndl;
         friend inline bool operator==(const MqttSubscribe_info& lhs, const MqttSubscribe_info& rhs) {
-           return (lhs.topic == rhs.topic) && (lhs.qos == rhs.qos) && (&lhs.r_hndl == &rhs.r_hndl);
+           return (!lhs.topic.compare(rhs.topic)) && (lhs.qos == rhs.qos);
+                   // TBD && (&lhs.r_hndl == &rhs.r_hndl);
         }
     };
 

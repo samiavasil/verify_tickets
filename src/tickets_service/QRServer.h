@@ -32,6 +32,7 @@ protected:
     bool IsMultipleAccessTypeEnabled(const QList<QMap<QString, QVariant> > &sold_access, int &sale_id, int &aj_site_id, QString &code, const int &qr_site_id);
     void SendVerificationResultViaMqtt(const QJsonObject &object, int &sale_id, int &door_id, bool enable_access);
     bool UpdateSoldAccesses(const QList<QMap<QString, QVariant> > &soldData);
+    void FeedbackUpdate(QJsonObject &jsonObj);
 };
 
 #endif // QRSERVER_H

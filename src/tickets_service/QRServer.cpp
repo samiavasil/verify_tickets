@@ -12,8 +12,7 @@
 * @param STR  SAtring to log
 */
 #define GOTO_EXIT(EXIT, LOG, STR) do {\
-    codename = (STR);\
-    LOG() << "Verifivation error: " << (STR);\
+    LOG() << (STR);\
     goto EXIT;\
     } while(0)\
 
@@ -31,11 +30,124 @@ enum {
     INVLAID_QR_CODE,
 };
 
+#define GET_VAR_AND_CHECK(jObj, key_id, qvar, type) do { \
+    if (!getVal(jObj, key_id, qvar, type)) { \
+    qCritical() << "QR FB Json Parser error: Line" << __LINE__; \
+    goto RET_ERROR; \
+    } \
+    }while(0)
+
+
+static bool getVal(QJsonObject& jsObj,  const char* field, QVariant& val, QVariant::Type type = QVariant::String) {
+
+    val = QVariant();
+    if (jsObj.contains(field)) {
+        val = jsObj[field].toVariant();
+        if(!val.convert(int(type))) {
+            val = QVariant();
+        }
+    }
+
+    return val.isValid();
+}
+
+void QRServer::FeedbackUpdate(QJsonObject &jsonObj) {
+
+    QDateTime cur_timestamp(QDateTime::currentDateTimeUtc());
+    QList<QMap<QString , QVariant>> soldData;
+    QString code;
+    QVariant val;
+    int aj_site_id;
+    int qr_site_id;
+    int sale_id;
+    int qty;
+    int old_qty;
+    bool ok;
+
+    GET_VAR_AND_CHECK(jsonObj, "aj_site_id", val, QVariant::Int);
+    aj_site_id = val.toInt(&ok);
+    if(!ok) {
+        GOTO_EXIT(RET_ERROR, qWarning, " : Can't get mu_id");
+    }
+
+    GET_VAR_AND_CHECK(jsonObj, "qr_site_id", val, QVariant::Int);
+    qr_site_id = val.toInt(&ok);
+    if(!ok) {
+        GOTO_EXIT(RET_ERROR, qWarning, " : Can't get mu_id");
+    }
+
+    GET_VAR_AND_CHECK(jsonObj, "sale_id", val, QVariant::Int);
+    sale_id = val.toInt(&ok);
+    if(!ok) {
+        GOTO_EXIT(RET_ERROR, qWarning, " : Can't get mu_id");
+    }
+
+    GET_VAR_AND_CHECK(jsonObj, "qty", val, QVariant::Int);
+    qty = val.toInt(&ok);
+    if(!ok) {
+        GOTO_EXIT(RET_ERROR, qWarning, " : Can't get qty");
+    }
+
+    GET_VAR_AND_CHECK(jsonObj, "code", val, QVariant::String);
+    code = val.toString();
+
+    if (!DBClient::Instance().GetSoldAccess(soldData, "*",
+                                            QString("sale_id = %1"
+                                                    " and aj_site_id = %2"
+                                                    " and code = '%3'"
+                                                    " and qr_site_id = %4"
+                                                    " ALLOW FILTERING").
+                                            arg(sale_id).
+                                            arg(aj_site_id).
+                                            arg(code).
+                                            arg(qr_site_id))) {
+       GOTO_EXIT(RET_ERROR, qWarning, " Can't get Sold Access");
+    }
+
+    if (soldData.count() != 1) {
+        GOTO_EXIT(RET_ERROR, qWarning, QString("Wrong soldData count: %1").arg(soldData.count()));
+    }
+
+    old_qty = soldData[0].value("qty").toInt(&ok);
+    if (!ok) {
+      GOTO_EXIT(RET_ERROR, qDebug, "Can't get qr_site_id from sold access");
+    }
+
+    if (qty < old_qty) {
+        soldData[0]["qty"] = qty;
+        if (!UpdateSoldAccesses(soldData)) {
+          GOTO_EXIT(RET_ERROR, qDebug, "Can't update access");
+        }
+    } else {
+        GOTO_EXIT(RET_ERROR, qWarning, "Feadback qty is bigger from DB qty");
+    }
+
+RET_ERROR:
+    return;
+}
+
 
 QRServer::QRServer(QObject *parent, const ServerConfigurator& config):
     TCPServer(parent, config)
 {
-
+    MqttManager::MqttSubscribe_info_t info = {
+        Configurator::Instance().Mqtt().feadback_topic,
+        0,
+        [this](QMqttClient* client, const QByteArray& msg){
+            qDebug() << "Mqtt client feadback: " << client << ", msg: " << msg;
+            QJsonParseError error;
+            QJsonDocument doc = QJsonDocument::fromJson(msg, &error);
+            if (doc.isNull()) {
+                qDebug() << "Incorrect Payload: " << msg;
+                qWarning() << "Json error:" << error.errorString();
+            } else  {
+                QJsonObject jsonObj = doc.object();
+                qDebug() << jsonObj;
+                this->FeedbackUpdate(jsonObj);
+            }
+        }
+    };
+    MqttManager::Instance().subscribe(MqttManager::Instance().m_client, info);
 }
 
 QRServer::~QRServer()
@@ -146,9 +258,9 @@ EXIT:
     return ret;
 }
 
-bool QRServer::GetSoldAccesForSale(QList<QMap<QString, QVariant>> &sold_access,
+bool QRServer::GetSoldAccesForSale(QList<QMap<QString, QVariant>> &soldAccess,
                                    int &sale_id, int &aj_site_id, QString &code) {
-    return DBClient::Instance().GetSoldAccess(sold_access, "*",
+    return DBClient::Instance().GetSoldAccess(soldAccess, "*",
                                               QString("sale_id = %1"
                                                       " and aj_site_id = %2"
                                                       " and code = '%3'"
@@ -158,7 +270,7 @@ bool QRServer::GetSoldAccesForSale(QList<QMap<QString, QVariant>> &sold_access,
                                               arg(code));
 }
 
-bool QRServer::IsSingleAccessTypeEnabled(const QList<QMap<QString, QVariant>> &sold_access,
+bool QRServer::IsSingleAccessTypeEnabled(const QList<QMap<QString, QVariant>> &soldAccess,
                                          const   QVariantList  &site_ids, const int &qr_site_id) {
 
     bool enable_access = false;
@@ -166,7 +278,7 @@ bool QRServer::IsSingleAccessTypeEnabled(const QList<QMap<QString, QVariant>> &s
     QString codename;
     bool ok;
 
-    foreach (auto sold, sold_access) {
+    foreach (auto sold, soldAccess) {
         int f_qr_site_id = sold.value("qr_site_id").toInt(&ok);
         if (!ok) {
             GOTO_EXIT(EXIT, qDebug, "Can't get qr_site_id from sold access");
@@ -193,7 +305,7 @@ EXIT:
     return enable_access;
 }
 
-bool QRServer::IsMultipleAccessTypeEnabled(const QList<QMap<QString, QVariant>> &sold_access,
+bool QRServer::IsMultipleAccessTypeEnabled(const QList<QMap<QString, QVariant>> &soldAccess,
                                            int &sale_id, int& aj_site_id, QString &code,
                                            const int &qr_site_id) {
     bool enable_access = false;
@@ -201,7 +313,7 @@ bool QRServer::IsMultipleAccessTypeEnabled(const QList<QMap<QString, QVariant>> 
     QString codename;
     bool ok;
 
-    foreach (auto sold, sold_access) {
+    foreach (auto sold, soldAccess) {
         int f_qr_site_id = sold.value("qr_site_id").toInt(&ok);
         if (!ok) {
             GOTO_EXIT(EXIT, qDebug, "Can't get qr_site_id from sold access");;
@@ -267,8 +379,8 @@ void QRServer::SendVerificationResultViaMqtt(const QJsonObject &object, int &qr_
     QString topic = QString("site%1door%2/full_msg").arg(qr_site_id).arg(door_id);
 
     QJsonDocument full_topic_json(object);
-    MqttManager::Instance().publish(topic_simple, enable_access ? "true" : "false", 1, false);
-    MqttManager::Instance().publish(topic, full_topic_json.toJson(), 1, false);
+    MqttManager::Instance().publish(MqttManager::Instance().m_client, topic_simple, enable_access ? "true" : "false", 1, false);
+    MqttManager::Instance().publish(MqttManager::Instance().m_client, topic, full_topic_json.toJson(), 1, false);
 
     qDebug() << "Json: " << QString::fromUtf8(full_topic_json.toJson().toStdString().data(),
                                               full_topic_json.toJson().toStdString().size());
@@ -287,7 +399,7 @@ void QRServer::Receive()
     QList<QMap<QString, QVariant>> code_access;
     QList<QMap<QString, QVariant>> fisc_unit;
     QList<QMap<QString, QVariant>> ajr_sales;
-    QList<QMap<QString, QVariant>> sold_access;
+    QList<QMap<QString, QVariant>> soldAccess;
 
     QString codename;
     bool enable_access = false;
@@ -346,7 +458,7 @@ void QRServer::Receive()
                 GOTO_EXIT(FAILOVER, qDebug, " Can't find get sale_id from ajur sale");
             }
 
-            if (!GetSoldAccesForSale(sold_access, sale_id, aj_site_id, code)) {
+            if (!GetSoldAccesForSale(soldAccess, sale_id, aj_site_id, code)) {
                 GOTO_EXIT(FAILOVER, qDebug, " Can't get Sold Access");
             }
 
@@ -373,12 +485,12 @@ void QRServer::Receive()
             codename = code_access[0].value("codename", "Wrong Code Name").toString();
 
             if (access_type == SINGLE) {
-                enable_access = IsSingleAccessTypeEnabled(sold_access,
+                enable_access = IsSingleAccessTypeEnabled(soldAccess,
                                                           code_access[0].value("site_ids").toList(),
                         qr_site_id);
 
             } else if (access_type == MULTIPLE) {
-                enable_access = IsMultipleAccessTypeEnabled(sold_access, sale_id,
+                enable_access = IsMultipleAccessTypeEnabled(soldAccess, sale_id,
                                                             aj_site_id, code,
                                                             qr_site_id);
             }
