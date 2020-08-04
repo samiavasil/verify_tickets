@@ -69,7 +69,7 @@ bool AJRServer::ParseJsonInput(QByteArray& buff, QList<QMap<QString , QVariant>>
     if (doc.isNull()) {
         qWarning() << "Json error:" << error.errorString();
     } else if(!doc.isArray()) {
-        qWarning() << tr("Wrong json format: Expected to be arrea type %1");
+        qWarning() << tr("Wrong json format: Expected to be arrea type");
     } else {
         out.clear();
         QJsonArray array = doc.array();

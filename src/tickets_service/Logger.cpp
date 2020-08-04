@@ -1,4 +1,5 @@
 #include <QString>
+#include <QMqttClient>
 #include "Logger.h"
 #include "MqttManager.h"
 #include "Configurator.h"
@@ -41,7 +42,9 @@ public:
         if (log) {
             if (Configurator::Instance().Mqtt().enbl_logs) {
                 QString topic = Configurator::Instance().Mqtt().log_topic;
-                MqttManager::Instance().publish(QMqttTopicName(topic), out_dbg.toUtf8(), 1, false);
+                if (MqttManager::Instance().m_client->state() == QMqttClient::Connected) {
+                    MqttManager::Instance().publish(MqttManager::Instance().m_client, QMqttTopicName(topic), out_dbg.toUtf8(), 1, false);
+                }
             }
             fprintf(stderr, "%s\n", out_dbg.toStdString().c_str());
         }

@@ -41,8 +41,7 @@ SOURCES += \
     db/SiteDescriptor.cpp \
     db/SoldAccess.cpp \
     db/Topics.cpp \
-        main.cpp \
-    TextMetaType.cpp
+        main.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -58,7 +57,6 @@ HEADERS += \
     QRServer.h \
     ServerConfigurator.h \
     TCPServer.h \
-    TextMetaType.h \
     db/AJRSale.h \
     db/BuildQuery.h \
     db/CassTable.h \

@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     ServerConfigurator cfg(QHostAddress(QHostAddress::Any), 12345, false);
     ServerConfigurator cfg1(QHostAddress::Any, 12346, false);
 
-    MqttManager::Instance().connectToHost();
+    MqttManager::Instance().connectMqttClient(MqttManager::Instance().m_client);
 
     if(DBClient::Instance().connectSession()) {
         /*TBD: Should be fixed. When can't connect to db should try to reconect,
